@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | Next Era Technologies</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <link rel="stylesheet" th:href="@{/theme.css}">
+    <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
+    <style>
+        canvas#matrix-canvas {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0; opacity: 0.35;
+            pointer-events: none;
+        }
+        body { display: flex; flex-direction: column; min-height: 100vh; }
+        .glass-header { z-index: 10; }
+        main {
+            flex: 1; display: flex; align-items: center;
+            justify-content: center; padding: 4rem 1rem;
+            position: relative; z-index: 1;
+        }
+        footer { position: relative; z-index: 1; margin-top: 0; }
+        .strength-bar {
+            height: 4px; background: rgba(255,255,255,0.06);
+            border-radius: 4px; margin-top: 8px; overflow: hidden;
+        }
+        .strength-fill {
+            height: 100%; width: 0%;
+            transition: width 0.3s ease, background 0.3s ease;
+            border-radius: 4px;
+        }
+        .strength-text { font-size: 0.72rem; color: var(--text-muted); margin-top: 5px; }
+        .divider {
+            display: flex; align-items: center; gap: 1rem;
+            margin: 1.5rem 0; color: var(--text-muted); font-size: 0.8rem;
+        }
+        .divider::before,.divider::after {
+            content: ''; flex: 1; height: 1px; background: var(--glass-border);
+        }
+        .password-container { position: relative; }
+        .toggle-password {
+            position: absolute; right: 15px; top: 15px;
+            background: none; border: none; cursor: pointer; color: var(--primary);
+            font-size: 1.1rem; padding: 5px; display: flex; align-items: center;
+            opacity: 0.8; transition: all 0.2s; z-index: 5;
+            filter: drop-shadow(0 0 5px var(--primary-glow));
+        }
+        .toggle-password:hover { opacity: 1; transform: scale(1.1); }
+    </style>
+</head>
+<body>
+<canvas id="matrix-canvas"></canvas>
+
+<header class="glass-header">
+    <div style="display:flex;align-items:center;gap:1rem">
+        <a th:href="@{/}"><img th:src="@{/images/logo.png}" alt="Logo" class="brand-logo"></a>
+        <span class="logo-text">NEXT ERA TECHNOLOGIES</span>
+    </div>
+    <nav><ul>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/products}">Products</a></li>
+        <li><a th:href="@{/signin}" style="color:var(--primary)">Sign In</a></li>
+        <li><button id="themeToggle" class="theme-toggle"></button></li>
+    </ul></nav>
+</header>
+
+<main>
+    <div class="auth-card" style="width:100%">
+        <div style="text-align:center;margin-bottom:2rem">
+            <div style="font-size:2.5rem;margin-bottom:1rem">🚀</div>
+            <h2>Create Account</h2>
+            <p style="font-size:0.85rem;margin-top:0.5rem;color:var(--text-body)">Join Next Era Technologies today</p>
+        </div>
+
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <form th:action="@{/register}" method="post">
+            <div style="margin-bottom:1.5rem">
+                <label class="form-label" for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-control"
+                       placeholder="Choose a username" required autocomplete="off">
+            </div>
+            <div style="margin-bottom:1.5rem">
+                <label class="form-label" for="password">Password</label>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" class="form-control"
+                           placeholder="Create a strong password" required style="padding-right: 45px;">
+                    <button type="button" class="toggle-password" onclick="togglePassVisibility('password', this)">
+                        👁️
+                    </button>
+                </div>
+                <div class="strength-bar">
+                    <div class="strength-fill" id="strength-fill"></div>
+                </div>
+                <div class="strength-text" id="strength-text">Password Strength</div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:1rem;font-size:0.85rem">
+                Create Account
+            </button>
+        </form>
+
+        <div class="divider">or</div>
+        <p style="text-align:center;font-size:0.9rem;color:var(--text-muted)">
+            Already have an account?
+            <a th:href="@{/signin}" style="color:var(--primary);text-decoration:none;font-weight:600">Sign In →</a>
+        </p>
+    </div>
+</main>
+
+<footer>
+    <span class="footer-brand">NEXT ERA TECHNOLOGIES</span>
+    <p>© 2026 Next Era Technologies.</p>
+</footer>
+
+<script>
+    document.getElementById('password').addEventListener('input', function () {
+        const val = this.value;
+        let strength = 0;
+        if (val.length >= 8) strength += 25;
+        if (val.match(/[A-Z]/)) strength += 25;
+        if (val.match(/[0-9]/)) strength += 25;
+        if (val.match(/[^A-Za-z0-9]/)) strength += 25;
+
+        const fill = document.getElementById('strength-fill');
+        const text = document.getElementById('strength-text');
+        fill.style.width = strength + '%';
+
+        if (val.length === 0) {
+            fill.style.width = '0%';
+            text.textContent = 'Password Strength';
+            text.style.color = 'var(--text-muted)';
+        } else if (strength < 50) {
+            fill.style.background = '#ef4444';
+            text.textContent = '⚠ Weak — add uppercase, numbers, 8+ chars';
+            text.style.color = '#ef4444';
+        } else if (strength < 100) {
+            fill.style.background = '#f59e0b';
+            text.textContent = '◈ Medium — add special characters';
+            text.style.color = '#f59e0b';
+        } else {
+            fill.style.background = '#00ff88';
+            text.textContent = '✓ Strong password!';
+            text.style.color = '#00ff88';
+        }
+    });
+</script>
+<script th:src="@{/matrix.js}"></script>
+<script th:src="@{/theme.js}"></script>
+<script>
+    function togglePassVisibility(id, btn) {
+        const input = document.getElementById(id);
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn.innerHTML = '🕶️';
+            btn.style.filter = 'drop-shadow(0 0 10px #ff0088)';
+            btn.style.color = '#ff0088';
+        } else {
+            input.type = 'password';
+            btn.innerHTML = '👁️';
+            btn.style.filter = 'drop-shadow(0 0 5px var(--primary-glow))';
+            btn.style.color = 'var(--primary)';
+        }
+    }
+</script>
+</body>
+</html>

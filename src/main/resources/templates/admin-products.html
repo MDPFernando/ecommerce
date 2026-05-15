@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory - Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <link rel="stylesheet" th:href="@{/theme.css}">
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+    
+    <link rel="icon" type="image/png" th:href="@{/images/logo.png(v=2)}">
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/logo.png(v=2)}">
+</head>
+<body class="admin-body">
+    <header class="glass-header">
+        <div class="logo-container" style="display: flex; align-items: center; gap: 1rem;">
+            <a th:href="@{/}">
+                <img th:src="@{/images/logo.png}" alt="Next Era Technologies Logo" class="brand-logo">
+            </a>
+            <h1 style="font-size: 1.2rem; margin: 0; color: #fff;">COMMAND CENTER</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a th:href="@{/}">Live Site</a></li>
+                <li th:if="${session.loggedInUser != null}"><a th:href="@{/logout}">Sign Out</a></li>
+                <li><button id="themeToggle" class="theme-toggle"></button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="sidebar-brand">Navigation Protocol</div>
+            <ul>
+                <li><a th:href="@{/admin/dashboard}">📊 Dashboard</a></li>
+                <li><a th:href="@{/admin/products}" class="active">📦 Inventory</a></li>
+                <li><a th:href="@{/admin/categories}">📁 Categories</a></li>
+                <li><a th:href="@{/admin/orders}">🚚 Orders</a></li>
+                <li><a th:href="@{/admin/offers}">🎁 Offers</a></li>
+                <li><a th:href="@{/admin/products/add}">➕ Add Product</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content" style="flex:1">
+            <div class="dash-header">
+                <div class="section-tag">Logistics Module</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <h2 style="font-family: 'Orbitron', sans-serif; font-size: 2.2rem; color: #fff;">Inventory Control</h2>
+                    
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <form th:action="@{/admin/products}" method="get" id="catFilterForm">
+                            <select name="category" class="form-control" style="padding: 0.6rem 2.5rem 0.6rem 1rem; min-width: 200px;" onchange="document.getElementById('catFilterForm').submit()">
+                                <option value="0">All Sectors</option>
+                                <option th:each="cat : ${categories}" 
+                                        th:value="${cat.id}" 
+                                        th:text="${cat.name}"
+                                        th:selected="${selectedCategory == cat.id}">Category</option>
+                            </select>
+                        </form>
+                        <a th:href="@{/admin/products/add}" class="btn btn-primary" style="padding: 0.8rem 1.5rem; font-size: 0.75rem;">+ Forge New Item</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Classification</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="product : ${products}">
+                            <td style="width: 80px;">
+                                <img th:src="${product.imageUrl != null ? product.imageUrl : 'https://placehold.co/60x40/080b14/00d4ff?text=No+Img'}" 
+                                     style="width: 60px; height: 40px; object-fit: cover; border-radius: 8px; border: 1px solid var(--glass-border);" alt="Product">
+                            </td>
+                            <td th:text="${product.name}" style="font-weight: 700; color: #fff;">Name</td>
+                            <td>
+                                <span class="offer-badge" style="font-size: 0.6rem; padding: 0.3rem 0.7rem; border-radius: 6px; margin: 0;" 
+                                      th:text="${product.category != null ? product.category.name : 'UNCLASSIFIED'}">Category</span>
+                            </td>
+                            <td th:text="'Rs. ' + ${product.price}" style="color: var(--primary); font-family: 'Orbitron', sans-serif; font-weight: 700;">Price</td>
+                            <td style="white-space: nowrap;">
+                                <a th:href="@{|/admin/products/edit/${product.id}|}" 
+                                   style="color: var(--primary); text-decoration: none; font-size: 0.8rem; font-weight: 700; margin-right: 15px; text-transform: uppercase;">Edit</a>
+                                <a th:href="@{|/admin/products/delete/${product.id}|}" 
+                                   style="color: #f87171; text-decoration: none; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;" 
+                                   onclick="return confirm('Confirm deletion of this artifact?');">Delete</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${products.empty}">
+                            <td colspan="5" style="text-align: center; padding: 4rem; color: var(--text-muted);">
+                                <div style="font-size: 2rem; margin-bottom: 1rem;">🔍</div>
+                                No artifacts found in selected inventory sectors.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <script th:src="@{/theme.js}"></script>
+</body>
+</html>

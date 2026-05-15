@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products | Next Era Technologies</title>
+    <link rel="stylesheet" th:href="@{/style.css(v=3.0)}">
+    <link rel="stylesheet" th:href="@{/theme.css(v=3.0)}">
+    <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
+    <style>
+        /* Equal-height cards with price+buttons always at bottom */
+        .product-grid { align-items: stretch; }
+        .product-card { display: flex; flex-direction: column; }
+        .product-info { display: flex; flex-direction: column; flex: 1; }
+        .product-desc-wrap { flex: 1; }
+        .product-desc {
+            font-size: 0.85rem; color: var(--text-body);
+            line-height: 1.55; margin-bottom: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .product-desc.expanded {
+            display: block;
+            -webkit-line-clamp: unset;
+        }
+        .read-more-btn {
+            background: none; border: none; cursor: pointer;
+            color: var(--primary); font-size: 0.75rem;
+            font-weight: 600; padding: 4px 0; margin-top: 4px;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.5px; transition: opacity 0.2s;
+        }
+        .read-more-btn:hover { opacity: 0.7; }
+        .product-bottom { margin-top: auto; padding-top: 1rem; }
+    </style>
+</head>
+<body>
+
+<header class="glass-header">
+    <div style="display:flex;align-items:center;gap:1rem">
+        <a th:href="@{/}"><img th:src="@{/images/logo.png}" alt="Logo" class="brand-logo"></a>
+        <span class="logo-text">NEXT ERA TECHNOLOGIES</span>
+    </div>
+    <nav>
+        <ul>
+            <li><a th:href="@{/}">Home</a></li>
+            <li><a th:href="@{/products}" style="color:var(--primary)">Products</a></li>
+            <li><a th:href="@{/orders/track}">Track Order</a></li>
+            <li th:if="${session.loggedInUser != null and session.loggedInUser.role != 'ADMIN'}"><a th:href="@{/cart}">🛒 Cart</a></li>
+            <li th:if="${session.loggedInUser != null and session.loggedInUser.role == 'ADMIN'}"><a th:href="@{/admin/dashboard}">Admin</a></li>
+            <li th:if="${session.loggedInUser == null}"><a th:href="@{/signin}" style="color:var(--primary)">Sign In</a></li>
+            <li th:if="${session.loggedInUser != null}"><a th:href="@{/logout}">Sign Out</a></li>
+            <li><button id="themeToggle" class="theme-toggle"></button></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container" style="padding-top:3rem">
+
+    <div class="section-header" style="text-align:left;margin-bottom:2rem">
+        <div class="section-tag">Our Catalogue</div>
+        <h2 style="font-size:2.2rem">The Store</h2>
+    </div>
+
+    <!-- Search + Filter -->
+    <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:2rem">
+        <form action="/products" method="get" class="search-container" style="max-width:460px;margin:0;flex:1">
+            <input type="text" name="search" class="search-input" placeholder="Search products..." th:value="${param.search}">
+            <button type="submit" class="btn btn-primary" style="padding:1rem 1.5rem">Search</button>
+        </form>
+    </div>
+
+    <!-- Category Pills -->
+    <div class="categories-row" th:if="${categories != null}">
+        <a th:href="@{/products}" class="cat-pill" th:classappend="${param.category == null ? 'active' : ''}">All</a>
+        <a th:each="cat : ${categories}"
+           th:href="@{/products(category=${cat.id})}"
+           th:text="${cat.name}"
+           class="cat-pill"
+           th:classappend="${param.category != null and param.category[0] == cat.id.toString() ? 'active' : ''}">Category</a>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="product-grid" th:if="${listProducts != null and !listProducts.empty}">
+        <div class="product-card" th:each="product : ${listProducts}">
+            <div class="product-image">
+                <img th:src="${product.imageUrl != null ? product.imageUrl : 'https://placehold.co/400x300/080b14/00d4ff?text=No+Image'}"
+                     th:alt="${product.name}">
+                <span class="product-badge" th:if="${product.featured != null and product.featured}">Featured</span>
+            </div>
+            <div class="product-info">
+                <div class="product-cat" th:if="${product.category != null}" th:text="${product.category.name}">Category</div>
+                <h3 class="product-name" th:text="${product.name}">Product Name</h3>
+
+                <!-- Clamped description with Read More toggle -->
+                <div class="product-desc-wrap">
+                    <p class="product-desc" th:text="${product.description}">Description</p>
+                    <button class="read-more-btn" onclick="toggleDesc(this)">Read More ▾</button>
+                </div>
+
+                <!-- Price + Buttons always at bottom -->
+                <div class="product-bottom">
+                    <div class="product-price" th:text="'Rs. ' + ${product.price}">Rs. 0</div>
+                    <div class="product-actions" style="gap: 4px;">
+                        <a th:if="${session.loggedInUser == null or session.loggedInUser.role != 'ADMIN'}" 
+                           th:href="@{|/cart/add/${product.id}|}" class="btn btn-primary">🛒 Add to Cart</a>
+                        <a th:href="|https://wa.me/94769414472?text=Hi!%20I%20want%20to%20order:%20${product.name}%20-%20Rs.${product.price}|"
+                           class="btn btn-whatsapp" target="_blank">💬 Buy Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tactical Empty State + Recommendations -->
+    <div th:if="${listProducts == null or listProducts.empty}" style="margin-bottom: 5rem;">
+        <div class="offer-hub-container" 
+             style="margin: 4rem auto 3rem; max-width: 700px; text-align: center; border-color: rgba(255, 60, 60, 0.2);">
+            
+            <div style="font-size: 3.5rem; margin-bottom: 1.5rem; color: rgba(255, 60, 60, 0.8); filter: drop-shadow(0 0 15px rgba(255, 60, 60, 0.3));">
+                📡
+            </div>
+            
+            <div class="offer-badge" style="background: rgba(255, 60, 60, 0.1); border-color: #ff3c3c; color: #ff3c3c;">
+                SIGNAL LOST
+            </div>
+            
+            <h2 class="offer-title" style="font-size: 2.2rem; margin-bottom: 1rem;">
+                Target Not Found
+            </h2>
+            
+            <p class="offer-desc" style="margin: 0 auto 2.5rem;">
+                <span th:if="${searchQuery != null}" th:text="'Tactical scans for \'' + ${searchQuery} + '\' returned no matching artifacts.'">
+                    The requested gear is currently outside our detectable parameters.
+                </span>
+                <span th:if="${searchQuery == null}">
+                    No products found in this sector.
+                </span>
+                <br><br>
+                However, our sensors have detected similar high-value gear for your consideration.
+            </p>
+            
+            <a th:href="@{/products}" class="btn btn-primary" style="padding: 1.1rem 2.5rem;">
+                Reset Tactical Hub
+            </a>
+        </div>
+
+        <!-- Similar Products / Recommendations -->
+        <div th:if="${recommendations != null and !recommendations.empty}" style="margin-top: 5rem;">
+            <div class="section-header" style="text-align:center;margin-bottom:3rem">
+                <div class="section-tag">Alternative Acquisition Targets</div>
+                <h2 style="font-size:1.8rem">Recommended Gear</h2>
+            </div>
+            
+            <div class="product-grid">
+                <div class="product-card" th:each="product : ${recommendations}">
+                    <div class="product-image">
+                        <img th:src="${product.imageUrl != null ? product.imageUrl : 'https://placehold.co/400x300/080b14/00d4ff?text=No+Image'}"
+                             th:alt="${product.name}">
+                        <span class="product-badge" th:if="${product.featured != null and product.featured}">Featured</span>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-cat" th:if="${product.category != null}" th:text="${product.category.name}">Category</div>
+                        <h3 class="product-name" th:text="${product.name}">Product Name</h3>
+                        <div class="product-desc-wrap">
+                            <p class="product-desc" th:text="${product.description}">Description</p>
+                            <button class="read-more-btn" onclick="toggleDesc(this)">Read More ▾</button>
+                        </div>
+                        <div class="product-bottom">
+                            <div class="product-price" th:text="'Rs. ' + ${product.price}">Rs. 0</div>
+                            <div class="product-actions">
+                                <a th:if="${session.loggedInUser == null or session.loggedInUser.role != 'ADMIN'}"
+                                   th:href="@{|/cart/add/${product.id}|}" class="btn btn-primary" style="font-size:0.75rem;padding:0.7rem 0.5rem">
+                                    🛒 Add to Cart
+                                </a>
+                                <a th:href="|https://wa.me/94769414472?text=Hi!%20I%20want%20to%20order:%20${product.name}%20-%20Rs.${product.price}|"
+                                   class="btn btn-whatsapp" style="font-size:0.75rem;padding:0.7rem 0.5rem" target="_blank">
+                                    💬 Buy Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<footer>
+    <span class="footer-brand">NEXT ERA TECHNOLOGIES</span>
+    <p>© 2026 Next Era Technologies.</p>
+    <a href="https://wa.me/94769414472" target="_blank" class="btn btn-whatsapp" style="padding:0.7rem 1.8rem; border-radius: 50px; font-size:0.7rem;">📡 DIRECT UPLINK</a>
+</footer>
+
+<div th:replace="~{chat-widget :: chat}"></div>
+<script th:src="@{/theme.js}"></script>
+<script>
+function toggleDesc(btn) {
+    const desc = btn.previousElementSibling;
+    const expanded = desc.classList.toggle('expanded');
+    btn.textContent = expanded ? 'Read Less ▴' : 'Read More ▾';
+}
+// Auto-hide Read More button if description isn't clamped
+document.querySelectorAll('.product-desc').forEach(el => {
+    if (el.scrollHeight <= el.clientHeight + 2) {
+        el.nextElementSibling.style.display = 'none';
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In | Next Era Technologies</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <link rel="stylesheet" th:href="@{/theme.css}">
+    <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
+    <style>
+        canvas#matrix-canvas {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0; opacity: 0.35;
+            pointer-events: none;
+        }
+        body { display: flex; flex-direction: column; min-height: 100vh; }
+        .glass-header { z-index: 10; }
+        main {
+            flex: 1; display: flex; align-items: center;
+            justify-content: center; padding: 4rem 1rem;
+            position: relative; z-index: 1;
+        }
+        footer { position: relative; z-index: 1; margin-top: 0; }
+        .divider {
+            display: flex; align-items: center; gap: 1rem;
+            margin: 1.5rem 0; color: var(--text-muted); font-size: 0.8rem;
+        }
+        .divider::before,.divider::after {
+            content: ''; flex: 1; height: 1px; background: var(--glass-border);
+        }
+        .password-container { position: relative; }
+        .toggle-password {
+            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; cursor: pointer; color: var(--primary);
+            font-size: 1.1rem; padding: 5px; display: flex; align-items: center;
+            opacity: 0.8; transition: all 0.2s; z-index: 5;
+            filter: drop-shadow(0 0 5px var(--primary-glow));
+        }
+        .toggle-password:hover { opacity: 1; transform: translateY(-50%) scale(1.1); }
+    </style>
+</head>
+<body>
+<canvas id="matrix-canvas"></canvas>
+
+<header class="glass-header">
+    <div style="display:flex;align-items:center;gap:1rem">
+        <a th:href="@{/}"><img th:src="@{/images/logo.png}" alt="Logo" class="brand-logo"></a>
+        <span class="logo-text">NEXT ERA TECHNOLOGIES</span>
+    </div>
+    <nav><ul>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/products}">Products</a></li>
+        <li><button id="themeToggle" class="theme-toggle"></button></li>
+    </ul></nav>
+</header>
+
+<main>
+    <div class="auth-card" style="width:100%">
+        <div style="text-align:center;margin-bottom:2rem">
+            <div style="font-size:2.5rem;margin-bottom:1rem">🔐</div>
+            <h2>Access Portal</h2>
+            <p style="font-size:0.85rem;margin-top:0.5rem;color:var(--text-body)">Sign in to continue to Next Era Technologies</p>
+        </div>
+
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+        <div th:if="${param.registered}" class="alert alert-success">Registration successful. Please sign in.</div>
+        <div th:if="${param.logout}" class="alert alert-success">You have been signed out.</div>
+
+        <form th:action="@{/signin}" method="post">
+            <div style="margin-bottom:1.5rem">
+                <label class="form-label" for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username" required>
+            </div>
+            <div style="margin-bottom:1.5rem">
+                <label class="form-label" for="password">Password</label>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required style="padding-right: 45px;">
+                    <button type="button" class="toggle-password" onclick="togglePassVisibility('password', this)">
+                        👁️
+                    </button>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:1rem;font-size:0.85rem">
+                Initialize Login
+            </button>
+        </form>
+
+        <div class="divider">or</div>
+        <p style="text-align:center;font-size:0.9rem;color:var(--text-muted)">
+            No account?
+            <a th:href="@{/register}" style="color:var(--primary);text-decoration:none;font-weight:600">Create Account →</a>
+        </p>
+    </div>
+</main>
+
+<footer>
+    <span class="footer-brand">NEXT ERA TECHNOLOGIES</span>
+    <p>© 2026 Next Era Technologies.</p>
+</footer>
+
+<script th:src="@{/matrix.js}"></script>
+<script th:src="@{/theme.js}"></script>
+<script>
+    function togglePassVisibility(id, btn) {
+        const input = document.getElementById(id);
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn.innerHTML = '🕶️';
+            btn.style.filter = 'drop-shadow(0 0 10px #ff0088)';
+            btn.style.color = '#ff0088';
+        } else {
+            input.type = 'password';
+            btn.innerHTML = '👁️';
+            btn.style.filter = 'drop-shadow(0 0 5px var(--primary-glow))';
+            btn.style.color = 'var(--primary)';
+        }
+    }
+</script>
+</body>
+</html>

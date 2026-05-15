@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart | Next Era Technologies</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <link rel="stylesheet" th:href="@{/theme.css}">
+    <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
+    <style>
+        .cart-grid{display:grid;grid-template-columns:1fr 380px;gap:2rem;margin-top:3rem}
+        .cart-table{width:100%;border-collapse:collapse}
+        .cart-table th{padding:1rem 1.5rem;font-family:'Orbitron',sans-serif;font-size:0.68rem;color:var(--primary);letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--glass-border);text-align:left}
+        .cart-table td{padding:1.3rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.03)}
+        .cart-table tr:hover td{background:rgba(0,212,255,0.02)}
+        .summary-card{background:var(--bg-card);border:1px solid var(--glass-border);border-radius:20px;padding:2rem;height:fit-content;position:sticky;top:90px}
+        @media(max-width:900px){.cart-grid{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+
+<header class="glass-header">
+    <div style="display:flex;align-items:center;gap:1rem">
+        <a th:href="@{/}"><img th:src="@{/images/logo.png}" alt="Logo" class="brand-logo"></a>
+        <span class="logo-text">NEXT ERA TECHNOLOGIES</span>
+    </div>
+    <nav><ul>
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/products}">Products</a></li>
+        <li><a th:href="@{/cart}" style="color:var(--primary)">🛒 Cart</a></li>
+        <li th:if="${session.loggedInUser != null and session.loggedInUser.role == 'ADMIN'}"><a th:href="@{/admin/dashboard}">Admin</a></li>
+        <li th:if="${session.loggedInUser != null}"><a th:href="@{/logout}">Sign Out</a></li>
+        <li><button id="themeToggle" class="theme-toggle"></button></li>
+    </ul></nav>
+</header>
+
+<main class="container">
+    <div style="margin-top:3rem">
+        <div class="section-tag">Your Selection</div>
+        <h2 style="font-family:'Orbitron',sans-serif;color:var(--text-head);font-size:2rem;text-transform:uppercase;letter-spacing:-1px;margin-top:0.5rem">Acquisition Cart</h2>
+    </div>
+
+    <!-- Empty Cart -->
+    <div th:if="${cartItems == null or cartItems.empty}" style="text-align:center;padding:8rem 2rem">
+        <div style="font-size:5rem;margin-bottom:1.5rem">🛒</div>
+        <h3 style="font-family:'Orbitron',sans-serif;color:var(--text-head);font-size:1.5rem;margin-bottom:1rem">Cart Is Empty</h3>
+        <p style="margin-bottom:2rem">No items added yet. Browse our product catalogue.</p>
+        <a th:href="@{/products}" class="btn btn-primary">Browse Products</a>
+    </div>
+
+    <!-- Cart with Items -->
+    <div th:unless="${cartItems == null or cartItems.empty}" class="cart-grid">
+
+        <!-- Items Table -->
+        <div style="background:var(--bg-card);border:1px solid var(--glass-border);border-radius:20px;padding:2rem">
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item : ${cartItems}">
+                        <td style="color:var(--text-head);font-weight:600" th:text="${item.product.name}"></td>
+                        <td th:text="${item.quantity}"></td>
+                        <td style="color:var(--primary);font-weight:700" th:text="'Rs. ' + ${item.product.price * item.quantity}"></td>
+                        <td>
+                            <a th:href="@{|/cart/remove/${item.id}|}"
+                               style="color:#f87171;font-size:0.78rem;text-decoration:none;border:1px solid rgba(248,113,113,0.3);padding:0.35rem 0.8rem;border-radius:8px;transition:all 0.2s"
+                               onmouseover="this.style.background='rgba(248,113,113,0.1)'"
+                               onmouseout="this.style.background='transparent'">Remove</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="summary-card">
+            <h3 style="font-family:'Orbitron',sans-serif;color:var(--text-head);font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:1.5rem">Order Summary</h3>
+
+            <div style="margin-bottom:2rem">
+                <label class="form-label">Full Name</label>
+                <input type="text" id="userName" class="form-control" placeholder="Your name">
+            </div>
+            <div style="margin-bottom:2rem">
+                <label class="form-label">Phone Number</label>
+                <input type="text" id="userPhone" class="form-control" placeholder="07XXXXXXXX">
+            </div>
+            <div style="margin-bottom:2rem">
+                <label class="form-label">WhatsApp Number</label>
+                <input type="text" id="userWhatsapp" class="form-control" placeholder="07XXXXXXXX">
+            </div>
+            <div style="margin-bottom:2rem">
+                <label class="form-label">Delivery Address</label>
+                <input type="text" id="userAddress" class="form-control" placeholder="Your full address">
+            </div>
+
+            <div style="border-top:1px solid var(--glass-border);padding-top:1.5rem;margin-bottom:1.5rem">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <span style="font-size:0.85rem;color:var(--text-muted)">Total</span>
+                    <span style="font-family:'Orbitron',sans-serif;font-size:1.6rem;color:var(--primary);font-weight:900" th:text="'Rs. ' + ${total}">Rs. 0</span>
+                </div>
+            </div>
+
+            <button id="whatsappCheckout" class="btn btn-whatsapp" style="width:100%;justify-content:center;padding:1.1rem;font-size:0.85rem">
+                💬 Place Order via WhatsApp
+            </button>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <span class="footer-brand">NEXT ERA TECHNOLOGIES</span>
+    <p>© 2026 Next Era Technologies.</p>
+</footer>
+
+<script th:inline="javascript">
+    document.getElementById('whatsappCheckout')?.addEventListener('click', async function() {
+        const name = document.getElementById('userName').value.trim();
+        const phone = document.getElementById('userPhone').value.trim();
+        const whatsapp = document.getElementById('userWhatsapp').value.trim();
+        const address = document.getElementById('userAddress').value.trim();
+        if (!name || !phone || !whatsapp || !address) { alert('Please fill in all fields.'); return; }
+        const cartItems = /*[[${cartItems}]]*/ [];
+        let items = '';
+        cartItems.forEach(i => items += `• ${i.product.name} x${i.quantity}\n`);
+        const total = /*[[${total}]]*/ 0;
+        const data = { customerName: name, customerPhone: phone, customerWhatsapp: whatsapp, address, itemsManifest: items, totalAmount: total, status: 'PROCESSING' };
+        try {
+            const res = await fetch('/orders/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+            const result = await res.json();
+            if (result.success) {
+                const msg = `🛍️ *NEW ORDER #${result.orderId}*\n\nCustomer: ${name}\nPhone: ${phone}\nAddress: ${address}\n\nItems:\n${items}\nTotal: Rs. ${total}\n\nTrack: https://yourdomain.up.railway.app/orders/track?query=${result.orderId}`;
+                window.open(`https://wa.me/94769414472?text=${encodeURIComponent(msg)}`, '_blank');
+            }
+        } catch (e) { alert('Order failed. Please try again.'); }
+    });
+</script>
+<script th:src="@{/theme.js}"></script>
+</body>
+</html>

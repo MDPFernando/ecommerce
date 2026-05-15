@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offers - Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/style.css(v=3.0)}">
+    <link rel="stylesheet" th:href="@{/theme.css(v=3.0)}">
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+    
+    <link rel="icon" type="image/png" th:href="@{/images/logo.png(v=2)}">
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/logo.png(v=2)}">
+</head>
+<body class="admin-body">
+    <header class="glass-header">
+        <div class="logo-container" style="display: flex; align-items: center; gap: 1rem;">
+            <a th:href="@{/}">
+                <img th:src="@{/images/logo.png}" alt="Next Era Technologies Logo" class="brand-logo">
+            </a>
+            <h1 style="font-size: 1.2rem; margin: 0; color: #fff;">COMMAND CENTER</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a th:href="@{/}">Live Site</a></li>
+                <li th:if="${session.loggedInUser != null}"><a th:href="@{/logout}">Sign Out</a></li>
+                <li><a th:href="@{/}">Live Site</a></li>
+                <li th:if="${session.loggedInUser != null}"><a th:href="@{/logout}">Sign Out</a></li>
+                <li><button id="themeToggle" class="theme-toggle">☀️</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="sidebar-brand">Command Center</div>
+            <a th:href="@{/admin/dashboard}">📊 Dashboard</a>
+            <a th:href="@{/admin/products}">📦 Inventory</a>
+            <a th:href="@{/admin/categories}">📁 Categories</a>
+            <a th:href="@{/admin/orders}">🚚 Orders</a>
+            <a th:href="@{/admin/offers}" class="active">🎁 Offers</a>
+        </aside>
+
+        <main class="admin-main">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1 style="font-family: 'Orbitron', sans-serif; color: #0ea5e9;">Special Offers</h1>
+                <a th:href="@{/admin/offers/add}" class="btn btn-primary">➕ Create Offer</a>
+            </div>
+            
+            <div class="product-grid" style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));">
+                <div class="product-card" th:each="offer : ${offers}">
+                    <div class="product-image" style="height: 180px;">
+                        <img th:src="${offer.imageUrl != null ? offer.imageUrl : 'https://placehold.co/400x300/080b14/00d4ff?text=No+Image'}" 
+                             th:alt="${offer.title}">
+                        <span class="product-badge" th:text="${offer.discountText != null ? offer.discountText : 'TACTICAL'}">OFFER</span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name" th:text="${offer.title}">Offer Title</h3>
+                        <p class="product-desc" th:text="${offer.description}" style="margin-bottom: 1.5rem;">Description</p>
+                        
+                        <div class="product-bottom" style="padding-top: 0;">
+                            <div class="product-actions">
+                                <a th:href="@{'/admin/offers/edit/' + ${offer.id}}" class="btn btn-primary" style="font-size: 0.75rem;">
+                                    📝 Modify Protocol
+                                </a>
+                                <a th:href="@{'/admin/offers/delete/' + ${offer.id}}" 
+                                   class="btn btn-outline" 
+                                   style="font-size: 0.75rem; border-color: rgba(255, 60, 60, 0.3); color: #f87171;"
+                                   onclick="return confirm('De-activate this tactical offer?')">
+                                    🗑️ Terminate
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${offers.empty}" class="offer-hub-container" style="margin-top: 2rem; border-style: dashed; opacity: 0.6;">
+                <p style="margin: 0;">No active tactical offers detected in the matrix. Deploy a new protocol to begin.</p>
+            </div>
+        </main>
+    </div>
+    
+    <!-- TACTICAL VISUAL CONFIRMATION NODE -->
+    <div th:if="${param.success}" id="tactical-toast" class="cyber-toast">
+        <div class="toast-icon">✅</div>
+        <div class="toast-content">
+            <h4 style="margin: 0 0 4px 0; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: #00d4ff;">SYSTEM UPDATE</h4>
+            <p style="margin: 0; font-size: 0.85rem; color: #fff;">PROTOCOL DEPLOYED: Offer matrix successfully updated.</p>
+        </div>
+        <div class="toast-progress"></div>
+    </div>
+
+    <style>
+        .cyber-toast {
+            position: fixed;
+            top: 80px;
+            right: -400px;
+            width: 350px;
+            background: rgba(10, 15, 30, 0.9);
+            border: 1px solid var(--primary);
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 212, 255, 0.2);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            z-index: 9999;
+            overflow: hidden;
+            animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, slideOut 0.5s ease-in 3.5s forwards;
+        }
+        
+        .toast-icon {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 5px rgba(0, 255, 100, 0.6));
+        }
+        
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+            animation: progressShrink 3.5s linear forwards;
+        }
+        
+        @keyframes slideIn {
+            0% { right: -400px; opacity: 0; }
+            100% { right: 20px; opacity: 1; }
+        }
+        @keyframes slideOut {
+            0% { right: 20px; opacity: 1; }
+            100% { right: -400px; opacity: 0; }
+        }
+        @keyframes progressShrink {
+            0% { width: 100%; }
+            100% { width: 0%; }
+        }
+    </style>
+
+    <script th:src="@{/theme.js}"></script>
+</body>
+</html>

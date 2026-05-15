@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next Era Technologies | Future-Grade Gear</title>
+    <meta name="description" content="Premium cybernetic and tech gear for the next generation. Shop the future at Next Era Technologies.">
+    <link rel="stylesheet" th:href="@{/style.css(v=3.0)}">
+    <link rel="stylesheet" th:href="@{/theme.css(v=21.0)}">
+    <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
+    <style>
+        /* Tactical Offer Hub Styling */
+        .offers-section {
+            margin: 6rem auto;
+            max-width: 900px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .offer-hub-container {
+            background: rgba(10, 20, 40, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            padding: 2.5rem;
+            backdrop-filter: blur(30px);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Creative Corner Accents */
+        .offer-hub-container::after {
+            content: '';
+            position: absolute;
+            top: 0; right: 0;
+            width: 100px; height: 100px;
+            background: linear-gradient(225deg, var(--primary-glow), transparent 70%);
+            border-radius: 0 40px 0 100%;
+            pointer-events: none;
+        }
+
+        .offer-slider {
+            width: 100%;
+            position: relative;
+        }
+
+        .offer-slide {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            animation: portalScale 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        @keyframes portalScale {
+            0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .offer-slide.active {
+            display: flex;
+        }
+
+        .offer-info {
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 5;
+        }
+
+        .offer-badge {
+            padding: 0.4rem 1rem;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .offer-title {
+            font-size: 2.8rem;
+            font-weight: 900;
+            margin-bottom: 0.8rem;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .offer-desc {
+            font-size: 1rem;
+            color: var(--text-body);
+            max-width: 500px;
+            margin-bottom: 2rem;
+        }
+
+        .offer-visual {
+            width: 100%;
+            max-width: 650px;
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .offer-visual img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .offer-img-wrapper {
+            position: relative;
+            width: 100%;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        .offer-img-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .offer-slide:hover img {
+            transform: scale(1.05);
+        }
+
+        .offer-controls {
+            position: absolute;
+            bottom: 3rem;
+            right: 3rem;
+            display: flex;
+            gap: 1.5rem;
+            z-index: 10;
+        }
+
+        .control-btn {
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px var(--primary-glow);
+        }
+
+        .offer-indicators {
+            position: absolute;
+            bottom: 3rem;
+            left: 3rem;
+            display: flex;
+            gap: 0.8rem;
+            z-index: 10;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .indicator.active {
+            width: 36px;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .hero { z-index: 10; position: relative; }
+        .hero-ctas, .search-container { position: relative; z-index: 20; }
+        .cta-banner { z-index: 10; position: relative; }
+        .cta-banner .btn { position: relative; z-index: 20; }
+
+        /* Neural Search Results Panel */
+        .search-container { position: relative; }
+        .search-results-panel {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0; right: 0;
+            background: rgba(10, 15, 30, 0.95);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 20px var(--primary-glow);
+            z-index: 100;
+            display: none;
+            overflow: hidden;
+            animation: searchFadeIn 0.3s ease;
+        }
+
+        @keyframes searchFadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .search-result-item:last-child { border-bottom: none; }
+
+        .search-result-item:hover {
+            background: rgba(0, 212, 255, 0.08);
+            padding-left: 1.5rem;
+        }
+
+        .result-img {
+            width: 45px; height: 45px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--glass-border);
+        }
+
+        .result-info { flex: 1; }
+        .result-name {
+            display: block;
+            font-size: 0.9rem;
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .result-price {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        @media (max-width: 992px) {
+            .offer-slide { text-align: center; }
+            .offer-desc { margin: 0 auto 2.5rem; }
+            .offer-title { font-size: 2.5rem; }
+            .offer-indicators, .offer-controls { position: relative; bottom: 0; left: 0; right: 0; justify-content: center; margin-top: 2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="starlight-bg" id="starlightBg"></div>
+<header class="glass-header">
+    <div style="display:flex;align-items:center;gap:1rem">
+        <a th:href="@{/}"><img th:src="@{/images/logo.png}" alt="Logo" class="brand-logo"></a>
+        <span class="logo-text">NEXT ERA TECHNOLOGIES</span>
+    </div>
+    <nav>
+        <ul>
+            <li><a th:href="@{/}">Home</a></li>
+            <li><a th:href="@{/products}">Products</a></li>
+            <li><a th:href="@{/orders/track}">Track Order</a></li>
+            <li th:if="${session.loggedInUser != null and session.loggedInUser.role != 'ADMIN'}"><a th:href="@{/cart}">🛒 Cart</a></li>
+            <li th:if="${session.loggedInUser != null and session.loggedInUser.role == 'ADMIN'}"><a th:href="@{/admin/dashboard}">Admin</a></li>
+            <li th:if="${session.loggedInUser == null}"><a th:href="@{/signin}" style="color:var(--primary)">Sign In</a></li>
+            <li th:if="${session.loggedInUser != null}"><a th:href="@{/logout}">Sign Out</a></li>
+            <li><button id="themeToggle" class="theme-toggle"></button></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <!-- HERO -->
+    <!-- HERO (CYBER-UPGRADE V4) -->
+    <style>
+        .cyber-hero {
+            min-height: 95vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 6rem 2rem;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 50%, rgba(10, 15, 30, 0) 0%, rgba(2, 4, 10, 0.7) 100%);
+        }
+        
+        /* 3D Perspective Grid Floor */
+        .cyber-hero::before {
+            content: '';
+            position: absolute;
+            bottom: -50%; left: -50%; right: -50%; top: 50%;
+            background-image: 
+                linear-gradient(rgba(0, 212, 255, 0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.2) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: perspective(500px) rotateX(60deg);
+            animation: gridMove 20s linear infinite;
+            z-index: -2;
+            opacity: 0.6;
+            mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+        }
+
+
+        
+        /* Rolls Royce Starlight Background */
+        .starlight-bg {
+            position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+        }
+        .rr-star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle linear infinite;
+        }
+
+        /* Floating Cyber Particles */
+        .cyber-particles {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0, 212, 255, 0.15) 2px, transparent 2px),
+                radial-gradient(circle at 70% 60%, rgba(255, 0, 85, 0.15) 2px, transparent 2px),
+                radial-gradient(circle at 40% 80%, rgba(0, 212, 255, 0.1) 1px, transparent 1px),
+                radial-gradient(circle at 80% 20%, rgba(255, 0, 85, 0.1) 1px, transparent 1px);
+            animation: floatParticles 60s linear infinite;
+        }
+
+        /* Advanced Typography */
+        .cyber-hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(3rem, 8vw, 7rem);
+            font-weight: 900;
+            line-height: 1.05;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: -3px;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 40px rgba(0, 212, 255, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .cyber-hero h1 span {
+            background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .cyber-hero h1:hover span {
+            animation: chromaticGlitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+        }
+
+        .cyber-hero p {
+            font-size: 1.25rem;
+            max-width: 650px;
+            margin: 0 auto 3.5rem;
+            color: #94a3b8;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            padding-bottom: 2rem;
+        }
+
+        /* Cyber HUD Search Container */
+        .cyber-search-container {
+            display: flex;
+            max-width: 750px;
+            margin: 0 auto;
+            gap: 15px;
+            position: relative;
+            z-index: 10;
+            background: rgba(5, 8, 15, 0.6);
+            padding: 10px;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(0, 212, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .cyber-search-container::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: 20px; right: 20px; height: 1px;
+            background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+        }
+        
+        .cyber-search-container::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; left: 20px; right: 20px; height: 1px;
+            background: linear-gradient(90deg, transparent, #7c3aed, transparent);
+        }
+
+        .cyber-search-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            border-radius: 10px;
+            padding: 1.2rem 2rem;
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        .cyber-search-input:focus {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.05);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.1), inset 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        /* KEYFRAMES */
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 50px; }
+        }
+        
+
+        
+        @keyframes twinkle {
+            0% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.6); box-shadow: 0 0 10px #fff, 0 0 20px var(--primary); }
+            100% { opacity: 0.2; transform: scale(0.8); }
+        }
+        
+        @keyframes floatParticles {
+            0% { background-position: 0 0; }
+            100% { background-position: 1000px 1000px; }
+        }
+        
+        @keyframes chromaticGlitch {
+            0% { text-shadow: 2px 0 0 red, -2px 0 0 blue; transform: translate(0); }
+            20% { text-shadow: -2px 0 0 red, 2px 0 0 blue; transform: translate(-2px, 1px); }
+            40% { text-shadow: 2px 0 0 red, -2px 0 0 blue; transform: translate(2px, -1px); }
+            60% { text-shadow: -2px 0 0 red, 2px 0 0 blue; transform: translate(-2px, 2px); }
+            80% { text-shadow: 2px 0 0 red, -2px 0 0 blue; transform: translate(2px, -2px); }
+            100% { text-shadow: -2px 0 0 red, 2px 0 0 blue; transform: translate(0); }
+        }
+    </style>
+
+    <section class="cyber-hero">
+        <div class="cyber-particles"></div>
+
+        
+        <div class="hero-badge" style="z-index: 2; margin-bottom: 2.5rem; background: rgba(0, 212, 255, 0.05); border-color: #00d4ff; box-shadow: 0 0 20px rgba(0,212,255,0.2);">
+            ⚡ Next-Gen Tech Marketplace
+        </div>
+        
+        <h1>Shop The<br><span>Future</span><br>Today</h1>
+        <p>Premium technology artifacts curated for the next generation of innovators, creators, and digital pioneers. Uplink to the grid below.</p>
+        
+        <div class="hero-ctas" style="z-index: 2;">
+            <a th:href="@{/products}" class="btn-cyber" style="padding: 1.2rem 3rem;">
+                <span style="margin-right: 10px;">🚀</span> EXPLORE GRID
+            </a>
+            <a th:href="@{/orders/track}" class="btn-cyber" style="border-color: #7c3aed; padding: 1.2rem 3rem;">
+                <span style="margin-right: 10px;">🛰️</span> TRACK UPLINK
+            </a>
+        </div>
+        
+        <form action="/products" method="get" class="cyber-search-container">
+            <input type="text" name="search" class="cyber-search-input" id="mainSearchInput" placeholder="Search parameters: artifacts, brands, logic boards..." autocomplete="off">
+            <button type="submit" class="btn-cyber" style="border-radius: 10px;">SEARCH</button>
+            <div id="searchResultsPanel" class="search-results-panel" style="bottom: -10px; transform: translateY(100%);"></div>
+        </form>
+    </section>
+
+    <!-- TACTICAL OFFER HUB (CYBERPUNK V4) -->
+    <style>
+        .cyber-offer-hub {
+            position: relative;
+            background: linear-gradient(135deg, rgba(5, 8, 15, 0.9) 0%, rgba(10, 20, 35, 0.8) 100%);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 24px;
+            padding: 4rem;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8), inset 0 0 40px rgba(0, 212, 255, 0.08);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            z-index: 1;
+        }
+        
+        /* Hex Grid Background Overlay */
+        .cyber-offer-hub::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
+            z-index: -1;
+            animation: panBg 30s linear infinite;
+        }
+
+        .cyber-offer-hub::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+            animation: scanline 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            z-index: 5;
+        }
+
+        .cyber-slide {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            align-items: center;
+            gap: 5rem;
+        }
+
+        .cyber-slide.active {
+            display: flex;
+            opacity: 1;
+            animation: dataMaterialize 1s forwards;
+        }
+
+        .cyber-info {
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cyber-badge {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.05);
+            color: #00d4ff;
+            padding: 0.6rem 1.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            border-radius: 2px;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2), inset 0 0 10px rgba(0, 212, 255, 0.1);
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cyber-badge::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: badgeShine 3s infinite;
+        }
+
+        .cyber-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin: 0 0 1.5rem 0;
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(0, 212, 255, 0.5), 2px 2px 0px rgba(255, 0, 85, 0.5);
+            position: relative;
+        }
+
+        .cyber-title:hover {
+            animation: textGlitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+        }
+
+        .cyber-desc {
+            color: #cbd5e1;
+            font-size: 1.2rem;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            max-width: 90%;
+            border-left: 3px solid #00d4ff;
+            padding-left: 1.5rem;
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.05), transparent);
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            
+            /* Text Truncation Protocol */
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .cyber-desc.expanded {
+            -webkit-line-clamp: unset;
+        }
+
+        .read-more-btn {
+            background: transparent;
+            border: none;
+            color: #00d4ff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0 0 0 1.5rem;
+            margin-bottom: 3rem;
+            letter-spacing: 2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        
+        .read-more-btn:hover {
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+            transform: translateX(5px);
+        }
+
+        /* FUTURISTIC BUTTONS */
+        .btn-cyber {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.2rem 2.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #fff;
+            background: transparent;
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            text-transform: uppercase;
+            text-decoration: none;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+
+        .btn-cyber::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #00d4ff;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s cubic-bezier(0.86, 0, 0.07, 1);
+            z-index: -1;
+        }
+
+        .btn-cyber:hover {
+            color: #050810;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+            border-color: #00d4ff;
+        }
+
+        .btn-cyber:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+        .btn-whatsapp-cyber {
+            border-color: rgba(37, 211, 102, 0.5);
+            box-shadow: 0 0 20px rgba(37, 211, 102, 0.1);
+        }
+        .btn-whatsapp-cyber::before { background: #25D366; }
+        .btn-whatsapp-cyber:hover {
+            box-shadow: 0 0 30px rgba(37, 211, 102, 0.6);
+            border-color: #25D366;
+        }
+
+        /* VISUAL MATRIX */
+        .cyber-visual {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 450px;
+            perspective: 1000px;
+        }
+
+        /* The Creative Rounded Frame */
+        .cyber-frame {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 400px;
+            max-height: 400px;
+            border-radius: 40px; /* Heavy round corners */
+            background: rgba(10, 20, 35, 0.8);
+            border: 2px solid rgba(0, 212, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 30px rgba(0, 212, 255, 0.1);
+            backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            animation: floatFrame 6s ease-in-out infinite;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Animated Glowing Border Effect */
+        .cyber-frame::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: conic-gradient(transparent, transparent, transparent, #00d4ff);
+            animation: spinBorder 4s linear infinite;
+            opacity: 0.7;
+        }
+        
+        /* Inner container to mask the spin and keep rounded corners */
+        .cyber-frame-inner {
+            position: absolute;
+            inset: 3px; /* Creates the border width */
+            background: linear-gradient(135deg, rgba(10, 15, 30, 0.95), rgba(5, 10, 20, 0.98));
+            border-radius: 37px;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .cyber-frame:hover {
+            transform: scale(1.05) rotateY(-10deg);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 50px rgba(0, 212, 255, 0.3);
+            border-color: rgba(0, 212, 255, 0.5);
+        }
+
+        .cyber-img {
+            max-width: 90%;
+            height: auto;
+            max-height: 90%;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+            position: relative;
+            z-index: 10;
+            border-radius: 20px; /* Slight rounding on the image itself */
+            animation: imgPulse 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatFrame {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes spinBorder {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes imgPulse {
+            from { filter: drop-shadow(0 10px 15px rgba(0, 212, 255, 0.1)); transform: scale(1); }
+            to { filter: drop-shadow(0 20px 30px rgba(0, 212, 255, 0.3)); transform: scale(1.03); }
+        }
+
+        /* ANIMATIONS */
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(600px); opacity: 0; }
+        }
+        
+        @keyframes dataMaterialize {
+            0% { opacity: 0; transform: translateY(20px); filter: blur(10px); clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%); }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%); }
+        }
+        
+        @keyframes spinRing {
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes spinRingReverse {
+            100% { transform: rotate(-360deg); }
+        }
+        
+        @keyframes zeroGravity {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); filter: drop-shadow(0 50px 40px rgba(0, 212, 255, 0.2)); }
+        }
+        
+        @keyframes badgeShine {
+            0% { left: -100%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
+        }
+        
+        @keyframes textGlitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+        
+        @keyframes panBg {
+            0% { background-position: 0 0; }
+            100% { background-position: 100px 100px; }
+        }
+
+        @media (max-width: 992px) {
+            .cyber-slide { flex-direction: column; text-align: center; gap: 3rem; }
+            .cyber-desc { margin: 0 auto 2rem; border-left: none; border-top: 3px solid #00d4ff; padding-left: 0; padding-top: 1rem; background: linear-gradient(180deg, rgba(0, 212, 255, 0.05), transparent); }
+            .cyber-title { font-size: 2.2rem; }
+            .cyber-info { order: 2; }
+            .cyber-visual { order: 1; height: 300px; }
+            .cyber-ring, .cyber-ring-inner { width: 250px; height: 250px; }
+        }
+    </style>
+
+    <section class="container offers-section" style="margin-top: 5rem;" th:if="${allOffers != null and !allOffers.isEmpty()}">
+        <div class="cyber-offer-hub">
+            <div id="offerSlider" class="offer-slider">
+                <div th:each="offer, iter : ${allOffers}" 
+                     class="cyber-slide" 
+                     th:classappend="${iter.index == 0 ? 'active' : ''}"
+                     th:data-index="${iter.index}">
+                    
+                    <div class="cyber-info">
+                        <div class="cyber-badge" th:text="${offer.discountText != null ? offer.discountText : 'SYSTEM PROTOCOL ACTIVE'}">OFFER</div>
+                        <h2 class="cyber-title" th:text="${offer.title}">Tactical Acquisition</h2>
+                        <div class="desc-container">
+                            <p class="cyber-desc" th:id="'desc-' + ${iter.index}" th:text="${offer.description}">Access premium futuristic gear with elite-level advantages. Your upgrade path starts here.</p>
+                            <button class="read-more-btn" th:if="${offer.description != null and offer.description.length() > 100}" th:onclick="'toggleDescription(' + ${iter.index} + ', this)'">
+                                READ MORE <span style="font-size: 0.6rem;">▼</span>
+                            </button>
+                            <div th:unless="${offer.description != null and offer.description.length() > 100}" style="margin-bottom: 3rem;"></div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                            <th:block th:if="${offer.product != null}">
+                                <a th:href="@{|/cart/add/${offer.product.id}|}" class="btn-cyber">
+                                    <span style="margin-right: 8px;">🛒</span> ADD TO CART
+                                </a>
+                                <a th:href="|https://wa.me/94769414472?text=Hi!%20I%20want%20to%20order:%20${offer.product.name}%20-%20Rs.${offer.product.price}|" 
+                                   class="btn-cyber btn-whatsapp-cyber" target="_blank">
+                                    <span style="margin-right: 8px;">💬</span> BUY NOW
+                                </a>
+                            </th:block>
+                            <th:block th:unless="${offer.product != null}">
+                                <a th:href="${offer.targetUrl != null and !offer.targetUrl.isEmpty() ? offer.targetUrl : '/products'}" class="btn-cyber">
+                                    INITIATE PROTOCOL <span style="margin-left: 8px;">❯</span>
+                                </a>
+                            </th:block>
+                        </div>
+                    </div>
+                    
+                    <div class="cyber-visual">
+                        <div class="cyber-frame">
+                            <div class="cyber-frame-inner">
+                                <img class="cyber-img" th:src="${offer.imageUrl != null ? offer.imageUrl : '/images/placeholder-offer.jpg'}" th:alt="${offer.title}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="offer-indicators" id="offerIndicators">
+                <div th:each="offer, iter : ${allOffers}" 
+                     class="indicator" 
+                     th:classappend="${iter.index == 0 ? 'active' : ''}"
+                     th:onclick="'goToSlide(' + ${iter.index} + ')'"></div>
+            </div>
+
+            <div class="offer-controls">
+                <div class="control-btn" onclick="prevSlide()">❮</div>
+                <div class="control-btn" onclick="nextSlide()">❯</div>
+            </div>
+        </div>
+    <!-- TACTICAL SECTOR NAVIGATION -->
+    <section class="container" style="margin: 4rem auto 2rem;">
+        <div class="section-header" style="text-align: center; margin-bottom: 2.5rem;">
+            <div class="section-tag">Targeting Protocols</div>
+            <h2 style="font-size: 2rem;">Tactical Sectors</h2>
+        </div>
+        
+        <div class="categories-row" style="justify-content: center; flex-wrap: wrap; gap: 1.5rem; padding-bottom: 2rem;">
+            <a th:href="@{/products}" class="cat-pill" style="padding: 1rem 2rem; font-size: 0.9rem;">
+                🚀 All Sectors
+            </a>
+            <a th:each="cat : ${categories}" 
+               th:href="@{/products(category=${cat.id})}" 
+               class="cat-pill" 
+               style="padding: 1rem 2rem; font-size: 0.9rem;">
+               <span th:text="${cat.name}">Category</span>
+            </a>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- STATS -->
+        <div class="stats-bar">
+            <div class="stat-item"><span class="stat-num">500+</span><span class="stat-label">Products</span></div>
+            <div class="stat-item"><span class="stat-num">10K+</span><span class="stat-label">Happy Customers</span></div>
+            <div class="stat-item"><span class="stat-num">24/7</span><span class="stat-label">Support</span></div>
+            <div class="stat-item"><span class="stat-num">100%</span><span class="stat-label">Secure Orders</span></div>
+        </div>
+
+        <!-- FEATURES -->
+        <section style="margin:5rem 0">
+            <div class="section-header">
+                <div class="section-tag">Why Choose Us</div>
+                <h2>Built For The Future</h2>
+                <p>Experience a new standard in tech retail with every order.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🛰️</div>
+                    <h3>Fast Delivery</h3>
+                    <p>Island-wide delivery with real-time order tracking via WhatsApp.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <h3>Secure Checkout</h3>
+                    <p>Every transaction is encrypted and handled with maximum integrity.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>WhatsApp Orders</h3>
+                    <p>Order directly through WhatsApp — instant confirmation, zero hassle.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Premium Quality</h3>
+                    <p>Every product is sourced and verified for the highest standards.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA BANNER -->
+        <section class="cta-banner">
+            <div class="section-tag">New Arrivals</div>
+            <h2>Ready To Upgrade?</h2>
+            <p style="max-width:500px;margin:0 auto 2.5rem">Our latest batch of premium tech products has just arrived. Limited stock — early access available now.</p>
+            <a th:href="@{/products}" class="btn btn-primary" style="font-size:0.9rem;padding:1.1rem 2.5rem">Browse The Store</a>
+        </section>
+    </div>
+</main>
+
+<footer>
+    <span class="footer-brand">NEXT ERA TECHNOLOGIES</span>
+    <p>© 2026 Next Era Technologies. All rights reserved.</p>
+    <a href="https://wa.me/94769414472" target="_blank" class="btn btn-whatsapp" style="padding:0.7rem 1.8rem; border-radius: 50px; font-size:0.7rem;">📡 DIRECT UPLINK</a>
+</footer>
+
+<div th:replace="~{chat-widget :: chat}"></div>
+<script th:src="@{/theme.js}"></script>
+<script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.cyber-slide');
+    const indicators = document.querySelectorAll('.indicator');
+    const totalSlides = slides.length;
+
+    function updateSlides() {
+        slides.forEach((slide, idx) => {
+            slide.classList.remove('active');
+            if (idx === currentSlide) {
+                slide.classList.add('active');
+                slide.style.display = 'flex';
+            } else {
+                slide.style.display = 'none';
+            }
+        });
+
+        indicators.forEach((indicator, idx) => {
+            indicator.classList.toggle('active', idx === currentSlide);
+        });
+    }
+
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        updateSlides();
+    }
+
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+        updateSlides();
+    }
+
+    function goToSlide(idx) {
+        currentSlide = idx;
+        updateSlides();
+    }
+    
+    function toggleDescription(idx, btn) {
+        const descEl = document.getElementById('desc-' + idx);
+        if (descEl.classList.contains('expanded')) {
+            descEl.classList.remove('expanded');
+            btn.innerHTML = 'READ MORE <span style="font-size: 0.6rem;">▼</span>';
+        } else {
+            descEl.classList.add('expanded');
+            btn.innerHTML = 'SHOW LESS <span style="font-size: 0.6rem;">▲</span>';
+        }
+    }
+
+    // Auto-advance
+    if (totalSlides > 1) {
+        setInterval(nextSlide, 8000);
+    }
+    
+    // Initial state
+    if (totalSlides > 0) {
+        updateSlides();
+    }
+
+    // Live Search Neural Engine
+    const searchInput = document.getElementById('mainSearchInput');
+    const resultsPanel = document.getElementById('searchResultsPanel');
+
+    searchInput.addEventListener('input', async (e) => {
+        const query = e.target.value.trim();
+        if (query.length < 2) {
+            resultsPanel.style.display = 'none';
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/products/search?query=${encodeURIComponent(query)}`);
+            const products = await response.json();
+
+            if (products.length > 0) {
+                resultsPanel.innerHTML = products.map(p => `
+                    <a href="/products?search=${encodeURIComponent(p.name)}" class="search-result-item">
+                        <img src="${p.imageUrl || 'https://placehold.co/100x100/080b14/00d4ff?text=Gear'}" class="result-img">
+                        <div class="result-info">
+                            <span class="result-name">${p.name}</span>
+                            <span class="result-price">Rs. ${p.price}</span>
+                        </div>
+                    </a>
+                `).join('');
+                resultsPanel.style.display = 'block';
+            } else {
+                resultsPanel.style.display = 'none';
+            }
+        } catch (err) {
+            console.error('Neural Search Interrupted:', err);
+        }
+    });
+
+    // Close panel on click outside
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !resultsPanel.contains(e.target)) {
+            resultsPanel.style.display = 'none';
+        }
+    });
+    // Starlight Generator
+    const starContainer = document.getElementById('starlightBg');
+    if (starContainer) {
+        for(let i=0; i<150; i++) {
+            let star = document.createElement('div');
+            star.className = 'rr-star';
+            star.style.width = Math.random() * 3 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            star.style.animationDelay = (Math.random() * 5) + 's';
+            starContainer.appendChild(star);
+        }
+    }
+</script>
+</body>
+</html>

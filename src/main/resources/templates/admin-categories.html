@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sector Calibration | Next Era Technologies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <link rel="stylesheet" th:href="@{/theme.css}">
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+    <style>
+        .category-grid { display: grid; grid-template-columns: 350px 1fr; gap: 2.5rem; align-items: start; }
+        .calibration-panel {
+            background: rgba(10, 20, 40, 0.85); border: 2px solid var(--primary);
+            border-radius: 24px; padding: 2.2rem; backdrop-filter: blur(30px);
+            position: sticky; top: 100px;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.15), inset 0 0 20px rgba(0, 212, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .calibration-panel:hover { box-shadow: 0 0 40px rgba(0, 212, 255, 0.25); border-color: var(--secondary); }
+        
+        .form-section-header {
+            font-family: 'Orbitron', sans-serif; font-size: 0.8rem;
+            color: var(--primary); letter-spacing: 3px; text-transform: uppercase;
+            margin-bottom: 2rem; display: flex; align-items: center; gap: 12px;
+            font-weight: 900; text-shadow: 0 0 10px var(--primary-glow);
+        }
+        .form-section-header::after { content: ''; flex: 1; height: 1px; background: var(--glass-border); }
+        
+        .cat-table-card {
+            background: var(--bg-card); border: 1px solid var(--glass-border);
+            border-radius: 24px; overflow: hidden;
+        }
+        
+        .status-badge {
+            font-size: 0.6rem; padding: 4px 10px; border-radius: 20px;
+            text-transform: uppercase; letter-spacing: 1px; font-weight: 700;
+        }
+        .badge-parent { background: rgba(0,212,255,0.1); color: var(--primary); border: 1px solid rgba(0,212,255,0.2); }
+        .badge-child { background: rgba(139,92,246,0.1); color: #a78bfa; border: 1px solid rgba(139,92,246,0.2); }
+
+        .btn-action {
+            padding: 0.6rem 1rem; font-size: 0.7rem; font-family: 'Orbitron', sans-serif;
+            border-radius: 8px; border: 1px solid var(--glass-border); background: transparent;
+            color: var(--text-body); transition: all 0.2s; cursor: pointer; text-decoration: none;
+            display: inline-block;
+        }
+        .btn-edit:hover { border-color: var(--primary); color: var(--primary); box-shadow: 0 0 10px rgba(0,212,255,0.2); }
+        .btn-delete:hover { border-color: #ef4444; color: #ef4444; box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+
+        .btn-save {
+            width: 100%; background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff; font-family: 'Orbitron', sans-serif; font-weight: 900; padding: 1.2rem;
+            border: none; border-radius: 14px; cursor: pointer; margin-top: 1.5rem;
+            transition: all 0.3s; box-shadow: 0 0 25px rgba(0, 212, 255, 0.3);
+            letter-spacing: 2px;
+        }
+        .btn-save:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(0, 212, 255, 0.5); }
+        
+        .form-control:focus {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+            outline: none;
+        }
+
+        /* Custom Dropdown Styling */
+        .custom-select-wrapper { position: relative; width: 100%; box-sizing: border-box; }
+        .custom-select-trigger {
+            width: 100%; background: rgba(0, 212, 255, 0.05);
+            border: 1px solid var(--glass-border); border-radius: 12px;
+            padding: 1rem 1.2rem; color: #fff; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            transition: all 0.3s; box-sizing: border-box;
+        }
+        .custom-select-trigger:hover { border-color: var(--primary); background: rgba(0, 212, 255, 0.1); }
+        .custom-select-trigger.active { border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
+        
+        .custom-options {
+            position: absolute; top: calc(100% + 5px); left: -1px; width: calc(100% + 2px);
+            background: rgba(10, 20, 40, 0.98); border: 1px solid var(--primary);
+            border-radius: 16px; overflow: hidden; z-index: 100;
+            display: none; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            backdrop-filter: blur(20px); box-sizing: border-box;
+        }
+        .custom-options.show { display: block; animation: slideDown 0.3s ease; }
+        
+        .custom-option {
+            padding: 1rem 1.2rem; color: var(--text-body); cursor: pointer;
+            transition: all 0.2s; font-size: 0.85rem; font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .custom-option:last-child { border-bottom: none; }
+        .custom-option:hover { background: var(--primary); color: #000; }
+        .custom-option.selected { color: var(--primary); background: rgba(0, 212, 255, 0.1); }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media(max-width: 1000px) { .category-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body class="admin-body">
+    <header class="glass-header">
+        <div class="logo-container" style="display: flex; align-items: center; gap: 1rem;">
+            <a th:href="@{/}"><img th:src="@{/images/logo.png}" alt="Logo" class="brand-logo"></a>
+            <h1 style="font-family: 'Orbitron', sans-serif; font-size: 1.1rem; margin: 0; color: #fff; letter-spacing: 2px;">NEURAL COMMAND</h1>
+        </div>
+        <nav><ul>
+            <li><a th:href="@{/}">Live Site</a></li>
+            <li><button id="themeToggle" class="theme-toggle"></button></li>
+        </ul></nav>
+    </header>
+
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="sidebar-brand">Navigation Protocol</div>
+            <ul>
+                <li><a th:href="@{/admin/dashboard}">📊 Dashboard</a></li>
+                <li><a th:href="@{/admin/products}">📦 Inventory</a></li>
+                <li><a th:href="@{/admin/categories}" class="active">📁 Categories</a></li>
+                <li><a th:href="@{/admin/orders}">🚚 Orders</a></li>
+                <li><a th:href="@{/admin/offers}">🎁 Offers</a></li>
+                <li><a th:href="@{/admin/products/add}">➕ Add Product</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content" style="flex:1">
+            <div class="dash-header">
+                <div class="section-tag">Classification Engine</div>
+                <h2 style="font-family: 'Orbitron', sans-serif; font-size: 2.2rem; color: #fff; margin-top: 0.5rem;">Sector Calibration</h2>
+            </div>
+
+            <div class="category-grid">
+                <!-- Panel: Add/Edit -->
+                <div class="calibration-panel">
+                    <div class="form-section-header">Calibration Input</div>
+                    <form th:action="@{/admin/categories/save}" method="post">
+                        <input type="hidden" name="id" th:value="${categoryToEdit != null ? categoryToEdit.id : ''}">
+                        
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label class="form-label" for="name">Sector Designation</label>
+                            <input type="text" id="name" name="name" class="form-control" required 
+                                   th:value="${categoryToEdit != null ? categoryToEdit.name : ''}" 
+                                   placeholder="e.g. Neural Interfaces">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label class="form-label" for="parentId">Parent Grid Mapping</label>
+                            <input type="hidden" id="parentId" name="parentId" th:value="${categoryToEdit != null and categoryToEdit.parent != null ? categoryToEdit.parent.id : '0'}">
+                            
+                            <div class="custom-select-wrapper">
+                                <div class="custom-select-trigger" id="parentTrigger">
+                                    <span id="selectedParent">-- Root Sector --</span>
+                                    <span style="font-size: 0.8rem; opacity: 0.5;">▼</span>
+                                </div>
+                                <div class="custom-options" id="parentOptions">
+                                    <div class="custom-option" data-value="0">-- Root Sector --</div>
+                                    <div th:each="cat : ${categories}" 
+                                         class="custom-option" 
+                                         th:data-value="${cat.id}" 
+                                         th:text="${cat.parent != null ? cat.parent.name + ' > ' + cat.name : cat.name}"
+                                         th:if="${categoryToEdit == null or categoryToEdit.id != cat.id}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-save" th:text="${categoryToEdit != null ? 'SYNC MODIFICATIONS' : 'INITIALIZE SECTOR'}">
+                            INITIALIZE SECTOR
+                        </button>
+                        
+                        <a th:if="${categoryToEdit != null}" th:href="@{/admin/categories}" 
+                           style="display: block; text-align: center; margin-top: 1rem; color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; font-family: 'Orbitron';">
+                           Cancel Calibration
+                        </a>
+                    </form>
+                </div>
+
+                <!-- Table: List -->
+                <div class="cat-table-card">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Sector ID</th>
+                                <th>Designation</th>
+                                <th>Mapping</th>
+                                <th>Operations</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="cat : ${categories}">
+                                <td th:text="'#' + ${cat.id}" style="color: var(--text-muted); font-family: 'Orbitron'; font-size: 0.7rem;">#1</td>
+                                <td>
+                                    <span th:text="${cat.name}" style="font-weight: 700; color: #fff;">Name</span>
+                                </td>
+                                <td>
+                                    <span th:if="${cat.parent == null}" class="status-badge badge-parent">ROOT</span>
+                                    <span th:if="${cat.parent != null}" class="status-badge badge-child" th:text="${cat.parent.name}">PARENT</span>
+                                </td>
+                                <td style="white-space: nowrap;">
+                                    <a th:href="@{'/admin/categories/edit/' + ${cat.id}}" class="btn-action btn-edit">Edit</a>
+                                    <a th:href="@{'/admin/categories/delete/' + ${cat.id}}" class="btn-action btn-delete" 
+                                       onclick="return confirm('WARNING: Deleting this sector may disrupt child mappings. Proceed?')">Delete</a>
+                                </td>
+                            </tr>
+                            <tr th:if="${categories.empty}">
+                                <td colspan="4" style="text-align: center; padding: 4rem; color: var(--text-muted);">
+                                    <div style="font-size: 2rem; margin-bottom: 1rem;">🛰️</div>
+                                    No data sectors discovered.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const trigger = document.getElementById('parentTrigger');
+            const optionsMenu = document.getElementById('parentOptions');
+            const options = document.querySelectorAll('.custom-option');
+            const hiddenInput = document.getElementById('parentId');
+            const label = document.getElementById('selectedParent');
+
+            // Handle Trigger Click
+            trigger.addEventListener('click', () => {
+                optionsMenu.classList.toggle('show');
+                trigger.classList.toggle('active');
+            });
+
+            // Handle Option Selection
+            options.forEach(opt => {
+                opt.addEventListener('click', () => {
+                    const val = opt.getAttribute('data-value');
+                    const text = opt.textContent;
+                    
+                    hiddenInput.value = val;
+                    label.textContent = text;
+                    
+                    optionsMenu.classList.remove('show');
+                    trigger.classList.remove('active');
+                    
+                    options.forEach(o => o.classList.remove('selected'));
+                    opt.classList.add('selected');
+                });
+            });
+
+            // Close on outside click
+            document.addEventListener('click', (e) => {
+                if (!trigger.contains(e.target) && !optionsMenu.contains(e.target)) {
+                    optionsMenu.classList.remove('show');
+                    trigger.classList.remove('active');
+                }
+            });
+
+            // Initialize selection
+            const currentVal = hiddenInput.value;
+            if (currentVal && currentVal !== '0') {
+                const activeOpt = document.querySelector(`.custom-option[data-value="${currentVal}"]`);
+                if (activeOpt) {
+                    label.textContent = activeOpt.textContent;
+                    activeOpt.classList.add('selected');
+                }
+            }
+        });
+    </script>
+    <script th:src="@{/theme.js}"></script>
+</body>
+</html>

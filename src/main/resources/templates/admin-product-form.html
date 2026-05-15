@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Forge | Next Era Technologies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <link rel="stylesheet" th:href="@{/theme.css}">
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+    <style>
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-top: 1rem; }
+        .glass-card { 
+            background: var(--bg-card); border: 1px solid var(--glass-border); 
+            border-radius: 24px; padding: 2.5rem; backdrop-filter: blur(20px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .form-section-title {
+            font-family: 'Orbitron', sans-serif; font-size: 0.75rem;
+            color: var(--primary); letter-spacing: 2px; text-transform: uppercase;
+            margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px;
+        }
+        .form-section-title::after { content: ''; flex: 1; height: 1px; background: var(--glass-border); }
+
+        /* Category Selection Grid */
+        .cat-selection-grid { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); 
+            gap: 10px; margin-top: 10px; max-height: 220px; overflow-y: auto; padding-right: 8px;
+        }
+        .cat-item {
+            background: rgba(0,212,255,0.05); border: 1px solid var(--glass-border);
+            border-radius: 12px; padding: 0.8rem; text-align: center; cursor: pointer;
+            transition: all 0.3s; font-size: 0.75rem; font-weight: 600; color: var(--text-body);
+        }
+        .cat-item:hover { border-color: var(--primary); background: rgba(0,212,255,0.1); transform: translateY(-2px); }
+        .cat-item.active { 
+            background: var(--primary); color: #000; border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+        .cat-item .parent-label { 
+            display: block; font-size: 0.6rem; opacity: 0.7; margin-bottom: 4px; 
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        /* Image Preview Box */
+        .image-preview-box {
+            width: 100%; height: 260px; border-radius: 18px; border: 2px dashed var(--glass-border);
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+            background: rgba(0,0,0,0.2); position: relative; transition: all 0.3s; margin-bottom: 1rem;
+        }
+        .image-preview-box img { width: 100%; height: 100%; object-fit: cover; transition: all 0.5s; }
+        .image-preview-box.has-img { border-style: solid; border-color: var(--primary); }
+        .preview-placeholder { text-align: center; color: var(--text-muted); pointer-events: none; }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff; font-family: 'Orbitron', sans-serif; font-weight: 900;
+            letter-spacing: 3px; padding: 1.2rem; border-radius: 14px;
+            width: 100%; margin-top: 2rem; border: none; cursor: pointer;
+            transition: all 0.3s; box-shadow: 0 0 30px rgba(0,212,255,0.3);
+        }
+        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 0 45px rgba(0,212,255,0.5); }
+
+        @media(max-width: 900px) { .form-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body class="admin-body">
+    <header class="glass-header">
+        <div class="logo-container" style="display: flex; align-items: center; gap: 1rem;">
+            <a th:href="@{/}"><img th:src="@{/images/logo.png}" alt="Logo" class="brand-logo"></a>
+            <h1 style="font-family: 'Orbitron', sans-serif; font-size: 1.1rem; margin: 0; color: #fff; letter-spacing: 2px;">NEURAL COMMAND</h1>
+        </div>
+        <nav><ul>
+            <li><a th:href="@{/}">Live Site</a></li>
+            <li><button id="themeToggle" class="theme-toggle"></button></li>
+        </ul></nav>
+    </header>
+
+    <div class="admin-container">
+        <aside class="sidebar">
+            <ul>
+                <li><a th:href="@{/admin/dashboard}">📊 Dashboard</a></li>
+                <li><a th:href="@{/admin/products}">📦 Inventory</a></li>
+                <li><a th:href="@{/admin/categories}">📁 Categories</a></li>
+                <li><a th:href="@{/admin/orders}">🚚 Orders</a></li>
+                <li><a th:href="@{/admin/offers}">🎁 Offers</a></li>
+                <li><a th:href="@{/admin/products/add}" class="active">➕ Add Product</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div style="margin-bottom: 2.5rem;">
+                <div class="section-tag">Administrator Tool</div>
+                <h2 style="font-family: 'Orbitron', sans-serif; font-size: 2.2rem; color: #fff; margin-top: 0.5rem;" th:text="${product.id == null ? 'Forge New Item' : 'Update Artifact'}">Forge Product</h2>
+            </div>
+
+            <form th:action="@{/admin/products/save}" th:object="${product}" method="post" enctype="multipart/form-data">
+                <input type="hidden" th:field="*{id}" />
+                
+                <div class="form-grid">
+                    <!-- Column 1: Core Specs -->
+                    <div class="glass-card">
+                        <div class="form-section-title"><span>01</span> Basic Configuration</div>
+                        
+                        <div class="form-group" style="margin-bottom: 1.8rem;">
+                            <label class="form-label" for="name">Artifact Name</label>
+                            <input type="text" id="name" th:field="*{name}" class="form-control" required placeholder="e.g. Neural Link V4">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1.8rem;">
+                            <label class="form-label" for="price">Credit Value (Rs.)</label>
+                            <input type="number" step="0.01" id="price" th:field="*{price}" class="form-control" required placeholder="50000.00">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Classification Sector</label>
+                            <input type="hidden" id="category" th:field="*{category}" required />
+                            
+                            <div class="cat-selection-grid" id="catGrid">
+                                <div th:each="cat : ${categories}" 
+                                     class="cat-item" 
+                                     th:data-id="${cat.id}"
+                                     th:classappend="${product.category != null and product.category.id == cat.id ? 'active' : ''}">
+                                    <span th:if="${cat.parent != null}" class="parent-label" th:text="${cat.parent.name}">Parent</span>
+                                    <span th:text="${cat.name}">Category</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Media & Intel -->
+                    <div class="glass-card">
+                        <div class="form-section-title"><span>02</span> Media & Intel</div>
+
+                        <div class="image-preview-box" id="previewBox">
+                            <img th:src="${product.imageUrl}" id="previewImg" th:style="${product.imageUrl != null ? 'display:block' : 'display:none'}">
+                            <div class="preview-placeholder" id="previewText" th:style="${product.imageUrl == null ? 'display:block' : 'display:none'}">
+                                <div style="font-size: 3rem; margin-bottom: 10px;">🖼️</div>
+                                <p>Visual sensor data will appear here</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label class="form-label" for="imageUrl">Visual Source Link</label>
+                            <input type="text" id="imageUrl" th:field="*{imageUrl}" class="form-control" placeholder="https://..." oninput="updatePreview(this.value)">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label class="form-label" for="imageFile">Local Data Upload</label>
+                            <input type="file" id="imageFile" name="imageFile" accept="image/*" class="form-control" style="padding: 0.6rem; font-size: 0.8rem;" onchange="previewLocal(this)">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="description">Technical Manifest</label>
+                            <textarea id="description" th:field="*{description}" class="form-control" required rows="4" placeholder="Enter specifications..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">INITIALIZE ARCHIVE STORAGE</button>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const catItems = document.querySelectorAll('.cat-item');
+            const catInput = document.getElementById('category');
+
+            catItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    catItems.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    catInput.value = item.getAttribute('data-id');
+                });
+            });
+
+            // If editing, find active category and scroll to it
+            const activeCat = document.querySelector('.cat-item.active');
+            if (activeCat) {
+                catInput.value = activeCat.getAttribute('data-id');
+                activeCat.scrollIntoView({ block: 'nearest' });
+            }
+        });
+
+        function updatePreview(url) {
+            const img = document.getElementById('previewImg');
+            const txt = document.getElementById('previewText');
+            if (url) {
+                img.src = url; img.style.display = 'block'; txt.style.display = 'none';
+                document.getElementById('previewBox').classList.add('has-img');
+            } else {
+                img.style.display = 'none'; txt.style.display = 'block';
+                document.getElementById('previewBox').classList.remove('has-img');
+            }
+        }
+
+        function previewLocal(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) { updatePreview(e.target.result); }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+    <script th:src="@{/theme.js}"></script>
+</body>
+</html>
