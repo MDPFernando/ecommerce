@@ -69,6 +69,83 @@
             text-transform: uppercase;
         }
         .step.active .step-label { color: #fff; }
+
+        /* Courier Selection Hub Styles */
+        .courier-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+            gap: 10px;
+            margin: 1.5rem 0;
+        }
+        .courier-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem 0.6rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .courier-card:hover {
+            border-color: #0ea5e9;
+            background: rgba(14, 165, 233, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(14, 165, 233, 0.1);
+        }
+        .courier-card.selected {
+            background: rgba(14, 165, 233, 0.1);
+            border-color: #0ea5e9;
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.2), inset 0 0 10px rgba(14, 165, 233, 0.1);
+        }
+        .courier-badge-icon {
+            font-size: 1.3rem;
+            filter: drop-shadow(0 0 4px rgba(14, 165, 233, 0.3));
+        }
+        .courier-name-creative {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #fff;
+            text-transform: uppercase;
+            margin: 0;
+            line-height: 1.2;
+        }
+        .courier-name-original {
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+        .satellite-btn {
+            background: linear-gradient(135deg, #0ea5e9, #00d4ff);
+            color: #000 !important;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            letter-spacing: 2px;
+            font-size: 0.78rem;
+            padding: 0.9rem;
+            border-radius: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.2);
+            text-transform: uppercase;
+        }
+        .satellite-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(14, 165, 233, 0.4);
+            filter: brightness(1.1);
+        }
     </style>
 </head>
 <body>
@@ -95,7 +172,7 @@
             
             <form th:action="@{/orders/track}" method="get" style="display: flex; gap: 1rem; margin-bottom: 3rem;">
                 <input type="text" name="query" placeholder="Order ID or Phone Number..." class="form-control" style="flex: 1; padding: 1rem; border-radius: 10px;">
-                <button type="submit" class="btn" style="padding: 0 2rem;">TRACK</button>
+                <button type="submit" class="btn" style="padding: 0 2.5rem; font-family: 'Orbitron', sans-serif;">RETRIEVE STATUS LOGS</button>
             </form>
 
             <div th:if="${order}">
@@ -132,6 +209,119 @@
                         <div class="step-label">Delivered</div>
                     </div>
                 </div>
+
+                <!-- Interactive Courier Dispatch Portal -->
+                <div th:if="${order.trackingNumber != null and !order.trackingNumber.empty}" 
+                     style="margin-top: 2rem; background: rgba(0, 212, 255, 0.03); padding: 1.8rem; border-radius: 16px; border: 1px solid rgba(0, 212, 255, 0.15); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);">
+                    
+                    <h3 style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: #0ea5e9; margin-top: 0; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px; text-transform: uppercase;">
+                        📡 COURIER GATEWAY INTERFACE
+                    </h3>
+                    
+                    <div style="background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.6rem;">
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">ASSIGNED CARRIER:</span>
+                            <strong th:text="${order.courierName}" style="color: #fff; font-size: 0.8rem; font-family: 'Space Grotesk', sans-serif;"></strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">TRACKING ID:</span>
+                            <code th:text="${order.trackingNumber}" style="color: #0ea5e9; font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 0.85rem;"></code>
+                        </div>
+                    </div>
+
+                    <!-- Hidden Inputs for JS Access -->
+                    <input type="hidden" id="assignedCourierName" th:value="${order.courierName}">
+                    <input type="hidden" id="assignedTrackingNumber" th:value="${order.trackingNumber}">
+                    <input type="hidden" id="assignedTrackingUrl" th:value="${order.trackingUrl}">
+
+                    <label class="form-label" style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; display: block;">
+                        Select Tracking Node Network:
+                    </label>
+
+                    <div class="courier-grid">
+                        <div class="courier-card" id="carrier-domex" onclick="selectCourier('domex')">
+                            <span class="courier-badge-icon">⚡</span>
+                            <h4 class="courier-name-creative">Domex Cyber</h4>
+                            <span class="courier-name-original">Domex Logistics</span>
+                        </div>
+                        <div class="courier-card" id="carrier-koombiyo" onclick="selectCourier('koombiyo')">
+                            <span class="courier-badge-icon">🌐</span>
+                            <h4 class="courier-name-creative">Koombiyo Nexus</h4>
+                            <span class="courier-name-original">Koombiyo Delivery</span>
+                        </div>
+                        <div class="courier-card" id="carrier-pronto" onclick="selectCourier('pronto')">
+                            <span class="courier-badge-icon">🚀</span>
+                            <h4 class="courier-name-creative">Pronto Hyper</h4>
+                            <span class="courier-name-original">Pronto Lanka</span>
+                        </div>
+                        <div class="courier-card" id="carrier-fardar" onclick="selectCourier('fardar')">
+                            <span class="courier-badge-icon">🔥</span>
+                            <h4 class="courier-name-creative">Fardar Warp</h4>
+                            <span class="courier-name-original">Fardar Express</span>
+                        </div>
+                        <div class="courier-card" id="carrier-slpost" onclick="selectCourier('slpost')">
+                            <span class="courier-badge-icon">📮</span>
+                            <h4 class="courier-name-creative">Chrono Post</h4>
+                            <span class="courier-name-original">Lanka Post</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <label class="form-label" style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; display: block;">Confirm/Edit Tracking Number:</label>
+                        <input type="text" id="trackingIdInputOrder" class="form-control" style="padding: 0.6rem; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-size: 0.9rem;" th:value="${order.trackingNumber}" oninput="updateUplinkButton()">
+                    </div>
+
+                    <button id="uplinkBtnOrder" class="satellite-btn" onclick="launchUplink()">
+                        🚀 TRACK VIA CARRIER GATEWAY
+                    </button>
+                </div>
+            </div>
+
+            <!-- Universal Courier Tracking Hub (Rendered when no single order is queried) -->
+            <div th:if="${order == null}" style="margin-top: 3rem; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 2rem;">
+                <h3 style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: #0ea5e9; margin-bottom: 1rem; text-align: center; text-transform: uppercase; letter-spacing: 1px;">
+                    🌌 Universal Sri Lankan Courier Hub
+                </h3>
+                <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-bottom: 1.5rem;">
+                    Select the carrier network the seller provided, input your tracking number, and launch direct status tracking.
+                </p>
+
+                <div class="courier-grid">
+                    <div class="courier-card" id="carrier-domex" onclick="selectCourier('domex')">
+                        <span class="courier-badge-icon">⚡</span>
+                        <h4 class="courier-name-creative">Domex Cyber</h4>
+                        <span class="courier-name-original">Domex Logistics</span>
+                    </div>
+                    <div class="courier-card" id="carrier-koombiyo" onclick="selectCourier('koombiyo')">
+                        <span class="courier-badge-icon">🌐</span>
+                        <h4 class="courier-name-creative">Koombiyo Nexus</h4>
+                        <span class="courier-name-original">Koombiyo Delivery</span>
+                    </div>
+                    <div class="courier-card" id="carrier-pronto" onclick="selectCourier('pronto')">
+                        <span class="courier-badge-icon">🚀</span>
+                        <h4 class="courier-name-creative">Pronto Hyper</h4>
+                        <span class="courier-name-original">Pronto Lanka</span>
+                    </div>
+                    <div class="courier-card" id="carrier-fardar" onclick="selectCourier('fardar')">
+                        <span class="courier-badge-icon">🔥</span>
+                        <h4 class="courier-name-creative">Fardar Warp</h4>
+                        <span class="courier-name-original">Fardar Express</span>
+                    </div>
+                    <div class="courier-card" id="carrier-slpost" onclick="selectCourier('slpost')">
+                        <span class="courier-badge-icon">📮</span>
+                        <h4 class="courier-name-creative">Chrono Post</h4>
+                        <span class="courier-name-original">Lanka Post</span>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label class="form-label" style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; display: block;">Enter Tracking Number:</label>
+                    <input type="text" id="trackingIdInputUniversal" class="form-control" style="padding: 0.6rem; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-size: 0.9rem;" placeholder="e.g. DX98127, KB98231..." oninput="updateUplinkButton()">
+                </div>
+
+                <button id="uplinkBtnUniversal" class="satellite-btn" onclick="launchUplink()">
+                    🚀 TRACK VIA CARRIER GATEWAY
+                </button>
             </div>
 
             <div th:if="${orders}">
@@ -152,5 +342,141 @@
     </main>
 
     <script th:src="@{/theme.js}"></script>
+    <script>
+        const courierConfigs = {
+            domex: {
+                name: "Domex",
+                urlPattern: (num) => `https://www.domex.lk/tracking.php?tracking_no=${encodeURIComponent(num)}`,
+                needManualPaste: false
+            },
+            koombiyo: {
+                name: "Koombiyo",
+                urlPattern: (num) => `https://koombiyodelivery.com/track?waybill=${encodeURIComponent(num)}`,
+                needManualPaste: false
+            },
+            pronto: {
+                name: "Pronto",
+                urlPattern: (num) => `https://www.prontolanka.lk/`,
+                needManualPaste: true
+            },
+            fardar: {
+                name: "Fardar",
+                urlPattern: (num) => `https://fardardomestic.com/`,
+                needManualPaste: true
+            },
+            slpost: {
+                name: "Lanka Post",
+                urlPattern: (num) => `http://www.slpost.gov.lk/`,
+                needManualPaste: true
+            }
+        };
+
+        let selectedCourier = 'domex';
+
+        function selectCourier(key) {
+            document.querySelectorAll('.courier-card').forEach(card => card.classList.remove('selected'));
+            
+            // Highlight all matching elements
+            const cards = document.querySelectorAll(`[id="carrier-${key}"]`);
+            cards.forEach(card => card.classList.add('selected'));
+            
+            selectedCourier = key;
+            updateUplinkButton();
+        }
+
+        function updateUplinkButton() {
+            const orderInput = document.getElementById('trackingIdInputOrder');
+            const universalInput = document.getElementById('trackingIdInputUniversal');
+            
+            const trackingNum = (orderInput ? orderInput.value.trim() : "") || (universalInput ? universalInput.value.trim() : "");
+            
+            const btnOrder = document.getElementById('uplinkBtnOrder');
+            const btnUniversal = document.getElementById('uplinkBtnUniversal');
+            
+            const config = courierConfigs[selectedCourier];
+            
+            [btnOrder, btnUniversal].forEach(btn => {
+                if(!btn) return;
+                if (!trackingNum) {
+                    btn.innerHTML = `🛰️ ENTER TRACKING ID FIRST`;
+                    btn.style.opacity = '0.5';
+                    btn.style.pointerEvents = 'none';
+                } else {
+                    btn.style.opacity = '1';
+                    btn.style.pointerEvents = 'auto';
+                    btn.innerHTML = `🚀 TRACK VIA ${config.name.toUpperCase()} GATEWAY`;
+                }
+            });
+        }
+
+        function launchUplink() {
+            const orderInput = document.getElementById('trackingIdInputOrder');
+            const universalInput = document.getElementById('trackingIdInputUniversal');
+            
+            const trackingNum = (orderInput ? orderInput.value.trim() : "") || (universalInput ? universalInput.value.trim() : "");
+            if(!trackingNum) return;
+            
+            const config = courierConfigs[selectedCourier];
+            const targetUrl = config.urlPattern(trackingNum);
+            
+            // Automatically copy tracking number to clipboard
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(trackingNum).then(() => {
+                    console.log('Tracking number copied to clipboard: ' + trackingNum);
+                }).catch(err => {
+                    console.error('Could not copy text: ', err);
+                });
+            } else {
+                // Fallback copy method for older browsers or non-HTTPS localhost if needed
+                const tempTextArea = document.createElement("textarea");
+                tempTextArea.value = trackingNum;
+                document.body.appendChild(tempTextArea);
+                tempTextArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempTextArea);
+            }
+            
+            if (config.needManualPaste) {
+                alert(`📋 COPIED TO CLIPBOARD: ${trackingNum}\n\nWe are opening the official ${config.name} tracking page.\n\nThe tracking ID has been automatically copied. Simply paste (Ctrl+V) it into their tracking input!`);
+            }
+            
+            window.open(targetUrl, '_blank');
+        }
+
+        // Initialize state on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const assignedNameEl = document.getElementById('assignedCourierName');
+            const assignedUrlEl = document.getElementById('assignedTrackingUrl');
+            
+            if (assignedUrlEl && assignedUrlEl.value.trim()) {
+                const customUrl = assignedUrlEl.value.trim();
+                courierConfigs['custom'] = {
+                    name: "Custom Portal",
+                    urlPattern: () => customUrl,
+                    needManualPaste: false
+                };
+            }
+
+            if (assignedNameEl && assignedNameEl.value.trim()) {
+                const assignedName = assignedNameEl.value.trim().toLowerCase();
+                if (assignedName.includes('domex')) selectCourier('domex');
+                else if (assignedName.includes('koombiyo')) selectCourier('koombiyo');
+                else if (assignedName.includes('pronto')) selectCourier('pronto');
+                else if (assignedName.includes('fardar')) selectCourier('fardar');
+                else if (assignedName.includes('post') || assignedName.includes('lanka')) selectCourier('slpost');
+                else if (courierConfigs['custom']) {
+                    courierConfigs['custom'].name = assignedNameEl.value.trim();
+                    selectCourier('custom');
+                } else {
+                    selectCourier('domex');
+                }
+            } else {
+                selectCourier('domex');
+            }
+            
+            // Trigger early input update
+            updateUplinkButton();
+        });
+    </script>
 </body>
 </html>

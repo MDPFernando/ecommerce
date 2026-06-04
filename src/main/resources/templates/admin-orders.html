@@ -103,9 +103,49 @@
         }
         .btn-update:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--primary-glow); }
 
-        @media(max-width: 1100px) {
-            .order-tactical-card { grid-template-columns: 1fr 1fr; }
-            .order-id { grid-column: span 2; }
+        .cyber-toast {
+            position: fixed;
+            top: 80px;
+            right: -400px;
+            width: 350px;
+            background: rgba(10, 15, 30, 0.9);
+            border: 1px solid var(--primary);
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 212, 255, 0.2);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            z-index: 9999;
+            overflow: hidden;
+            animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, slideOut 0.5s ease-in 3.5s forwards;
+        }
+        .toast-icon {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 5px rgba(0, 255, 100, 0.6));
+        }
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+            animation: progressShrink 3.5s linear forwards;
+        }
+        @keyframes slideIn {
+            0% { right: -400px; opacity: 0; }
+            100% { right: 20px; opacity: 1; }
+        }
+        @keyframes slideOut {
+            0% { right: 20px; opacity: 1; }
+            100% { right: -400px; opacity: 0; }
+        }
+        @keyframes progressShrink {
+            0% { width: 100%; }
+            100% { width: 0%; }
         }
     </style>
 </head>
@@ -135,9 +175,56 @@
         </aside>
 
         <main class="main-content" style="flex:1">
-            <div class="dash-header">
-                <div class="section-tag">Logistics Module</div>
-                <h2 style="font-family: 'Orbitron', sans-serif; font-size: 2.2rem; color: #fff; margin-top: 0.5rem;">Deployment Logistics</h2>
+            <div class="dash-header" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+                <div>
+                    <div class="section-tag">Logistics Module</div>
+                    <h2 style="font-family: 'Orbitron', sans-serif; font-size: 2.2rem; color: #fff; margin-top: 0.5rem;">Deployment Logistics</h2>
+                </div>
+                <button type="button" class="btn btn-primary" style="padding: 0.8rem 1.5rem; font-size: 0.75rem;" onclick="toggleManualOrderForm()">
+                    ➕ LOG WHATSAPP ORDER
+                </button>
+            </div>
+
+            <!-- Manual Order Logger Accordion -->
+            <div class="glass-card" style="margin-bottom: 2rem; border-color: rgba(0, 212, 255, 0.2); padding: 1.8rem 2.2rem; display:none;" id="manualOrderLogger">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3 style="font-family: 'Orbitron', sans-serif; font-size: 1rem; color: var(--primary); margin: 0;">🛰️ LOG DIRECT WHATSAPP ORDER</h3>
+                    <button type="button" class="btn" style="padding: 0.4rem 1rem; font-size: 0.75rem; background: rgba(255, 60, 60, 0.1); color: #ff8888; border: 1px solid rgba(255, 60, 60, 0.3);" onclick="toggleManualOrderForm()">CANCEL</button>
+                </div>
+                
+                <form th:action="@{/admin/orders/create-manual}" method="post" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div>
+                        <div class="form-group" style="margin-bottom: 1.2rem;">
+                            <label class="form-label" style="font-size: 0.7rem;">Customer Name</label>
+                            <input type="text" name="customerName" class="form-control" required placeholder="e.g. John Doe">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1.2rem;">
+                            <label class="form-label" style="font-size: 0.7rem;">Customer Phone</label>
+                            <input type="text" name="customerPhone" class="form-control" required placeholder="e.g. 077XXXXXXX">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1.2rem;">
+                            <label class="form-label" style="font-size: 0.7rem;">Customer WhatsApp</label>
+                            <input type="text" name="customerWhatsapp" class="form-control" required placeholder="e.g. 077XXXXXXX">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group" style="margin-bottom: 1.2rem;">
+                            <label class="form-label" style="font-size: 0.7rem;">Total Amount (Rs.)</label>
+                            <input type="number" step="0.01" name="totalAmount" class="form-control" required placeholder="e.g. 5000">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1.2rem;">
+                            <label class="form-label" style="font-size: 0.7rem;">Delivery Address</label>
+                            <input type="text" name="address" class="form-control" required placeholder="Customer shipping address">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1.2rem;">
+                            <label class="form-label" style="font-size: 0.7rem;">Ordered Items Manifest</label>
+                            <textarea name="itemsManifest" class="form-control" required rows="2" placeholder="e.g. Smart Watch x1, Earbuds x1"></textarea>
+                        </div>
+                    </div>
+                    <div style="grid-column: span 2; text-align: right;">
+                        <button type="submit" class="btn btn-primary" style="padding: 0.8rem 2.5rem; font-size: 0.8rem;">PROCEED LOGGING</button>
+                    </div>
+                </form>
             </div>
 
             <div class="orders-grid">
@@ -162,7 +249,7 @@
                     </div>
 
                     <div class="status-control">
-                        <form th:action="@{/admin/orders/update-status}" method="post" style="display: flex; flex-direction: column; gap: 10px;">
+                        <form th:action="@{/admin/orders/update-status}" method="post" style="display: flex; flex-direction: column; gap: 8px;">
                             <input type="hidden" name="orderId" th:value="${order.id}">
                             <input type="hidden" th:id="'statusInput-' + ${order.id}" name="status" th:value="${order.status}">
                             
@@ -186,6 +273,22 @@
                                     <div class="custom-option" data-value="DISPATCHED" th:onclick="'selectOption(' + ${order.id} + ', \'DISPATCHED\', \'Signal Dispatched\')'">Signal Dispatched</div>
                                     <div class="custom-option" data-value="OUT_FOR_DELIVERY" th:onclick="'selectOption(' + ${order.id} + ', \'OUT_FOR_DELIVERY\', \'Final Transit\')'">Final Transit</div>
                                     <div class="custom-option" data-value="DELIVERED" th:onclick="'selectOption(' + ${order.id} + ', \'DELIVERED\', \'Deployment Complete\')'">Deployment Complete</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Courier Details -->
+                            <div style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 6px; margin-top: 4px;">
+                                <div style="margin-bottom: 6px;">
+                                    <label class="form-label" style="font-size: 0.58rem; margin-bottom: 2px;">Courier Service</label>
+                                    <input type="text" name="courierName" th:value="${order.courierName}" class="form-control" style="padding: 0.3rem 0.6rem; font-size: 0.72rem; height: auto;" placeholder="e.g. Domex, Koombiyo">
+                                </div>
+                                <div style="margin-bottom: 6px;">
+                                    <label class="form-label" style="font-size: 0.58rem; margin-bottom: 2px;">Tracking ID</label>
+                                    <input type="text" name="trackingNumber" th:value="${order.trackingNumber}" class="form-control" style="padding: 0.3rem 0.6rem; font-size: 0.72rem; height: auto;" placeholder="e.g. DX98231">
+                                </div>
+                                <div style="margin-bottom: 6px;">
+                                    <label class="form-label" style="font-size: 0.58rem; margin-bottom: 2px;">Tracking Link (Optional)</label>
+                                    <input type="text" name="trackingUrl" th:value="${order.trackingUrl}" class="form-control" style="padding: 0.3rem 0.6rem; font-size: 0.72rem; height: auto;" placeholder="Custom portal URL...">
                                 </div>
                             </div>
                             
@@ -241,7 +344,29 @@
                 document.querySelectorAll('.order-tactical-card').forEach(c => c.classList.remove('elevated'));
             }
         });
+
+        function toggleManualOrderForm() {
+            const form = document.getElementById('manualOrderLogger');
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+                form.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                form.style.display = 'none';
+            }
+        }
     </script>
+
+    <!-- TACTICAL VISUAL CONFIRMATION NODE -->
+    <div th:if="${param.success}" id="tactical-toast" class="cyber-toast">
+        <div class="toast-icon">✅</div>
+        <div class="toast-content">
+            <h4 style="margin: 0 0 4px 0; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--primary);">SYSTEM UPDATE</h4>
+            <p th:if="${param.success[0] == 'order_logged'}" style="margin: 0; font-size: 0.85rem; color: #fff;">PROTOCOL DEPLOYED: WhatsApp order manually logged in matrix.</p>
+            <p th:if="${param.success[0] != 'order_logged'}" style="margin: 0; font-size: 0.85rem; color: #fff;">PROTOCOL DEPLOYED: Logistics database updated.</p>
+        </div>
+        <div class="toast-progress"></div>
+    </div>
+
     <script th:src="@{/theme.js}"></script>
 </body>
 </html>

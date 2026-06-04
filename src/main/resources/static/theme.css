@@ -59,7 +59,8 @@
   text-shadow: none !important;
 }
 
-[data-theme="light"] .starlight-bg {
+[data-theme="light"] .starlight-bg,
+[data-theme="light"] #starfield {
   display: none !important;
 }
 [data-theme="light"] .cyber-search-container {
@@ -126,30 +127,148 @@
 }
 
 /* ── THEME TOGGLE BUTTON ── */
-/* ── THEME TOGGLE BUTTON ── */
 .theme-toggle {
-  display: flex; align-items: center; justify-content: center;
-  padding: 0.5rem 1.2rem; border-radius: 50px;
-  border: 1px solid var(--glass-border);
-  background: rgba(15, 23, 42, 0.8);
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0.35rem 1.4rem 0.35rem 0.5rem; border-radius: 50px;
+  border: 1.5px solid rgba(0, 212, 255, 0.25);
+  background: rgba(6, 15, 30, 0.9);
   cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-size: 0.8rem; font-family: 'Orbitron', sans-serif;
-  font-weight: 600; letter-spacing: 1px;
+  font-family: 'Orbitron', sans-serif;
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 0 12px rgba(0, 212, 255, 0.05);
 }
 .theme-toggle:hover {
-  border-color: var(--primary);
-  background: rgba(15, 23, 42, 0.95);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px var(--primary-glow);
+  border-color: rgba(0, 212, 255, 0.75);
+  background: rgba(6, 15, 30, 0.98);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 25px rgba(0, 212, 255, 0.25), inset 0 0 15px rgba(0, 212, 255, 0.1);
 }
 [data-theme="light"] .theme-toggle {
   background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(0, 119, 204, 0.2);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border-color: rgba(124, 58, 237, 0.25);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05), inset 0 0 10px rgba(124, 58, 237, 0.02);
 }
 [data-theme="light"] .theme-toggle:hover {
   background: #fff;
-  border-color: var(--primary);
+  border-color: rgba(124, 58, 237, 0.7);
+  box-shadow: 0 6px 25px rgba(124, 58, 237, 0.15);
+}
+
+/* ── LIGHT THEME ADMIN COMMAND CENTER OVERRIDES ── */
+[data-theme="light"] .admin-body {
+  background: var(--bg-void) !important;
+  color: var(--text-body) !important;
+}
+
+[data-theme="light"] .logo-container h1,
+[data-theme="light"] .dash-header h2,
+[data-theme="light"] .main-content h2,
+[data-theme="light"] .sidebar-brand {
+  color: #050b14 !important;
+  text-shadow: none !important;
+}
+
+/* Sidebar Styling in Light Mode */
+[data-theme="light"] .sidebar {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(0, 191, 255, 0.25) !important;
+  box-shadow: 0 15px 45px rgba(0, 191, 255, 0.08) !important;
+  backdrop-filter: blur(25px) !important;
+}
+
+[data-theme="light"] .sidebar-brand {
+  color: #0077cc !important;
+  border-bottom: 1px solid rgba(0, 191, 255, 0.15) !important;
+  padding-bottom: 1rem !important;
+}
+
+[data-theme="light"] .sidebar a {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .sidebar a:hover {
+  background: rgba(0, 191, 255, 0.08) !important;
+  color: #0088cc !important;
+  border-color: rgba(0, 191, 255, 0.2) !important;
+}
+
+[data-theme="light"] .sidebar a.active {
+  background: rgba(0, 191, 255, 0.12) !important;
+  color: #0077cc !important;
+  border-color: rgba(0, 191, 255, 0.4) !important;
+  box-shadow: 0 0 15px rgba(0, 191, 255, 0.1) !important;
+}
+
+/* Card Styling in Light Mode */
+[data-theme="light"] .dash-card {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(0, 191, 255, 0.25) !important;
+  box-shadow: 0 10px 30px rgba(0, 191, 255, 0.04) !important;
+}
+
+[data-theme="light"] .dash-card:hover {
+  border-color: rgba(0, 191, 255, 0.5) !important;
+  box-shadow: 0 15px 45px rgba(0, 191, 255, 0.12) !important;
+}
+
+[data-theme="light"] .dash-card h3 {
+  color: #64748b !important;
+}
+
+[data-theme="light"] .dash-card .number {
+  color: #0f172a !important;
+}
+
+/* Table container and Table row elements */
+[data-theme="light"] .table-container {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(0, 191, 255, 0.25) !important;
+  box-shadow: 0 10px 35px rgba(0, 191, 255, 0.04) !important;
+}
+
+[data-theme="light"] .admin-table th {
+  background: rgba(0, 191, 255, 0.06) !important;
+  color: #0077cc !important;
+}
+
+[data-theme="light"] .admin-table td {
+  border-bottom: 1px solid rgba(0, 191, 255, 0.1) !important;
+  color: #334155 !important;
+}
+
+[data-theme="light"] .admin-table td[style*="color: #fff"],
+[data-theme="light"] .admin-table span[style*="color: #fff"],
+[data-theme="light"] .admin-table th[style*="color: #fff"],
+[data-theme="light"] .admin-table tr[style*="color: #fff"],
+[data-theme="light"] .admin-table a[style*="color: #fff"],
+[data-theme="light"] .admin-table div[style*="color: #fff"] {
+  color: #0f172a !important;
+}
+
+/* Form layout / inputs in light mode */
+[data-theme="light"] .form-group label {
+  color: #334155 !important;
+}
+
+[data-theme="light"] .form-control {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(0, 191, 255, 0.3) !important;
+}
+
+[data-theme="light"] .form-control:focus {
+  border-color: #00bfff !important;
+  box-shadow: 0 0 10px rgba(0, 191, 255, 0.2) !important;
+}
+
+[data-theme="light"] select.form-control option {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Custom dropdown options styling for dark theme to prevent white-on-white text */
+select.form-control option {
+  background: #080b14;
+  color: #00d4ff;
+  font-family: 'Space Grotesk', sans-serif;
 }

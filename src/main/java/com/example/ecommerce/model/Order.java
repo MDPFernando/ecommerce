@@ -24,6 +24,10 @@ public class Order {
     
     private String status; // PROCESSING, PACKED, DISPATCHED, OUT_FOR_DELIVERY, DELIVERED
     
+    private String courierName;
+    private String trackingNumber;
+    private String trackingUrl;
+    
     private LocalDateTime createdAt;
 
     @PrePersist

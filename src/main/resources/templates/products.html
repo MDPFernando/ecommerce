@@ -101,14 +101,29 @@
                     <button class="read-more-btn" onclick="toggleDesc(this)">Read More ▾</button>
                 </div>
 
+                <!-- Stock Status Indicator -->
+                <div class="product-stock" style="margin-top: 0.8rem; font-size: 0.75rem; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 6px;">
+                    <span th:style="${(product.stockQuantity != null and product.stockQuantity > 0) ? 'background: #10b981;' : 'background: #ef4444;'}" 
+                          style="width: 8px; height: 8px; border-radius: 50%; display: inline-block;"></span>
+                    <span th:if="${product.stockQuantity != null and product.stockQuantity > 5}" style="color: var(--text-muted);">Stock Available: <strong th:text="${product.stockQuantity}" style="color: #10b981; font-family: 'Orbitron', sans-serif;">10</strong> units</span>
+                    <span th:if="${product.stockQuantity != null and product.stockQuantity > 0 and product.stockQuantity <= 5}" style="color: #f59e0b; font-weight: 600;">Low Stock: <strong th:text="${product.stockQuantity}" style="font-family: 'Orbitron', sans-serif;">3</strong> units left!</span>
+                    <span th:if="${product.stockQuantity == null or product.stockQuantity == 0}" style="color: #ef4444; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Out of Stock</span>
+                </div>
+
                 <!-- Price + Buttons always at bottom -->
                 <div class="product-bottom">
                     <div class="product-price" th:text="'Rs. ' + ${product.price}">Rs. 0</div>
-                    <div class="product-actions" style="gap: 4px;">
+                    <div class="product-actions" th:if="${product.stockQuantity != null and product.stockQuantity > 0}">
                         <a th:if="${session.loggedInUser == null or session.loggedInUser.role != 'ADMIN'}" 
                            th:href="@{|/cart/add/${product.id}|}" class="btn btn-primary">🛒 Add to Cart</a>
-                        <a th:href="|https://wa.me/94769414472?text=Hi!%20I%20want%20to%20order:%20${product.name}%20-%20Rs.${product.price}|"
-                           class="btn btn-whatsapp" target="_blank">💬 Buy Now</a>
+                        <a th:if="${session.loggedInUser == null or session.loggedInUser.role != 'ADMIN'}"
+                           th:href="@{|/cart/add/${product.id}|}"
+                           class="btn btn-whatsapp">💬 Buy Now</a>
+                    </div>
+                    <div class="product-actions" th:if="${product.stockQuantity == null or product.stockQuantity == 0}" style="grid-template-columns: 1fr;">
+                        <button class="btn" style="width: 100%; opacity: 0.4; cursor: not-allowed; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); pointer-events: none;" disabled>
+                            🚫 OUT OF STOCK
+                        </button>
                     </div>
                 </div>
             </div>
@@ -169,17 +184,32 @@
                             <p class="product-desc" th:text="${product.description}">Description</p>
                             <button class="read-more-btn" onclick="toggleDesc(this)">Read More ▾</button>
                         </div>
+                        <!-- Stock Status Indicator -->
+                        <div class="product-stock" style="margin-top: 0.8rem; font-size: 0.75rem; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 6px;">
+                            <span th:style="${(product.stockQuantity != null and product.stockQuantity > 0) ? 'background: #10b981;' : 'background: #ef4444;'}" 
+                                  style="width: 8px; height: 8px; border-radius: 50%; display: inline-block;"></span>
+                            <span th:if="${product.stockQuantity != null and product.stockQuantity > 5}" style="color: var(--text-muted);">Stock Available: <strong th:text="${product.stockQuantity}" style="color: #10b981; font-family: 'Orbitron', sans-serif;">10</strong> units</span>
+                            <span th:if="${product.stockQuantity != null and product.stockQuantity > 0 and product.stockQuantity <= 5}" style="color: #f59e0b; font-weight: 600;">Low Stock: <strong th:text="${product.stockQuantity}" style="font-family: 'Orbitron', sans-serif;">3</strong> units left!</span>
+                            <span th:if="${product.stockQuantity == null or product.stockQuantity == 0}" style="color: #ef4444; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Out of Stock</span>
+                        </div>
+
                         <div class="product-bottom">
                             <div class="product-price" th:text="'Rs. ' + ${product.price}">Rs. 0</div>
-                            <div class="product-actions">
+                            <div class="product-actions" th:if="${product.stockQuantity != null and product.stockQuantity > 0}">
                                 <a th:if="${session.loggedInUser == null or session.loggedInUser.role != 'ADMIN'}"
                                    th:href="@{|/cart/add/${product.id}|}" class="btn btn-primary" style="font-size:0.75rem;padding:0.7rem 0.5rem">
                                     🛒 Add to Cart
                                 </a>
-                                <a th:href="|https://wa.me/94769414472?text=Hi!%20I%20want%20to%20order:%20${product.name}%20-%20Rs.${product.price}|"
-                                   class="btn btn-whatsapp" style="font-size:0.75rem;padding:0.7rem 0.5rem" target="_blank">
+                                <a th:if="${session.loggedInUser == null or session.loggedInUser.role != 'ADMIN'}"
+                                   th:href="@{|/cart/add/${product.id}|}"
+                                   class="btn btn-whatsapp" style="font-size:0.75rem;padding:0.7rem 0.5rem;">
                                     💬 Buy Now
                                 </a>
+                            </div>
+                            <div class="product-actions" th:if="${product.stockQuantity == null or product.stockQuantity == 0}" style="grid-template-columns: 1fr;">
+                                <button class="btn" style="width: 100%; opacity: 0.4; cursor: not-allowed; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); pointer-events: none; font-size:0.75rem; padding:0.7rem 0.5rem;" disabled>
+                                    🚫 OUT OF STOCK
+                                </button>
                             </div>
                         </div>
                     </div>

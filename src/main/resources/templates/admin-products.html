@@ -74,6 +74,7 @@
                             <th>Name</th>
                             <th>Classification</th>
                             <th>Price</th>
+                            <th>Stock</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -89,6 +90,11 @@
                                       th:text="${product.category != null ? product.category.name : 'UNCLASSIFIED'}">Category</span>
                             </td>
                             <td th:text="'Rs. ' + ${product.price}" style="color: var(--primary); font-family: 'Orbitron', sans-serif; font-weight: 700;">Price</td>
+                            <td>
+                                <span th:text="${product.stockQuantity != null ? product.stockQuantity : 0}" 
+                                      th:style="${(product.stockQuantity != null and product.stockQuantity > 5) ? 'color: #10b981;' : ((product.stockQuantity != null and product.stockQuantity > 0) ? 'color: #f59e0b;' : 'color: #ef4444;')}" 
+                                      style="font-family: 'Orbitron', sans-serif; font-weight: 700;">0</span>
+                            </td>
                             <td style="white-space: nowrap;">
                                 <a th:href="@{|/admin/products/edit/${product.id}|}" 
                                    style="color: var(--primary); text-decoration: none; font-size: 0.8rem; font-weight: 700; margin-right: 15px; text-transform: uppercase;">Edit</a>
@@ -98,7 +104,7 @@
                             </td>
                         </tr>
                         <tr th:if="${products.empty}">
-                            <td colspan="5" style="text-align: center; padding: 4rem; color: var(--text-muted);">
+                            <td colspan="6" style="text-align: center; padding: 4rem; color: var(--text-muted);">
                                 <div style="font-size: 2rem; margin-bottom: 1rem;">🔍</div>
                                 No artifacts found in selected inventory sectors.
                             </td>

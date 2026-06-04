@@ -22,12 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateBtn(btn, theme) {
     if (theme === 'dark') {
       btn.innerHTML = `
-        <span style="font-size: 1.2rem; filter: drop-shadow(0 0 8px rgba(255,200,0,0.6)); margin-right: 8px;">☀️</span>
-        <span style="color: #f59e0b">Light</span>`;
+        <span style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background: rgba(255, 159, 28, 0.15); box-shadow: 0 0 12px rgba(255, 159, 28, 0.4); margin-right: 10px; font-size: 1.1rem; filter: drop-shadow(0 0 3px rgba(255, 159, 28, 0.8));">☀️</span>
+        <span style="color: #ffa500; font-weight: 700; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; font-size: 0.82rem; text-transform: uppercase;">Light</span>`;
     } else {
       btn.innerHTML = `
-        <span style="font-size: 1.2rem; filter: drop-shadow(0 0 8px rgba(0,212,255,0.6)); margin-right: 8px;">🌙</span>
-        <span style="color: #00d4ff">Dark</span>`;
+        <span style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background: rgba(0, 212, 255, 0.15); box-shadow: 0 0 12px rgba(0, 212, 255, 0.4); margin-right: 10px; font-size: 1.1rem; filter: drop-shadow(0 0 3px rgba(0, 212, 255, 0.8));">🌙</span>
+        <span style="color: #00d4ff; font-weight: 700; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; font-size: 0.82rem; text-transform: uppercase;">Dark</span>`;
     }
   }
 });
+

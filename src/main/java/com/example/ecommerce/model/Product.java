@@ -20,6 +20,7 @@ public class Product {
     private Double price;
     private String imageUrl;
     private Boolean featured = false;
+    private Integer stockQuantity = 10;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")

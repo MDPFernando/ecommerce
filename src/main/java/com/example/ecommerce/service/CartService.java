@@ -47,4 +47,9 @@ public class CartService {
         }
         return total;
     }
+
+    public void clearCart(User user) {
+        List<CartItem> cartItems = cartItemRepository.findByUser(user);
+        cartItemRepository.deleteAll(cartItems);
+    }
 }

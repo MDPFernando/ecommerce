@@ -257,7 +257,7 @@ nav a:hover::after{width:100%}
   font-size:1.6rem;font-weight:800;color:var(--primary);
   font-family:'Orbitron',sans-serif;margin-bottom:1.2rem;
 }
-.product-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.product-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .product-actions .btn { width: 100%; font-size: 0.65rem !important; padding: 0.6rem 2px !important; }
 
 /* FEATURE CARDS */

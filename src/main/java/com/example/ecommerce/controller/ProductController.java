@@ -39,6 +39,20 @@ public class ProductController {
             .collect(java.util.stream.Collectors.toList());
     }
 
+    @Autowired
+    private com.example.ecommerce.service.GeminiService geminiService;
+
+    @GetMapping("/api/ai/suggest-description")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public java.util.Map<String, String> suggestDescription(@RequestParam("name") String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return java.util.Map.of("description", "Please enter an Artifact Name first before invoking AI synthesis.");
+        }
+        
+        String suggestion = geminiService.getProductDescriptionSuggestion(name);
+        return java.util.Map.of("description", suggestion);
+    }
+
     @GetMapping("/products")
     public String viewProductsPage(
             @RequestParam(value = "category", required = false) Long categoryId,

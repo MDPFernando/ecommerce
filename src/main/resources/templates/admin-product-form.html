@@ -115,6 +115,11 @@
                             <input type="number" step="0.01" id="price" th:field="*{price}" class="form-control" required placeholder="50000.00">
                         </div>
 
+                        <div class="form-group" style="margin-bottom: 1.8rem;">
+                            <label class="form-label" for="stockQuantity">Available Stock Units</label>
+                            <input type="number" id="stockQuantity" th:field="*{stockQuantity}" class="form-control" required placeholder="10" min="0">
+                        </div>
+
                         <div class="form-group">
                             <label class="form-label">Classification Sector</label>
                             <input type="hidden" id="category" th:field="*{category}" required />
@@ -154,7 +159,12 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="description">Technical Manifest</label>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.6rem;">
+                                <label class="form-label" for="description" style="margin-bottom:0;">Technical Manifest</label>
+                                <button type="button" id="aiGenerateBtn" class="btn-cyber" style="padding: 4px 10px; font-size: 0.7rem; font-family:'Orbitron', sans-serif; font-weight:700; border-color: var(--primary); color: var(--primary); background: rgba(0,212,255,0.06); border-radius: 8px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 4px;" title="Synthesize Technical Manifest via Artificial Intelligence">
+                                    <span>🧠 AI Generate</span>
+                                </button>
+                            </div>
                             <textarea id="description" th:field="*{description}" class="form-control" required rows="4" placeholder="Enter specifications..."></textarea>
                         </div>
                     </div>
@@ -183,6 +193,47 @@
             if (activeCat) {
                 catInput.value = activeCat.getAttribute('data-id');
                 activeCat.scrollIntoView({ block: 'nearest' });
+            }
+
+            // AI Generate Technical Manifest Handler
+            const aiBtn = document.getElementById('aiGenerateBtn');
+            const nameInput = document.getElementById('name');
+            const descArea = document.getElementById('description');
+
+            if (aiBtn && nameInput && descArea) {
+                aiBtn.addEventListener('click', function() {
+                    const artifactName = nameInput.value.trim();
+                    if (!artifactName) {
+                        alert("⚠️ Target Scan Incomplete: Please enter an 'Artifact Name' first so the AI can synthesize a context-aware description!");
+                        nameInput.focus();
+                        return;
+                    }
+
+                    // Dynamic loading telemetry style
+                    const originalBtnText = aiBtn.innerHTML;
+                    aiBtn.disabled = true;
+                    aiBtn.innerHTML = `<span>⏳ Synthesizing...</span>`;
+                    descArea.placeholder = "🌐 Querying Next Era AI engine for technical manifests... Please wait...";
+
+                    fetch(`/api/ai/suggest-description?name=${encodeURIComponent(artifactName)}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data && data.description) {
+                                descArea.value = data.description;
+                            } else {
+                                alert("⚠️ Synchronous AI connection interrupted. Please compose manual manifests.");
+                            }
+                        })
+                        .catch(err => {
+                            console.error("AI Generation Failure: ", err);
+                            alert("⚠️ Neural Matrix Uplink failed. Defaulting to local console input.");
+                        })
+                        .finally(() => {
+                            aiBtn.disabled = false;
+                            aiBtn.innerHTML = originalBtnText;
+                            descArea.placeholder = "Enter specifications...";
+                        });
+                });
             }
         });
 

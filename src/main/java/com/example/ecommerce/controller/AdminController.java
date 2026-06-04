@@ -263,11 +263,57 @@ public class AdminController {
     }
 
     @PostMapping("/orders/update-status")
-    public String updateOrderStatus(@RequestParam Long orderId, @RequestParam String status) {
+    public String updateOrderStatus(@RequestParam Long orderId, 
+                                    @RequestParam String status,
+                                    @RequestParam(required = false) String courierName,
+                                    @RequestParam(required = false) String trackingNumber,
+                                    @RequestParam(required = false) String trackingUrl) {
         orderRepository.findById(orderId).ifPresent(order -> {
             order.setStatus(status);
+            order.setCourierName(courierName);
+            order.setTrackingNumber(trackingNumber);
+            
+            if (trackingUrl != null && !trackingUrl.trim().isEmpty()) {
+                order.setTrackingUrl(trackingUrl.trim());
+            } else if (trackingNumber != null && !trackingNumber.trim().isEmpty() && courierName != null && !courierName.trim().isEmpty()) {
+                String cleanNum = trackingNumber.trim();
+                String cleanCourier = courierName.trim().toLowerCase();
+                if (cleanCourier.contains("domex")) {
+                    order.setTrackingUrl("https://www.domex.lk/tracking.php?tracking_no=" + cleanNum);
+                } else if (cleanCourier.contains("koombiyo")) {
+                    order.setTrackingUrl("https://koombiyodelivery.com/track?waybill=" + cleanNum);
+                } else if (cleanCourier.contains("pronto")) {
+                    order.setTrackingUrl("https://www.prontolanka.lk/");
+                } else if (cleanCourier.contains("fardar")) {
+                    order.setTrackingUrl("https://fardardomestic.com/");
+                } else {
+                    order.setTrackingUrl("");
+                }
+            } else {
+                order.setTrackingUrl("");
+            }
+            
             orderRepository.save(order);
         });
         return "redirect:/admin/orders";
+    }
+
+    @PostMapping("/orders/create-manual")
+    public String createManualOrder(@RequestParam String customerName,
+                                    @RequestParam String customerPhone,
+                                    @RequestParam String customerWhatsapp,
+                                    @RequestParam String address,
+                                    @RequestParam String itemsManifest,
+                                    @RequestParam Double totalAmount) {
+        Order order = new Order();
+        order.setCustomerName(customerName);
+        order.setCustomerPhone(customerPhone);
+        order.setCustomerWhatsapp(customerWhatsapp);
+        order.setAddress(address);
+        order.setItemsManifest(itemsManifest);
+        order.setTotalAmount(totalAmount);
+        order.setStatus("PROCESSING");
+        orderRepository.save(order);
+        return "redirect:/admin/orders?success=order_logged";
     }
 }

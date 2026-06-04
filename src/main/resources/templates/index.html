@@ -1,1089 +1,1681 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Next Era Technologies | Future-Grade Gear</title>
-    <meta name="description" content="Premium cybernetic and tech gear for the next generation. Shop the future at Next Era Technologies.">
-    <link rel="stylesheet" th:href="@{/style.css(v=3.0)}">
-    <link rel="stylesheet" th:href="@{/theme.css(v=21.0)}">
-    <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
-    <style>
-        /* Tactical Offer Hub Styling */
-        .offers-section {
-            margin: 6rem auto;
-            max-width: 900px;
-            position: relative;
-            z-index: 5;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Next Era Technologies | Future-Grade Gear</title>
+<meta name="description" content="Premium cybernetic tech gear for the next generation.">
+<link rel="stylesheet" th:href="@{/style.css(v=3.0)}">
+<link rel="stylesheet" th:href="@{/theme.css(v=21.0)}">
+<link rel="icon" type="image/png" th:href="@{/images/logo.png}">
+<style>
+#starfield{position:fixed;inset:0;z-index:0;pointer-events:none;}
+[data-theme="light"] #starfield {
+  display: none !important;
+}
 
-        .offer-hub-container {
-            background: rgba(10, 20, 40, 0.6);
-            border: 1px solid var(--glass-border);
-            border-radius: 40px;
-            padding: 2.5rem;
-            backdrop-filter: blur(30px);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+/* ===== CYBER BUTTONS ===== */
+.btn-cyber{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0.9rem 2rem;border-radius:12px;font-family:'Orbitron',sans-serif;font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:2px;cursor:pointer;transition:all 0.3s;text-decoration:none;border:1px solid #00d4ff;color:#00d4ff;background:rgba(0,212,255,0.05);position:relative;overflow:hidden;}
+.btn-cyber::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,212,255,0.15),transparent);opacity:0;transition:opacity 0.3s;}
+.btn-cyber:hover{background:rgba(0,212,255,0.15);box-shadow:0 0 30px rgba(0,212,255,0.5),inset 0 0 30px rgba(0,212,255,0.05);transform:translateY(-3px);color:#fff;}
+.btn-cyber:hover::before{opacity:1;}
+.btn-cyber.solid{background:linear-gradient(135deg,#00d4ff,#0099cc);color:#000;border-color:transparent;box-shadow:0 0 25px rgba(0,212,255,0.4);}
+.btn-cyber.solid:hover{box-shadow:0 0 45px rgba(0,212,255,0.7);transform:translateY(-4px);}
+.btn-cyber.purple{border-color:#7c3aed;color:#a78bfa;background:rgba(124,58,237,0.05);}
+.btn-cyber.purple:hover{background:rgba(124,58,237,0.15);box-shadow:0 0 30px rgba(124,58,237,0.5);color:#fff;}
 
-        /* Creative Corner Accents */
-        .offer-hub-container::after {
-            content: '';
-            position: absolute;
-            top: 0; right: 0;
-            width: 100px; height: 100px;
-            background: linear-gradient(225deg, var(--primary-glow), transparent 70%);
-            border-radius: 0 40px 0 100%;
-            pointer-events: none;
-        }
+/* ===== HERO ===== */
+.cyber-hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8rem 2rem 4rem;position:relative;overflow:hidden;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.3);border-radius:50px;padding:0.5rem 1.4rem;font-size:0.72rem;font-family:'Orbitron',sans-serif;color:#00d4ff;letter-spacing:3px;text-transform:uppercase;margin-bottom:2rem;animation:badgePulse 2s infinite alternate;}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:#00d4ff;animation:pulse 2s infinite;}
+@keyframes badgePulse{from{box-shadow:0 0 10px rgba(0,212,255,0.2);}to{box-shadow:0 0 25px rgba(0,212,255,0.6);}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(1.5);}}
+.cyber-hero h1{font-family:'Orbitron',sans-serif;font-size:clamp(2.5rem,7vw,7rem);font-weight:900;line-height:1;color:#fff;text-transform:uppercase;letter-spacing:-4px;margin:0 0 1.5rem;filter:drop-shadow(0 0 40px rgba(0,212,255,0.3));}
+.cyber-hero h1 .grad{background:linear-gradient(90deg,#00d4ff,#7c3aed,#00ff88,#00d4ff);background-size:300% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shine 5s linear infinite;}
+@keyframes shine{to{background-position:300% center;}}
+.cyber-hero .sub{font-size:1.15rem;color:#7b8db0;max-width:600px;margin:0 auto 3rem;line-height:1.7;}
+.hero-ctas{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;margin-bottom:3rem;}
+.cyber-search-wrap{display:flex;gap:10px;max-width:600px;width:100%;position:relative;}
+.cyber-search-input{flex:1;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.2);border-radius:12px;padding:1rem 1.5rem;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:0.95rem;outline:none;transition:all 0.3s;}
+.cyber-search-input::placeholder{color:#4a5568;}
+.cyber-search-input:focus{border-color:#00d4ff;box-shadow:0 0 0 3px rgba(0,212,255,0.1);}
 
-        .offer-slider {
-            width: 100%;
-            position: relative;
-        }
+/* ===== DYNAMIC SEARCH SUGGESTIONS ===== */
+.search-suggestions {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: rgba(2, 8, 20, 0.95);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 14px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 212, 255, 0.15);
+  z-index: 999;
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 0.8rem;
+  backdrop-filter: blur(12px);
+  animation: suggFadeIn 0.25s ease-out;
+}
+@keyframes suggFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.search-suggestions::-webkit-scrollbar {
+  width: 6px;
+}
+.search-suggestions::-webkit-scrollbar-thumb {
+  background: rgba(0, 212, 255, 0.3);
+  border-radius: 3px;
+}
+.sugg-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.7rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.sugg-item:last-child {
+  border-bottom: none;
+}
+.sugg-item:hover {
+  background: rgba(0, 212, 255, 0.08);
+  transform: translateX(4px);
+}
+.sugg-item-img {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  background: rgba(2, 8, 20, 0.5);
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.15);
+}
+.sugg-item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+.sugg-item-name {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+.sugg-item-desc {
+  font-size: 0.68rem;
+  color: #7b8db0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
+}
+.sugg-item-price {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #00ff88;
+  background: rgba(0, 255, 136, 0.08);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+}
 
-        .offer-slide {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            animation: portalScale 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-        }
+/* Light mode overrides */
+[data-theme="light"] .search-suggestions {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 119, 204, 0.25);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 0 20px rgba(0, 212, 255, 0.05);
+}
+[data-theme="light"] .sugg-item {
+  border-bottom-color: rgba(0,0,0,0.05);
+}
+[data-theme="light"] .sugg-item:hover {
+  background: rgba(0, 212, 255, 0.05);
+}
+[data-theme="light"] .sugg-item-name {
+  color: #0f172a;
+}
+[data-theme="light"] .sugg-item-desc {
+  color: #475569;
+}
+[data-theme="light"] .sugg-item-img {
+  background: #fff;
+  border-color: rgba(0, 212, 255, 0.15);
+}
 
-        @keyframes portalScale {
-            0% { opacity: 0; transform: scale(0.9) translateY(20px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
+/* Empty suggestions sorry card */
+.sugg-empty {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.sugg-empty-icon {
+  font-size: 1.8rem;
+  animation: pulseUfo 2s infinite alternate;
+}
+@keyframes pulseUfo {
+  from { transform: scale(1) translateY(0); filter: drop-shadow(0 0 5px rgba(0,212,255,0.4)); }
+  to { transform: scale(1.1) translateY(-3px); filter: drop-shadow(0 0 15px rgba(124,58,237,0.7)); }
+}
+.sugg-empty-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #a78bfa;
+  letter-spacing: 1px;
+}
+.sugg-empty-text {
+  font-size: 0.72rem;
+  color: #7b8db0;
+  line-height: 1.5;
+  max-width: 320px;
+}
+[data-theme="light"] .sugg-empty-title {
+  color: #6d28d9;
+}
+[data-theme="light"] .sugg-empty-text {
+  color: #475569;
+}
 
-        .offer-slide.active {
-            display: flex;
-        }
+/* ===== 3D LOGO UNIVERSE (CENTERED) ===== */
+.logo-universe-wrap{display:flex;justify-content:center;margin:2rem 0 0;}
+.logo-universe{width:480px;height:480px;position:relative;perspective:1500px;cursor:pointer;}
+#logo-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;}
+.logo-card-scene{position:absolute;inset:70px;transform-style:preserve-3d;z-index:10;transition:transform 0.15s ease-out;animation:cardFloat 8s ease-in-out infinite;}
+@keyframes cardFloat{0%,100%{transform:translateY(0) rotateX(0) rotateY(0);}25%{transform:translateY(-20px) rotateX(8deg) rotateY(15deg);}50%{transform:translateY(-10px) rotateX(-5deg) rotateY(-10deg);}75%{transform:translateY(-25px) rotateX(6deg) rotateY(12deg);}}
+.logo-card-face{width:100%;height:100%;background:rgba(2,8,20,0.9);border:2px solid rgba(0,212,255,0.7);border-radius:28px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 0 80px rgba(0,212,255,0.5),0 0 160px rgba(0,212,255,0.2),inset 0 0 60px rgba(0,212,255,0.1);transform-style:preserve-3d;}
+.logo-card-grid {position:absolute;inset:0;background-image:linear-gradient(rgba(0,212,255,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.05) 1px,transparent 1px);background-size:15px 15px;background-position:center;transform:translateZ(15px);opacity:0.6;}
+.logo-card-face::after{content:'';position:absolute;left:0;right:0;height:40%;background:linear-gradient(to bottom,transparent,rgba(0,212,255,0.08) 50%,transparent);animation:scanLine 2.5s linear infinite;z-index:2;transform:translateZ(25px);}
+@keyframes scanLine{0%{top:-45%;}100%{top:110%;}}
+.logo-img-main{width:80%;height:auto;z-index:20;filter:drop-shadow(0 0 30px #00d4ff) drop-shadow(0 0 70px rgba(124,58,237,0.7));animation:logoPulse 3s ease-in-out infinite alternate;transform:translateZ(50px);}
+@keyframes logoPulse{from{transform:scale(1) translateZ(50px);filter:drop-shadow(0 0 20px #00d4ff) drop-shadow(0 0 50px rgba(0,212,255,0.5));}to{transform:scale(1.08) translateZ(55px);filter:drop-shadow(0 0 40px #00d4ff) drop-shadow(0 0 100px rgba(124,58,237,0.8));}}
+/* ===== HOLOGRAPHIC RING CORE ===== */
+.hologram-core {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 5;
+  transform: translateZ(30px);
+}
+.holo-ring {
+  position: absolute;
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.15), inset 0 0 15px rgba(0, 212, 255, 0.05);
+}
+.holo-ring-1 {
+  width: 250px;
+  height: 250px;
+  border: 2px solid transparent;
+  border-top-color: rgba(0, 212, 255, 0.35);
+  border-bottom-color: rgba(0, 212, 255, 0.35);
+  animation: holoSpinCW 16s linear infinite;
+}
+.holo-ring-2 {
+  width: 190px;
+  height: 190px;
+  border: 1.5px dashed rgba(124, 58, 237, 0.55);
+  animation: holoSpinCCW 10s linear infinite;
+}
+.holo-ring-3 {
+  width: 130px;
+  height: 130px;
+  border: 1px solid transparent;
+  border-left-color: rgba(0, 255, 136, 0.4);
+  border-right-color: rgba(0, 255, 136, 0.4);
+  animation: holoSpinCW 7s linear infinite;
+}
+.holo-crosshair {
+  position: absolute;
+  width: 270px;
+  height: 270px;
+  background: 
+    linear-gradient(90deg, transparent 48%, rgba(0, 212, 255, 0.2) 49%, rgba(0, 212, 255, 0.2) 51%, transparent 52%),
+    linear-gradient(0deg, transparent 48%, rgba(0, 212, 255, 0.2) 49%, rgba(0, 212, 255, 0.2) 51%, transparent 52%);
+  border-radius: 50%;
+  opacity: 0.65;
+  animation: holoPulse 3s ease-in-out infinite alternate;
+}
+@keyframes holoSpinCW {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes holoSpinCCW {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+@keyframes holoPulse {
+  from { transform: scale(0.98); opacity: 0.4; }
+  to { transform: scale(1.04); opacity: 0.8; }
+}
+.ground-glow{position:absolute;bottom:55px;left:50%;transform:translateX(-50%);width:260px;height:20px;background:radial-gradient(ellipse,rgba(0,212,255,0.6) 0%,transparent 70%);border-radius:50%;filter:blur(8px);z-index:5;animation:groundPulse 8s ease-in-out infinite;}
+@keyframes groundPulse{0%,100%{opacity:0.5;transform:translateX(-50%) scaleX(1);}50%{opacity:1;transform:translateX(-50%) scaleX(0.8);}}
 
-        .offer-info {
-            margin-bottom: 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 5;
-        }
+/* ===== SCROLLING STATS BAR ===== */
+.stats-ticker{background:rgba(0,212,255,0.04);border-top:1px solid rgba(0,212,255,0.1);border-bottom:1px solid rgba(0,212,255,0.1);padding:1.2rem 0;overflow:hidden;position:relative;z-index:5;}
+.stats-ticker-inner{display:flex;gap:4rem;animation:tickerScroll 20s linear infinite;white-space:nowrap;}
+.ticker-item{display:flex;align-items:center;gap:0.8rem;font-family:'Orbitron',sans-serif;font-size:0.75rem;color:#7b8db0;letter-spacing:2px;text-transform:uppercase;}
+.ticker-num{color:#00d4ff;font-weight:900;}
+@keyframes tickerScroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 
-        .offer-badge {
-            padding: 0.4rem 1rem;
-            background: rgba(0, 212, 255, 0.1);
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 2px;
-            margin-bottom: 1rem;
-            box-shadow: 0 0 15px var(--primary-glow);
-        }
-
-        .offer-title {
-            font-size: 2.8rem;
-            font-weight: 900;
-            margin-bottom: 0.8rem;
-            line-height: 1.1;
-            background: linear-gradient(135deg, #fff, var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .offer-desc {
-            font-size: 1rem;
-            color: var(--text-body);
-            max-width: 500px;
-            margin-bottom: 2rem;
-        }
-
-        .offer-visual {
-            width: 100%;
-            max-width: 650px;
-            position: relative;
-            border-radius: 24px;
-            overflow: hidden;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-        }
-
-        .offer-visual img {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: transform 0.5s ease;
-        }
-
-        .offer-img-wrapper {
-            position: relative;
-            width: 100%;
-            border-radius: 24px;
-            overflow: hidden;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-        }
-
-        .offer-img-wrapper img {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: transform 0.5s ease;
-        }
-
-        .offer-slide:hover img {
-            transform: scale(1.05);
-        }
-
-        .offer-controls {
-            position: absolute;
-            bottom: 3rem;
-            right: 3rem;
-            display: flex;
-            gap: 1.5rem;
-            z-index: 10;
-        }
-
-        .control-btn {
-            width: 54px;
-            height: 54px;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--glass-border);
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(10px);
-        }
-
-        .control-btn:hover {
-            background: rgba(0, 212, 255, 0.1);
-            border-color: var(--primary);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px var(--primary-glow);
-        }
-
-        .offer-indicators {
-            position: absolute;
-            bottom: 3rem;
-            left: 3rem;
-            display: flex;
-            gap: 0.8rem;
-            z-index: 10;
-        }
-
-        .indicator {
-            width: 12px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .indicator.active {
-            width: 36px;
-            background: var(--primary);
-            box-shadow: 0 0 10px var(--primary-glow);
-        }
-
-        .hero { z-index: 10; position: relative; }
-        .hero-ctas, .search-container { position: relative; z-index: 20; }
-        .cta-banner { z-index: 10; position: relative; }
-        .cta-banner .btn { position: relative; z-index: 20; }
-
-        /* Neural Search Results Panel */
-        .search-container { position: relative; }
-        .search-results-panel {
-            position: absolute;
-            top: calc(100% + 10px);
-            left: 0; right: 0;
-            background: rgba(10, 15, 30, 0.95);
-            backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 20px var(--primary-glow);
-            z-index: 100;
-            display: none;
-            overflow: hidden;
-            animation: searchFadeIn 0.3s ease;
-        }
-
-        @keyframes searchFadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .search-result-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-        }
-
-        .search-result-item:last-child { border-bottom: none; }
-
-        .search-result-item:hover {
-            background: rgba(0, 212, 255, 0.08);
-            padding-left: 1.5rem;
-        }
-
-        .result-img {
-            width: 45px; height: 45px;
-            border-radius: 8px;
-            object-fit: cover;
-            border: 1px solid var(--glass-border);
-        }
-
-        .result-info { flex: 1; }
-        .result-name {
-            display: block;
-            font-size: 0.9rem;
-            color: #fff;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-        .result-price {
-            font-size: 0.75rem;
-            color: var(--primary);
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        @media (max-width: 992px) {
-            .offer-slide { text-align: center; }
-            .offer-desc { margin: 0 auto 2.5rem; }
-            .offer-title { font-size: 2.5rem; }
-            .offer-indicators, .offer-controls { position: relative; bottom: 0; left: 0; right: 0; justify-content: center; margin-top: 2rem; }
-        }
-    </style>
+/* ===== HIGH-CONTRAST LIGHT MODE ENHANCEMENTS ===== */
+[data-theme="light"] {
+  --bg-void: #f1f5f9;
+  --text-body: #334155;
+  --text-head: #0f172a;
+}
+[data-theme="light"] body {
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+}
+[data-theme="light"] .cyber-hero {
+  background: radial-gradient(circle at 50% 50%, rgba(0, 212, 255, 0.08) 0%, #f1f5f9 100%) !important;
+}
+[data-theme="light"] .cyber-hero h1 {
+  color: #0f172a !important;
+  filter: drop-shadow(0 0 20px rgba(0,212,255,0.2)) !important;
+}
+[data-theme="light"] .cyber-hero .sub {
+  color: #475569 !important;
+}
+[data-theme="light"] .logo-card-face {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(0, 212, 255, 0.8) !important;
+  box-shadow: 0 0 50px rgba(0, 212, 255, 0.25), inset 0 0 30px rgba(0, 212, 255, 0.05) !important;
+}
+[data-theme="light"] .holo-ring-1 {
+  border-top-color: rgba(0, 136, 204, 0.45) !important;
+  border-bottom-color: rgba(0, 136, 204, 0.45) !important;
+}
+[data-theme="light"] .holo-ring-2 {
+  border-color: rgba(109, 40, 217, 0.5) rgba(0, 136, 204, 0.4) !important;
+}
+[data-theme="light"] .holo-ring-3 {
+  border-left-color: rgba(0, 136, 204, 0.5) !important;
+  border-right-color: rgba(0, 136, 204, 0.5) !important;
+}
+[data-theme="light"] .holo-crosshair {
+  background: 
+    linear-gradient(90deg, transparent 48%, rgba(0, 136, 204, 0.18) 49%, rgba(0, 136, 204, 0.18) 51%, transparent 52%),
+    linear-gradient(0deg, transparent 48%, rgba(0, 136, 204, 0.18) 49%, rgba(0, 136, 204, 0.18) 51%, transparent 52%) !important;
+}
+[data-theme="light"] .logo-img-main {
+  filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5)) drop-shadow(0 0 50px rgba(124,58,237,0.3)) !important;
+}
+[data-theme="light"] .ground-glow {
+  background: radial-gradient(ellipse, rgba(0, 212, 255, 0.4) 0%, transparent 70%) !important;
+}
+[data-theme="light"] .stats-ticker {
+  background: rgba(0, 212, 255, 0.05) !important;
+  border-color: rgba(0, 212, 255, 0.15) !important;
+}
+[data-theme="light"] .ticker-item {
+  color: #475569 !important;
+}
+[data-theme="light"] .ticker-num {
+  color: #0088cc !important;
+}
+[data-theme="light"] .cyber-search-input {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #0f172a !important;
+  border-color: rgba(0, 212, 255, 0.3) !important;
+}
+[data-theme="light"] .cyber-search-input::placeholder {
+  color: #94a3b8 !important;
+}
+[data-theme="light"] .cyber-search-input:focus {
+  border-color: #00d4ff !important;
+  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.15) !important;
+}
+[data-theme="light"] .offer-section-title {
+  color: #0f172a !important;
+}
+[data-theme="light"] .offer-section-tag {
+  color: #0088cc !important;
+}
+[data-theme="light"] .offer-hub {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(0, 212, 255, 0.3) !important;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.05), 0 0 40px rgba(0, 212, 255, 0.05) !important;
+}
+[data-theme="light"] .offer-title {
+  background: linear-gradient(135deg, #0f172a, #0088cc) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+[data-theme="light"] .offer-desc {
+  color: #475569 !important;
+}
+[data-theme="light"] .offer-right {
+  border-color: rgba(0, 212, 255, 0.25) !important;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.08) !important;
+}
+[data-theme="light"] .offer-badge {
+  background: rgba(0, 212, 255, 0.08) !important;
+  border-color: rgba(0, 212, 255, 0.4) !important;
+  color: #0088cc !important;
+}
+[data-theme="light"] .offer-dot {
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+[data-theme="light"] .offer-dot.active {
+  background: #00d4ff !important;
+}
+[data-theme="light"] .offer-btn {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border-color: rgba(0, 212, 255, 0.25) !important;
+  color: #334155 !important;
+}
+[data-theme="light"] .offer-btn:hover {
+  background: rgba(0, 212, 255, 0.1) !important;
+  border-color: #00d4ff !important;
+}
+[data-theme="light"] .feat-card {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(0, 212, 255, 0.15) !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.02) !important;
+}
+[data-theme="light"] .feat-card:hover {
+  border-color: rgba(0, 212, 255, 0.4) !important;
+  box-shadow: 0 15px 45px rgba(0, 212, 255, 0.12) !important;
+}
+[data-theme="light"] .feat-icon {
+  background: rgba(0, 212, 255, 0.06) !important;
+  border-color: rgba(0, 212, 255, 0.2) !important;
+}
+[data-theme="light"] .feat-card h3 {
+  color: #0f172a !important;
+}
+[data-theme="light"] .feat-card p {
+  color: #475569 !important;
+}
+[data-theme="light"] .cta-card {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(124, 58, 237, 0.05)) !important;
+  border-color: rgba(0, 212, 255, 0.2) !important;
+}
+[data-theme="light"] .cta-card h2 {
+  color: #0f172a !important;
+}
+[data-theme="light"] .cta-card p {
+  color: #475569 !important;
+}
+[data-theme="light"] footer {
+  border-top-color: rgba(0, 212, 255, 0.15) !important;
+}
+[data-theme="light"] .footer-brand {
+  color: #0f172a !important;
+}
+[data-theme="light"] footer p {
+  color: #64748b !important;
+}
+[data-theme="light"] .btn-cyber {
+  color: #0088cc !important;
+  border-color: rgba(0, 191, 255, 0.5) !important;
+  background: rgba(0, 191, 255, 0.04) !important;
+}
+[data-theme="light"] .btn-cyber:hover {
+  background: #00d4ff !important;
+  color: #000 !important;
+}
+[data-theme="light"] .btn-cyber.solid {
+  background: linear-gradient(135deg, #00d4ff, #0099cc) !important;
+  color: #000 !important;
+  border-color: transparent !important;
+}
+[data-theme="light"] .btn-cyber.solid:hover {
+  color: #fff !important;
+}
+[data-theme="light"] .btn-cyber.purple {
+  color: #7c3aed !important;
+  border-color: rgba(124, 58, 237, 0.5) !important;
+  background: rgba(124, 58, 237, 0.04) !important;
+}
+[data-theme="light"] .btn-cyber.purple:hover {
+  background: #7c3aed !important;
+  color: #fff !important;
+}
+</style>
 </head>
 <body>
-<div class="starlight-bg" id="starlightBg"></div>
+<canvas id="starfield"></canvas>
+
+<!-- HEADER -->
 <header class="glass-header">
-    <div style="display:flex;align-items:center;gap:1rem">
-        <a th:href="@{/}"><img th:src="@{/images/logo.png}" alt="Logo" class="brand-logo"></a>
-        <span class="logo-text">NEXT ERA TECHNOLOGIES</span>
-    </div>
-    <nav>
-        <ul>
-            <li><a th:href="@{/}">Home</a></li>
-            <li><a th:href="@{/products}">Products</a></li>
-            <li><a th:href="@{/orders/track}">Track Order</a></li>
-            <li th:if="${session.loggedInUser != null and session.loggedInUser.role != 'ADMIN'}"><a th:href="@{/cart}">🛒 Cart</a></li>
-            <li th:if="${session.loggedInUser != null and session.loggedInUser.role == 'ADMIN'}"><a th:href="@{/admin/dashboard}">Admin</a></li>
-            <li th:if="${session.loggedInUser == null}"><a th:href="@{/signin}" style="color:var(--primary)">Sign In</a></li>
-            <li th:if="${session.loggedInUser != null}"><a th:href="@{/logout}">Sign Out</a></li>
-            <li><button id="themeToggle" class="theme-toggle"></button></li>
-        </ul>
-    </nav>
+  <div style="display:flex;align-items:center;gap:1rem">
+    <a th:href="@{/}"><img th:src="@{/images/logo.png}" alt="Logo" class="brand-logo"></a>
+    <span class="logo-text">NEXT ERA TECHNOLOGIES</span>
+  </div>
+  <nav>
+    <ul>
+      <li><a th:href="@{/}">Home</a></li>
+      <li><a th:href="@{/products}">Products</a></li>
+      <li><a th:href="@{/orders/track}">Track Order</a></li>
+      <li th:if="${session.loggedInUser != null and session.loggedInUser.role != 'ADMIN'}"><a th:href="@{/cart}">🛒 Cart</a></li>
+      <li th:if="${session.loggedInUser != null and session.loggedInUser.role == 'ADMIN'}"><a th:href="@{/admin/dashboard}">Admin</a></li>
+      <li th:if="${session.loggedInUser == null}"><a th:href="@{/signin}" style="color:var(--primary)">Sign In</a></li>
+      <li th:if="${session.loggedInUser != null}"><a th:href="@{/logout}">Sign Out</a></li>
+      <li><button id="themeToggle" class="theme-toggle" title="Toggle Theme">🌙</button></li>
+    </ul>
+  </nav>
 </header>
 
 <main>
-    <!-- HERO -->
-    <!-- HERO (CYBER-UPGRADE V4) -->
-    <style>
-        .cyber-hero {
-            min-height: 95vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 6rem 2rem;
-            position: relative;
-            overflow: hidden;
-            background: radial-gradient(circle at 50% 50%, rgba(10, 15, 30, 0) 0%, rgba(2, 4, 10, 0.7) 100%);
-        }
-        
-        /* 3D Perspective Grid Floor */
-        .cyber-hero::before {
-            content: '';
-            position: absolute;
-            bottom: -50%; left: -50%; right: -50%; top: 50%;
-            background-image: 
-                linear-gradient(rgba(0, 212, 255, 0.2) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 212, 255, 0.2) 1px, transparent 1px);
-            background-size: 50px 50px;
-            transform: perspective(500px) rotateX(60deg);
-            animation: gridMove 20s linear infinite;
-            z-index: -2;
-            opacity: 0.6;
-            mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
-            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
-        }
+<!-- ===== HERO ===== -->
+<section class="cyber-hero">
+  <div class="hero-badge"><span class="badge-dot"></span>Neural Network Online · v4.2.1</div>
+  <h1>Shop The<br><span class="grad">Future</span><br>Today</h1>
+  <p class="sub">Next-generation cybernetic commerce. Premium artifacts curated for innovators, creators &amp; digital pioneers — delivered at lightspeed.</p>
+  <div class="hero-ctas">
+    <a th:href="@{/products}" class="btn-cyber solid">🚀 Explore Grid</a>
+    <a th:href="@{/orders/track}" class="btn-cyber purple">🛰️ Track Uplink</a>
+  </div>
+  <form action="/products" method="get" class="cyber-search-wrap" style="position:relative;">
+    <input type="text" name="search" class="cyber-search-input" id="mainSearchInput" placeholder="Search neural archives — products, brands..." autocomplete="off">
+    <button type="submit" class="btn-cyber solid" style="white-space:nowrap;">Search</button>
+    <div class="search-suggestions" id="searchSuggestions" style="display:none;"></div>
+  </form>
 
-
-        
-        /* Rolls Royce Starlight Background */
-        .starlight-bg {
-            position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
-        }
-        .rr-star {
-            position: absolute;
-            background: #fff;
-            border-radius: 50%;
-            animation: twinkle linear infinite;
-        }
-
-        /* Floating Cyber Particles */
-        .cyber-particles {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            background-image: 
-                radial-gradient(circle at 20% 30%, rgba(0, 212, 255, 0.15) 2px, transparent 2px),
-                radial-gradient(circle at 70% 60%, rgba(255, 0, 85, 0.15) 2px, transparent 2px),
-                radial-gradient(circle at 40% 80%, rgba(0, 212, 255, 0.1) 1px, transparent 1px),
-                radial-gradient(circle at 80% 20%, rgba(255, 0, 85, 0.1) 1px, transparent 1px);
-            animation: floatParticles 60s linear infinite;
-        }
-
-        /* Advanced Typography */
-        .cyber-hero h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(3rem, 8vw, 7rem);
-            font-weight: 900;
-            line-height: 1.05;
-            color: #ffffff;
-            text-transform: uppercase;
-            letter-spacing: -3px;
-            margin-bottom: 1.5rem;
-            text-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 40px rgba(0, 212, 255, 0.3);
-            position: relative;
-            z-index: 2;
-        }
-        
-        .cyber-hero h1 span {
-            background: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            position: relative;
-            display: inline-block;
-        }
-        
-        .cyber-hero h1:hover span {
-            animation: chromaticGlitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
-        }
-
-        .cyber-hero p {
-            font-size: 1.25rem;
-            max-width: 650px;
-            margin: 0 auto 3.5rem;
-            color: #94a3b8;
-            position: relative;
-            z-index: 2;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
-            padding-bottom: 2rem;
-        }
-
-        /* Cyber HUD Search Container */
-        .cyber-search-container {
-            display: flex;
-            max-width: 750px;
-            margin: 0 auto;
-            gap: 15px;
-            position: relative;
-            z-index: 10;
-            background: rgba(5, 8, 15, 0.6);
-            padding: 10px;
-            border-radius: 16px;
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(0, 212, 255, 0.05);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-        
-        .cyber-search-container::before {
-            content: '';
-            position: absolute;
-            top: -1px; left: 20px; right: 20px; height: 1px;
-            background: linear-gradient(90deg, transparent, #00d4ff, transparent);
-        }
-        
-        .cyber-search-container::after {
-            content: '';
-            position: absolute;
-            bottom: -1px; left: 20px; right: 20px; height: 1px;
-            background: linear-gradient(90deg, transparent, #7c3aed, transparent);
-        }
-
-        .cyber-search-input {
-            flex: 1;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(0, 212, 255, 0.1);
-            border-radius: 10px;
-            padding: 1.2rem 2rem;
-            color: #fff;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.1rem;
-            outline: none;
-            transition: all 0.3s;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
-        }
-        
-        .cyber-search-input:focus {
-            border-color: #00d4ff;
-            background: rgba(0, 212, 255, 0.05);
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.1), inset 0 2px 10px rgba(0,0,0,0.5);
-        }
-
-        /* KEYFRAMES */
-        @keyframes gridMove {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 50px; }
-        }
-        
-
-        
-        @keyframes twinkle {
-            0% { opacity: 0.2; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.6); box-shadow: 0 0 10px #fff, 0 0 20px var(--primary); }
-            100% { opacity: 0.2; transform: scale(0.8); }
-        }
-        
-        @keyframes floatParticles {
-            0% { background-position: 0 0; }
-            100% { background-position: 1000px 1000px; }
-        }
-        
-        @keyframes chromaticGlitch {
-            0% { text-shadow: 2px 0 0 red, -2px 0 0 blue; transform: translate(0); }
-            20% { text-shadow: -2px 0 0 red, 2px 0 0 blue; transform: translate(-2px, 1px); }
-            40% { text-shadow: 2px 0 0 red, -2px 0 0 blue; transform: translate(2px, -1px); }
-            60% { text-shadow: -2px 0 0 red, 2px 0 0 blue; transform: translate(-2px, 2px); }
-            80% { text-shadow: 2px 0 0 red, -2px 0 0 blue; transform: translate(2px, -2px); }
-            100% { text-shadow: -2px 0 0 red, 2px 0 0 blue; transform: translate(0); }
-        }
-    </style>
-
-    <section class="cyber-hero">
-        <div class="cyber-particles"></div>
-
-        
-        <div class="hero-badge" style="z-index: 2; margin-bottom: 2.5rem; background: rgba(0, 212, 255, 0.05); border-color: #00d4ff; box-shadow: 0 0 20px rgba(0,212,255,0.2);">
-            ⚡ Next-Gen Tech Marketplace
+  <!-- CENTERED 3D LOGO -->
+  <div class="logo-universe-wrap">
+    <div class="logo-universe" id="logoUniverse">
+      <canvas id="logo-canvas"></canvas>
+      <div class="logo-card-scene" id="logoCard">
+        <div class="logo-card-face">
+          <div class="logo-card-grid"></div>
+          <!-- Holographic Rotating Sci-Fi Ring Core -->
+          <div class="hologram-core">
+            <div class="holo-ring holo-ring-1"></div>
+            <div class="holo-ring holo-ring-2"></div>
+            <div class="holo-ring holo-ring-3"></div>
+            <div class="holo-crosshair"></div>
+          </div>
+          <img th:src="@{/images/logo.png}" alt="NET Logo" class="logo-img-main">
         </div>
-        
-        <h1>Shop The<br><span>Future</span><br>Today</h1>
-        <p>Premium technology artifacts curated for the next generation of innovators, creators, and digital pioneers. Uplink to the grid below.</p>
-        
-        <div class="hero-ctas" style="z-index: 2;">
-            <a th:href="@{/products}" class="btn-cyber" style="padding: 1.2rem 3rem;">
-                <span style="margin-right: 10px;">🚀</span> EXPLORE GRID
-            </a>
-            <a th:href="@{/orders/track}" class="btn-cyber" style="border-color: #7c3aed; padding: 1.2rem 3rem;">
-                <span style="margin-right: 10px;">🛰️</span> TRACK UPLINK
-            </a>
-        </div>
-        
-        <form action="/products" method="get" class="cyber-search-container">
-            <input type="text" name="search" class="cyber-search-input" id="mainSearchInput" placeholder="Search parameters: artifacts, brands, logic boards..." autocomplete="off">
-            <button type="submit" class="btn-cyber" style="border-radius: 10px;">SEARCH</button>
-            <div id="searchResultsPanel" class="search-results-panel" style="bottom: -10px; transform: translateY(100%);"></div>
-        </form>
-    </section>
-
-    <!-- TACTICAL OFFER HUB (CYBERPUNK V4) -->
-    <style>
-        .cyber-offer-hub {
-            position: relative;
-            background: linear-gradient(135deg, rgba(5, 8, 15, 0.9) 0%, rgba(10, 20, 35, 0.8) 100%);
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            border-radius: 24px;
-            padding: 4rem;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8), inset 0 0 40px rgba(0, 212, 255, 0.08);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            z-index: 1;
-        }
-        
-        /* Hex Grid Background Overlay */
-        .cyber-offer-hub::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-image: radial-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px);
-            background-size: 20px 20px;
-            opacity: 0.3;
-            z-index: -1;
-            animation: panBg 30s linear infinite;
-        }
-
-        .cyber-offer-hub::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 2px;
-            background: linear-gradient(90deg, transparent, #00d4ff, transparent);
-            animation: scanline 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-            z-index: 5;
-        }
-
-        .cyber-slide {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            align-items: center;
-            gap: 5rem;
-        }
-
-        .cyber-slide.active {
-            display: flex;
-            opacity: 1;
-            animation: dataMaterialize 1s forwards;
-        }
-
-        .cyber-info {
-            flex: 1;
-            position: relative;
-            z-index: 2;
-        }
-
-        .cyber-badge {
-            display: inline-block;
-            background: rgba(0, 212, 255, 0.05);
-            color: #00d4ff;
-            padding: 0.6rem 1.5rem;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.8rem;
-            font-weight: 700;
-            letter-spacing: 4px;
-            border: 1px solid rgba(0, 212, 255, 0.5);
-            border-radius: 2px;
-            margin-bottom: 2rem;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2), inset 0 0 10px rgba(0, 212, 255, 0.1);
-            text-transform: uppercase;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .cyber-badge::after {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: badgeShine 3s infinite;
-        }
-
-        .cyber-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3.5rem;
-            line-height: 1.1;
-            margin: 0 0 1.5rem 0;
-            color: #ffffff;
-            text-shadow: 0 0 15px rgba(0, 212, 255, 0.5), 2px 2px 0px rgba(255, 0, 85, 0.5);
-            position: relative;
-        }
-
-        .cyber-title:hover {
-            animation: textGlitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
-        }
-
-        .cyber-desc {
-            color: #cbd5e1;
-            font-size: 1.2rem;
-            line-height: 1.7;
-            margin-bottom: 1rem;
-            max-width: 90%;
-            border-left: 3px solid #00d4ff;
-            padding-left: 1.5rem;
-            background: linear-gradient(90deg, rgba(0, 212, 255, 0.05), transparent);
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
-            
-            /* Text Truncation Protocol */
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .cyber-desc.expanded {
-            -webkit-line-clamp: unset;
-        }
-
-        .read-more-btn {
-            background: transparent;
-            border: none;
-            color: #00d4ff;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            padding: 0 0 0 1.5rem;
-            margin-bottom: 3rem;
-            letter-spacing: 2px;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-        }
-        
-        .read-more-btn:hover {
-            color: #fff;
-            text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
-            transform: translateX(5px);
-        }
-
-        /* FUTURISTIC BUTTONS */
-        .btn-cyber {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.2rem 2.5rem;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: #fff;
-            background: transparent;
-            border: 1px solid rgba(0, 212, 255, 0.5);
-            text-transform: uppercase;
-            text-decoration: none;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
-        }
-
-        .btn-cyber::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #00d4ff;
-            transform: scaleX(0);
-            transform-origin: right;
-            transition: transform 0.4s cubic-bezier(0.86, 0, 0.07, 1);
-            z-index: -1;
-        }
-
-        .btn-cyber:hover {
-            color: #050810;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
-            border-color: #00d4ff;
-        }
-
-        .btn-cyber:hover::before {
-            transform: scaleX(1);
-            transform-origin: left;
-        }
-        
-        .btn-whatsapp-cyber {
-            border-color: rgba(37, 211, 102, 0.5);
-            box-shadow: 0 0 20px rgba(37, 211, 102, 0.1);
-        }
-        .btn-whatsapp-cyber::before { background: #25D366; }
-        .btn-whatsapp-cyber:hover {
-            box-shadow: 0 0 30px rgba(37, 211, 102, 0.6);
-            border-color: #25D366;
-        }
-
-        /* VISUAL MATRIX */
-        .cyber-visual {
-            flex: 1;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 450px;
-            perspective: 1000px;
-        }
-
-        /* The Creative Rounded Frame */
-        .cyber-frame {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            max-width: 400px;
-            max-height: 400px;
-            border-radius: 40px; /* Heavy round corners */
-            background: rgba(10, 20, 35, 0.8);
-            border: 2px solid rgba(0, 212, 255, 0.1);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 30px rgba(0, 212, 255, 0.1);
-            backdrop-filter: blur(15px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            animation: floatFrame 6s ease-in-out infinite;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        /* Animated Glowing Border Effect */
-        .cyber-frame::before {
-            content: '';
-            position: absolute;
-            width: 150%;
-            height: 150%;
-            background: conic-gradient(transparent, transparent, transparent, #00d4ff);
-            animation: spinBorder 4s linear infinite;
-            opacity: 0.7;
-        }
-        
-        /* Inner container to mask the spin and keep rounded corners */
-        .cyber-frame-inner {
-            position: absolute;
-            inset: 3px; /* Creates the border width */
-            background: linear-gradient(135deg, rgba(10, 15, 30, 0.95), rgba(5, 10, 20, 0.98));
-            border-radius: 37px;
-            z-index: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        .cyber-frame:hover {
-            transform: scale(1.05) rotateY(-10deg);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 50px rgba(0, 212, 255, 0.3);
-            border-color: rgba(0, 212, 255, 0.5);
-        }
-
-        .cyber-img {
-            max-width: 90%;
-            height: auto;
-            max-height: 90%;
-            object-fit: contain;
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
-            position: relative;
-            z-index: 10;
-            border-radius: 20px; /* Slight rounding on the image itself */
-            animation: imgPulse 4s ease-in-out infinite alternate;
-        }
-
-        @keyframes floatFrame {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        @keyframes spinBorder {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes imgPulse {
-            from { filter: drop-shadow(0 10px 15px rgba(0, 212, 255, 0.1)); transform: scale(1); }
-            to { filter: drop-shadow(0 20px 30px rgba(0, 212, 255, 0.3)); transform: scale(1.03); }
-        }
-
-        /* ANIMATIONS */
-        @keyframes scanline {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(600px); opacity: 0; }
-        }
-        
-        @keyframes dataMaterialize {
-            0% { opacity: 0; transform: translateY(20px); filter: blur(10px); clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%); }
-            100% { opacity: 1; transform: translateY(0); filter: blur(0); clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%); }
-        }
-        
-        @keyframes spinRing {
-            100% { transform: rotate(360deg); }
-        }
-        
-        @keyframes spinRingReverse {
-            100% { transform: rotate(-360deg); }
-        }
-        
-        @keyframes zeroGravity {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(2deg); filter: drop-shadow(0 50px 40px rgba(0, 212, 255, 0.2)); }
-        }
-        
-        @keyframes badgeShine {
-            0% { left: -100%; }
-            20% { left: 200%; }
-            100% { left: 200%; }
-        }
-        
-        @keyframes textGlitch {
-            0% { transform: translate(0) }
-            20% { transform: translate(-2px, 2px) }
-            40% { transform: translate(-2px, -2px) }
-            60% { transform: translate(2px, 2px) }
-            80% { transform: translate(2px, -2px) }
-            100% { transform: translate(0) }
-        }
-        
-        @keyframes panBg {
-            0% { background-position: 0 0; }
-            100% { background-position: 100px 100px; }
-        }
-
-        @media (max-width: 992px) {
-            .cyber-slide { flex-direction: column; text-align: center; gap: 3rem; }
-            .cyber-desc { margin: 0 auto 2rem; border-left: none; border-top: 3px solid #00d4ff; padding-left: 0; padding-top: 1rem; background: linear-gradient(180deg, rgba(0, 212, 255, 0.05), transparent); }
-            .cyber-title { font-size: 2.2rem; }
-            .cyber-info { order: 2; }
-            .cyber-visual { order: 1; height: 300px; }
-            .cyber-ring, .cyber-ring-inner { width: 250px; height: 250px; }
-        }
-    </style>
-
-    <section class="container offers-section" style="margin-top: 5rem;" th:if="${allOffers != null and !allOffers.isEmpty()}">
-        <div class="cyber-offer-hub">
-            <div id="offerSlider" class="offer-slider">
-                <div th:each="offer, iter : ${allOffers}" 
-                     class="cyber-slide" 
-                     th:classappend="${iter.index == 0 ? 'active' : ''}"
-                     th:data-index="${iter.index}">
-                    
-                    <div class="cyber-info">
-                        <div class="cyber-badge" th:text="${offer.discountText != null ? offer.discountText : 'SYSTEM PROTOCOL ACTIVE'}">OFFER</div>
-                        <h2 class="cyber-title" th:text="${offer.title}">Tactical Acquisition</h2>
-                        <div class="desc-container">
-                            <p class="cyber-desc" th:id="'desc-' + ${iter.index}" th:text="${offer.description}">Access premium futuristic gear with elite-level advantages. Your upgrade path starts here.</p>
-                            <button class="read-more-btn" th:if="${offer.description != null and offer.description.length() > 100}" th:onclick="'toggleDescription(' + ${iter.index} + ', this)'">
-                                READ MORE <span style="font-size: 0.6rem;">▼</span>
-                            </button>
-                            <div th:unless="${offer.description != null and offer.description.length() > 100}" style="margin-bottom: 3rem;"></div>
-                        </div>
-                        
-                        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
-                            <th:block th:if="${offer.product != null}">
-                                <a th:href="@{|/cart/add/${offer.product.id}|}" class="btn-cyber">
-                                    <span style="margin-right: 8px;">🛒</span> ADD TO CART
-                                </a>
-                                <a th:href="|https://wa.me/94769414472?text=Hi!%20I%20want%20to%20order:%20${offer.product.name}%20-%20Rs.${offer.product.price}|" 
-                                   class="btn-cyber btn-whatsapp-cyber" target="_blank">
-                                    <span style="margin-right: 8px;">💬</span> BUY NOW
-                                </a>
-                            </th:block>
-                            <th:block th:unless="${offer.product != null}">
-                                <a th:href="${offer.targetUrl != null and !offer.targetUrl.isEmpty() ? offer.targetUrl : '/products'}" class="btn-cyber">
-                                    INITIATE PROTOCOL <span style="margin-left: 8px;">❯</span>
-                                </a>
-                            </th:block>
-                        </div>
-                    </div>
-                    
-                    <div class="cyber-visual">
-                        <div class="cyber-frame">
-                            <div class="cyber-frame-inner">
-                                <img class="cyber-img" th:src="${offer.imageUrl != null ? offer.imageUrl : '/images/placeholder-offer.jpg'}" th:alt="${offer.title}">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="offer-indicators" id="offerIndicators">
-                <div th:each="offer, iter : ${allOffers}" 
-                     class="indicator" 
-                     th:classappend="${iter.index == 0 ? 'active' : ''}"
-                     th:onclick="'goToSlide(' + ${iter.index} + ')'"></div>
-            </div>
-
-            <div class="offer-controls">
-                <div class="control-btn" onclick="prevSlide()">❮</div>
-                <div class="control-btn" onclick="nextSlide()">❯</div>
-            </div>
-        </div>
-    <!-- TACTICAL SECTOR NAVIGATION -->
-    <section class="container" style="margin: 4rem auto 2rem;">
-        <div class="section-header" style="text-align: center; margin-bottom: 2.5rem;">
-            <div class="section-tag">Targeting Protocols</div>
-            <h2 style="font-size: 2rem;">Tactical Sectors</h2>
-        </div>
-        
-        <div class="categories-row" style="justify-content: center; flex-wrap: wrap; gap: 1.5rem; padding-bottom: 2rem;">
-            <a th:href="@{/products}" class="cat-pill" style="padding: 1rem 2rem; font-size: 0.9rem;">
-                🚀 All Sectors
-            </a>
-            <a th:each="cat : ${categories}" 
-               th:href="@{/products(category=${cat.id})}" 
-               class="cat-pill" 
-               style="padding: 1rem 2rem; font-size: 0.9rem;">
-               <span th:text="${cat.name}">Category</span>
-            </a>
-        </div>
-    </section>
-
-    <div class="container">
-        <!-- STATS -->
-        <div class="stats-bar">
-            <div class="stat-item"><span class="stat-num">500+</span><span class="stat-label">Products</span></div>
-            <div class="stat-item"><span class="stat-num">10K+</span><span class="stat-label">Happy Customers</span></div>
-            <div class="stat-item"><span class="stat-num">24/7</span><span class="stat-label">Support</span></div>
-            <div class="stat-item"><span class="stat-num">100%</span><span class="stat-label">Secure Orders</span></div>
-        </div>
-
-        <!-- FEATURES -->
-        <section style="margin:5rem 0">
-            <div class="section-header">
-                <div class="section-tag">Why Choose Us</div>
-                <h2>Built For The Future</h2>
-                <p>Experience a new standard in tech retail with every order.</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🛰️</div>
-                    <h3>Fast Delivery</h3>
-                    <p>Island-wide delivery with real-time order tracking via WhatsApp.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔐</div>
-                    <h3>Secure Checkout</h3>
-                    <p>Every transaction is encrypted and handled with maximum integrity.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💬</div>
-                    <h3>WhatsApp Orders</h3>
-                    <p>Order directly through WhatsApp — instant confirmation, zero hassle.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Premium Quality</h3>
-                    <p>Every product is sourced and verified for the highest standards.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- CTA BANNER -->
-        <section class="cta-banner">
-            <div class="section-tag">New Arrivals</div>
-            <h2>Ready To Upgrade?</h2>
-            <p style="max-width:500px;margin:0 auto 2.5rem">Our latest batch of premium tech products has just arrived. Limited stock — early access available now.</p>
-            <a th:href="@{/products}" class="btn btn-primary" style="font-size:0.9rem;padding:1.1rem 2.5rem">Browse The Store</a>
-        </section>
+      </div>
+      <div class="ground-glow"></div>
     </div>
+  </div>
+</section>
+
+<!-- STATS TICKER -->
+<div class="stats-ticker">
+  <div class="stats-ticker-inner" id="tickerInner">
+    <span class="ticker-item">🛡️ Products <span class="ticker-num">500+</span></span>
+    <span class="ticker-item">⚡ Orders Delivered <span class="ticker-num">12K+</span></span>
+    <span class="ticker-item">🌐 Countries <span class="ticker-num">48</span></span>
+    <span class="ticker-item">⭐ Satisfaction <span class="ticker-num">99%</span></span>
+    <span class="ticker-item">🔒 Secure Checkout <span class="ticker-num">SSL</span></span>
+    <span class="ticker-item">🛡️ Products <span class="ticker-num">500+</span></span>
+    <span class="ticker-item">⚡ Orders Delivered <span class="ticker-num">12K+</span></span>
+    <span class="ticker-item">🌐 Countries <span class="ticker-num">48</span></span>
+    <span class="ticker-item">⭐ Satisfaction <span class="ticker-num">99%</span></span>
+    <span class="ticker-item">🔒 Secure Checkout <span class="ticker-num">SSL</span></span>
+  </div>
+</div>
+
+<!-- ===== OFFER BANNER ===== -->
+<style>
+.offers-section {
+  max-width: 1100px;
+  margin: 6rem auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 5;
+}
+.offer-section-tag {
+  text-align: center;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.75rem;
+  color: #00d4ff;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 0.8rem;
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+}
+.offer-section-title {
+  text-align: center;
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 900;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  margin-bottom: 3.5rem;
+}
+.offer-hub {
+  background: rgba(5, 12, 28, 0.85);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 40px;
+  padding: 3rem;
+  backdrop-filter: blur(35px);
+  position: relative;
+  overflow: hidden;
+  min-height: 480px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 60px rgba(0, 212, 255, 0.08);
+  perspective: 1500px;
+  transform-style: preserve-3d;
+}
+.offer-hub::before {
+  content: ''; position: absolute; top: 0; right: 0; width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.12), transparent 70%);
+  pointer-events: none;
+}
+.offer-hub::after {
+  content: ''; position: absolute; bottom: 0; left: 0; width: 250px; height: 250px;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.12), transparent 70%);
+  pointer-events: none;
+}
+
+.offer-slide {
+  position: absolute;
+  inset: 3rem;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 3rem;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+  transform: rotateY(-90deg) translateZ(100px) scale(0.8);
+  filter: blur(15px);
+  transform-style: preserve-3d;
+  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), filter 0.85s ease;
+}
+.offer-slide.active {
+  opacity: 1;
+  transform: rotateY(0deg) translateZ(0) scale(1);
+  filter: blur(0);
+  pointer-events: auto;
+  z-index: 2;
+}
+
+/* Staggered Boot-Up Hologram Animation */
+.offer-slide .offer-left > *,
+.offer-slide .offer-right {
+  opacity: 0;
+  transform: translateY(25px) scale(0.95);
+  filter: blur(4px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.offer-slide .offer-right {
+  transform: translateY(15px) scale(0.9) rotateY(15deg);
+}
+
+.offer-slide.active .offer-left > *:nth-child(1) {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition-delay: 0.1s;
+}
+.offer-slide.active .offer-left > *:nth-child(2) {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition-delay: 0.25s;
+}
+.offer-slide.active .offer-left > *:nth-child(3) {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition-delay: 0.4s;
+}
+.offer-slide.active .offer-left > *:nth-child(4) {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition-delay: 0.55s;
+}
+.offer-slide.active .offer-right {
+  opacity: 1;
+  transform: translateY(0) scale(1) rotateY(0deg);
+  filter: blur(0);
+  transition-delay: 0.3s;
+}
+
+/* Pulsing Cyber Scanning Laser Line */
+.offer-right::after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #00d4ff, #7c3aed, #00d4ff, transparent);
+  box-shadow: 0 0 15px #00d4ff, 0 0 25px rgba(0, 212, 255, 0.8);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+.offer-slide.active .offer-right::after {
+  animation: laserSweep 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  opacity: 0.8;
+}
+
+@keyframes laserSweep {
+  0% { top: 15%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 85%; opacity: 0; }
+}
+
+.offer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Hologram Photo Frame */
+.offer-right {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 280px;
+  border-radius: 24px;
+  background: rgba(0, 212, 255, 0.02);
+  border: 1.5px solid rgba(0, 212, 255, 0.15);
+  box-shadow: inset 0 0 30px rgba(0, 212, 255, 0.05);
+  overflow: visible;
+  transition: all 0.5s ease;
+}
+.offer-right:hover {
+  border-color: rgba(0, 212, 255, 0.4);
+  box-shadow: inset 0 0 40px rgba(0, 212, 255, 0.1), 0 10px 30px rgba(0, 212, 255, 0.1);
+  transform: translateY(-5px);
+}
+.hologram-plate {
+  position: absolute;
+  bottom: 25px;
+  width: 140px;
+  height: 12px;
+  background: radial-gradient(ellipse, rgba(0, 212, 255, 0.8) 0%, rgba(0, 212, 255, 0) 80%);
+  border-radius: 50%;
+  animation: platePulse 2s infinite alternate;
+}
+.hologram-logo {
+  width: 130px;
+  height: auto;
+  border-radius: 0;
+  object-fit: contain;
+  filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.6));
+  animation: hologramFloat 4s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes hologramFloat {
+  0% { transform: translateY(-5px) rotate(0deg); filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.6)); }
+  50% { transform: translateY(-20px) rotate(2deg); filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.85)); }
+  100% { transform: translateY(-5px) rotate(0deg); filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.6)); }
+}
+@keyframes platePulse {
+  0% { transform: scale(0.9); opacity: 0.6; }
+  100% { transform: scale(1.1); opacity: 1; }
+}
+
+.offer-nav {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 3rem;
+  right: 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  padding-top: 1.5rem;
+}
+.offer-dots {
+  display: flex;
+  gap: 0.6rem;
+}
+.offer-dot {
+  width: 10px;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.offer-dot.active {
+  width: 32px;
+  background: #00d4ff;
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+}
+.offer-btns {
+  display: flex;
+  gap: 0.8rem;
+}
+.offer-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+.offer-btn:hover {
+  background: rgba(0, 212, 255, 0.1);
+  border-color: #00d4ff;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .offer-slide {
+    grid-template-columns: 1fr;
+    inset: 1.5rem;
+    gap: 1.5rem;
+    height: auto;
+  }
+  .offer-hub {
+    min-height: 640px;
+    padding: 1.5rem;
+  }
+  .offer-right {
+    height: 180px;
+  }
+  .hologram-logo {
+    width: 90px;
+  }
+  .offer-nav {
+    bottom: 1.5rem;
+    left: 1.5rem;
+    right: 1.5rem;
+  }
+}
+
+.offer-badge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 0.45rem 1rem;
+  border-radius: 50px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border: 1px solid rgba(0, 212, 255, 0.4);
+  color: #00d4ff;
+  background: rgba(0, 212, 255, 0.08);
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.15);
+  margin-bottom: 0.5rem;
+}
+.offer-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  font-weight: 900;
+  line-height: 1.1;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  background: linear-gradient(90deg, #fff 0%, #00d4ff 50%, #fff 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shineTitle 4s linear infinite;
+  text-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+}
+@keyframes shineTitle {
+  to { background-position: 200% center; }
+}
+
+.offer-desc {
+  font-size: 0.92rem;
+  color: #7b8db0;
+  line-height: 1.6;
+  border-left: 3px solid #00d4ff;
+  padding-left: 1.2rem;
+  background: linear-gradient(90deg, rgba(0, 212, 255, 0.05), transparent);
+  position: relative;
+  overflow: hidden;
+}
+.offer-desc::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, #00d4ff, #7c3aed, transparent);
+  animation: descLaser 2.2s linear infinite;
+}
+@keyframes descLaser {
+  0% { top: -100%; }
+  100% { top: 100%; }
+}
+
+/* Plantery Hologram Orbit Ring */
+.hologram-orbit {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border: 1.5px dashed rgba(0, 212, 255, 0.25);
+  border-radius: 50%;
+  animation: orbitRotate 15s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hologram-orbit::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  width: 12px;
+  height: 12px;
+  background: #00d4ff;
+  border-radius: 50%;
+  box-shadow: 0 0 12px #00d4ff, 0 0 24px #00d4ff;
+}
+
+@keyframes orbitRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ===== FEATURES ===== */
+.features-section{max-width:1100px;margin:5rem auto;padding:0 2rem;}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;}
+.feat-card{background:rgba(5,12,28,0.7);border:1px solid rgba(0,212,255,0.1);border-radius:24px;padding:2rem;text-align:center;transition:all 0.4s;position:relative;overflow:hidden;}
+.feat-card::before{content:'';position:absolute;inset:0;border-radius:24px;background:linear-gradient(135deg,rgba(0,212,255,0.05),transparent);opacity:0;transition:opacity 0.4s;}
+.feat-card:hover{border-color:rgba(0,212,255,0.4);transform:translateY(-8px);box-shadow:0 20px 60px rgba(0,0,0,0.4),0 0 40px rgba(0,212,255,0.1);}
+.feat-card:hover::before{opacity:1;}
+.feat-icon{width:64px;height:64px;margin:0 auto 1.5rem;background:rgba(0,212,255,0.08);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;border:1px solid rgba(0,212,255,0.15);box-shadow:0 0 20px rgba(0,212,255,0.1);}
+.feat-card h3{font-family:'Orbitron',sans-serif;color:#f0f4ff;font-size:0.85rem;font-weight:700;margin-bottom:0.6rem;text-transform:uppercase;letter-spacing:1px;}
+.feat-card p{font-size:0.85rem;color:#7b8db0;line-height:1.5;}
+
+/* ===== CTA BANNER ===== */
+.cta-section{max-width:1100px;margin:5rem auto;padding:0 2rem;}
+.cta-card{background:linear-gradient(135deg,rgba(0,212,255,0.06),rgba(124,58,237,0.08));border:1px solid rgba(0,212,255,0.2);border-radius:32px;padding:5rem 3rem;text-align:center;position:relative;overflow:hidden;}
+.cta-card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at center,rgba(0,212,255,0.06),transparent 60%);animation:ctaRotate 20s linear infinite;}
+@keyframes ctaRotate{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.cta-card h2{font-family:'Orbitron',sans-serif;font-size:clamp(1.5rem,3vw,2.5rem);color:#fff;text-transform:uppercase;letter-spacing:-1px;margin-bottom:1.2rem;}
+.cta-card p{color:#7b8db0;margin-bottom:2.5rem;font-size:1rem;}
+.cta-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+</style>
+
+<div class="offers-section">
+  <p class="offer-section-tag">⚡ Limited Time Offers</p>
+  <h2 class="offer-section-title">Tactical Deal Hub</h2>
+  <div class="offer-hub" id="offerHub">
+    <!-- Dynamic Slides from database (if present) -->
+    <th:block th:if="${allOffers != null and !allOffers.empty}">
+      <div th:each="off, iterStat : ${allOffers}" 
+           class="offer-slide" 
+           th:classappend="${iterStat.first} ? 'active' : ''"
+           th:id="'slide' + ${iterStat.index}">
+        <div class="offer-left">
+          <span class="offer-badge" 
+                th:style="${iterStat.index % 3 == 1} ? 'border-color:#7c3aed;color:#a78bfa;background:rgba(124,58,237,0.1);' : (${iterStat.index % 3 == 2} ? 'border-color:#00ff88;color:#00ff88;background:rgba(0,255,136,0.08);' : 'border-color:rgba(0, 212, 255, 0.4);color:#00d4ff;background:rgba(0, 212, 255, 0.08);')"
+                th:text="${off.discountText != null and !#strings.isEmpty(off.discountText) ? off.discountText : '🔥 Limited Offer'}">⚡ Flash Sale</span>
+          <div class="offer-title" 
+               th:style="${iterStat.index % 3 == 1} ? 'background:linear-gradient(135deg,#fff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;' : (${iterStat.index % 3 == 2} ? 'background:linear-gradient(135deg,#fff,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;' : 'background:linear-gradient(135deg,#fff,#00d4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;')"
+               th:text="${off.title}">Offer Title</div>
+          <p class="offer-desc" th:text="${off.description}">Offer Description</p>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+            <a th:href="${off.product != null ? '/products?search=' + off.product.name : (off.targetUrl != null and !#strings.isEmpty(off.targetUrl) ? off.targetUrl : '/products')}" 
+               class="btn-cyber solid"
+               th:classappend="${iterStat.index % 3 == 1} ? 'purple' : ''"
+               th:style="${iterStat.index % 3 == 2} ? 'border-color:#00ff88;color:#00ff88;' : ''">Acquire Now →</a>
+            <a th:href="@{/products}" class="btn-cyber">View All Deals</a>
+          </div>
+        </div>
+        <div class="offer-right">
+          <div class="hologram-plate" 
+               th:style="${iterStat.index % 3 == 1} ? 'background:radial-gradient(ellipse,rgba(124,58,237,0.8) 0%,rgba(124,58,237,0) 80%);' : (${iterStat.index % 3 == 2} ? 'background:radial-gradient(ellipse,rgba(0,255,136,0.8) 0%,rgba(0,255,136,0) 80%);' : 'background:radial-gradient(ellipse,rgba(0,212,255,0.8) 0%,rgba(0,212,255,0) 80%);')"></div>
+          <div class="hologram-orbit"
+               th:style="${iterStat.index % 3 == 1} ? 'border-color:rgba(124,58,237,0.3);' : (${iterStat.index % 3 == 2} ? 'border-color:rgba(0,255,136,0.3);' : 'border-color:rgba(0,212,255,0.3);')"></div>
+          <img th:src="${off.imageUrl != null and !#strings.isEmpty(off.imageUrl) ? off.imageUrl : '/images/logo.png'}" 
+               alt="Offer Product" 
+               class="hologram-logo"
+               th:style="${iterStat.index % 3 == 1} ? 'filter:drop-shadow(0 0 20px rgba(124,58,237,0.6));' : (${iterStat.index % 3 == 2} ? 'filter:drop-shadow(0 0 20px rgba(0,255,136,0.6));' : 'filter:drop-shadow(0 0 20px rgba(0,212,255,0.6));')">
+        </div>
+      </div>
+    </th:block>
+
+    <!-- Fallback Slides (if no offers in database) -->
+    <th:block th:if="${allOffers == null or allOffers.empty}">
+      <!-- Slide 1 -->
+      <div class="offer-slide active" id="slide0">
+        <div class="offer-left">
+          <span class="offer-badge">🔥 Flash Sale · 24H Only</span>
+          <div class="offer-title">Neural Interface<br>Pro Series</div>
+          <p class="offer-desc">Unlock next-gen productivity with our flagship neural computing systems. Limited units — deploy before they vanish from the grid.</p>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+            <a th:href="@{/products}" class="btn-cyber solid">Claim Offer →</a>
+            <a th:href="@{/products}" class="btn-cyber">View All Deals</a>
+          </div>
+        </div>
+        <div class="offer-right">
+          <div class="hologram-plate"></div>
+          <div class="hologram-orbit"></div>
+          <img th:src="@{/images/logo.png}" alt="Offer 1" class="hologram-logo">
+        </div>
+      </div>
+      <!-- Slide 2 -->
+      <div class="offer-slide" id="slide1">
+        <div class="offer-left">
+          <span class="offer-badge" style="border-color:#7c3aed;color:#a78bfa;background:rgba(124,58,237,0.1);">🌌 Exclusive Drop</span>
+          <div class="offer-title" style="background:linear-gradient(135deg,#fff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Quantum Storage<br>Vault Edition</div>
+          <p class="offer-desc">Military-grade encrypted storage with quantum compression. Store your entire digital universe in a device that fits in your pocket.</p>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+            <a th:href="@{/products}" class="btn-cyber purple">Acquire Now →</a>
+            <a th:href="@{/products}" class="btn-cyber">Browse Catalogue</a>
+          </div>
+        </div>
+        <div class="offer-right">
+          <div class="hologram-plate" style="background:radial-gradient(ellipse,rgba(124,58,237,0.8) 0%,rgba(124,58,237,0) 80%);"></div>
+          <div class="hologram-orbit" style="border-color:rgba(124,58,237,0.35);"></div>
+          <img th:src="@{/images/logo.png}" alt="Offer 2" class="hologram-logo" style="filter:drop-shadow(0 0 20px rgba(124,58,237,0.6));">
+        </div>
+      </div>
+      <!-- Slide 3 -->
+      <div class="offer-slide" id="slide2">
+        <div class="offer-left">
+          <span class="offer-badge" style="border-color:#00ff88;color:#00ff88;background:rgba(0,255,136,0.08);">🛡️ Bundle Deal</span>
+          <div class="offer-title" style="background:linear-gradient(135deg,#fff,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Cyber Armor<br>Complete Kit</div>
+          <p class="offer-desc">Full-spectrum protection suite — cybersecurity hardware, encrypted comms and biometric authentication all in one tactical bundle.</p>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+            <a th:href="@{/products}" class="btn-cyber" style="border-color:#00ff88;color:#00ff88;">Get the Bundle →</a>
+            <a th:href="@{/products}" class="btn-cyber">See More</a>
+          </div>
+        </div>
+        <div class="offer-right">
+          <div class="hologram-plate" style="background:radial-gradient(ellipse,rgba(0,255,136,0.8) 0%,rgba(0,255,136,0) 80%);"></div>
+          <div class="hologram-orbit" style="border-color:rgba(0,255,136,0.35);"></div>
+          <img th:src="@{/images/logo.png}" alt="Offer 3" class="hologram-logo" style="filter:drop-shadow(0 0 20px rgba(0,255,136,0.6));">
+        </div>
+      </div>
+    </th:block>
+
+    <!-- Nav -->
+    <div class="offer-nav">
+      <div class="offer-dots">
+        <!-- Dynamic Dots -->
+        <th:block th:if="${allOffers != null and !allOffers.empty}">
+          <div th:each="off, iterStat : ${allOffers}" 
+               class="offer-dot" 
+               th:classappend="${iterStat.first} ? 'active' : ''"
+               th:onclick="'goSlide(' + ${iterStat.index} + ')'"></div>
+        </th:block>
+        <!-- Fallback Dots -->
+        <th:block th:if="${allOffers == null or allOffers.empty}">
+          <div class="offer-dot active" onclick="goSlide(0)"></div>
+          <div class="offer-dot" onclick="goSlide(1)"></div>
+          <div class="offer-dot" onclick="goSlide(2)"></div>
+        </th:block>
+      </div>
+      <div class="offer-btns">
+        <button class="offer-btn" onclick="prevSlide()">◀</button>
+        <button class="offer-btn" onclick="nextSlide()">▶</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="features-section">
+  <div class="offer-section-tag" style="text-align:center;">Why Choose NET</div>
+  <h2 class="offer-section-title">Mission-Critical Advantages</h2>
+  <div class="features-grid">
+    <div class="feat-card"><div class="feat-icon">⚡</div><h3>Lightspeed Delivery</h3><p>Sub-orbital logistics network ensuring same-day dispatch for all priority orders.</p></div>
+    <div class="feat-card"><div class="feat-icon">🔒</div><h3>Quantum Encrypted</h3><p>Military-grade 256-bit encryption protects every transaction on our grid.</p></div>
+    <div class="feat-card"><div class="feat-icon">🤖</div><h3>AI-Powered Support</h3><p>NET Assistant provides 24/7 intelligent support with real-time inventory access.</p></div>
+    <div class="feat-card"><div class="feat-icon">🌐</div><h3>Global Network</h3><p>48 countries. One unified platform. Your artifacts, delivered anywhere on Earth.</p></div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-card">
+    <h2>Ready to Enter the Grid?</h2>
+    <p>Join thousands of digital pioneers already equipped with next-generation technology from Next Era Technologies.</p>
+    <div class="cta-btns">
+      <a th:href="@{/products}" class="btn-cyber solid">🚀 Shop Now</a>
+      <a th:href="@{/signin}" class="btn-cyber">Create Account</a>
+    </div>
+  </div>
+</div>
 </main>
 
+<!-- FOOTER -->
 <footer>
-    <span class="footer-brand">NEXT ERA TECHNOLOGIES</span>
-    <p>© 2026 Next Era Technologies. All rights reserved.</p>
-    <a href="https://wa.me/94769414472" target="_blank" class="btn btn-whatsapp" style="padding:0.7rem 1.8rem; border-radius: 50px; font-size:0.7rem;">📡 DIRECT UPLINK</a>
+  <div class="footer-brand">⚡ NEXT ERA TECHNOLOGIES</div>
+  <p>© 2025 Next Era Technologies. All systems operational.</p>
+  <p style="font-size:0.75rem;color:#4a5568;">Powered by NET-AI Neural Commerce Engine</p>
 </footer>
 
+<!-- CHATBOT -->
 <div th:replace="~{chat-widget :: chat}"></div>
+
 <script th:src="@{/theme.js}"></script>
 <script>
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.cyber-slide');
-    const indicators = document.querySelectorAll('.indicator');
-    const totalSlides = slides.length;
-
-    function updateSlides() {
-        slides.forEach((slide, idx) => {
-            slide.classList.remove('active');
-            if (idx === currentSlide) {
-                slide.classList.add('active');
-                slide.style.display = 'flex';
-            } else {
-                slide.style.display = 'none';
-            }
-        });
-
-        indicators.forEach((indicator, idx) => {
-            indicator.classList.toggle('active', idx === currentSlide);
-        });
+// ===== STARFIELD (Rolls Royce effect) =====
+(function(){
+  const c=document.getElementById('starfield');
+  if(!c) return;
+  const ctx=c.getContext('2d');
+  let W,H,stars=[];
+  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  // Optimized star count (120 instead of 280) for excellent performance on all screens
+  for(let i=0;i<120;i++){stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.8+0.2,speed:Math.random()*0.3+0.05,twinkle:Math.random()*Math.PI*2,col:Math.random()>0.85?'rgba(124,58,237,':'rgba(0,212,255,'});}
+  function drawStars(){
+    if(document.documentElement.getAttribute('data-theme') === 'light') {
+      ctx.clearRect(0,0,W,H);
+      requestAnimationFrame(drawStars);
+      return;
     }
+    ctx.clearRect(0,0,W,H);
+    stars.forEach(s=>{
+      s.y+=s.speed;if(s.y>H)s.y=0;
+      s.twinkle+=0.03;
+      const a=(0.3+0.7*Math.abs(Math.sin(s.twinkle))).toFixed(2);
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=s.col+a+')';
+      // Removed performance-killing shadowBlur and shadowColor completely
+      ctx.fill();
+    });
+    requestAnimationFrame(drawStars);
+  }
+  drawStars();
+})();
 
-    function nextSlide() {
-        currentSlide = (currentSlide + 1) % totalSlides;
-        updateSlides();
-    }
+// ===== 3D LOGO CANVAS =====
+document.addEventListener('DOMContentLoaded',function(){
+  const canvas=document.getElementById('logo-canvas');
+  const universe=document.getElementById('logoUniverse');
+  const card=document.getElementById('logoCard');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  let w,h,cx,cy;
+  function resize(){
+    w=canvas.width=universe.offsetWidth;
+    h=canvas.height=universe.offsetHeight;
+    cx=w/2;
+    cy=h/2;
+  }
+  window.addEventListener('resize',resize);
+  resize();
 
-    function prevSlide() {
-        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-        updateSlides();
-    }
+  // Settings for 3D Camera/Projection
+  const focalLength = 320;
+  let targetTiltX = 0, targetTiltY = 0;
+  let currentTiltX = 0, currentTiltY = 0;
+  let baseAngleY = 0, baseAngleX = 0;
+  let isMouseOver = false;
 
-    function goToSlide(idx) {
-        currentSlide = idx;
-        updateSlides();
-    }
+  // Track mouse coordinates for gravity attraction
+  let mouse3D = { x: 0, y: 0, z: 0 };
+
+  // Define 3D orbits: radius, speed, color, dash pattern, z-offset, angle offset
+  const rings = [
+    { r: 180, speedY: 0.012, speedX: 0.005, color: '0,212,255', dash: [15, 30], angle: 0, tilt: 0.2 },
+    { r: 215, speedY: -0.008, speedX: -0.003, color: '124,58,237', dash: [8, 25], angle: Math.PI/3, tilt: -0.15 },
+    { r: 245, speedY: 0.006, speedX: 0.007, color: '0,255,136', dash: [4, 15], angle: Math.PI*2/3, tilt: 0.3 }
+  ];
+
+  // Define 3D orbital nodes: ring index, angle, rotation speed, color, size
+  const nodes = [
+    { ringIdx: 0, angle: 0, speed: 0.015, color: '#00d4ff', size: 6.5, name: 'CORE_A', freq: '4.8Ghz' },
+    { ringIdx: 0, angle: Math.PI, speed: 0.015, color: '#ff3282', size: 5, name: 'AUX_A', freq: '2.4Ghz' },
+    { ringIdx: 1, angle: Math.PI/2, speed: -0.01, color: '#7c3aed', size: 6, name: 'CORE_B', freq: '6.2Ghz' },
+    { ringIdx: 2, angle: Math.PI*3/2, speed: 0.008, color: '#00ff88', size: 5.5, name: 'QUANTUM_C', freq: '9.0Ghz' }
+  ];
+
+  // Initialize particles in 3D sphere
+  const particles = [];
+  const particleCount = 80;
+  for(let i=0; i<particleCount; i++){
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos((Math.random() * 2) - 1);
+    const radius = 70 + Math.random() * 150;
+    particles.push({
+      x: radius * Math.sin(phi) * Math.cos(theta),
+      y: radius * Math.sin(phi) * Math.sin(theta),
+      z: radius * Math.cos(phi),
+      baseX: 0, baseY: 0, baseZ: 0, // to store original position
+      r: radius,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      vz: (Math.random() - 0.5) * 0.4,
+      size: Math.random() * 1.8 + 0.6,
+      life: Math.random() * Math.PI * 2,
+      color: Math.random() > 0.6 ? '0,212,255' : '124,58,237'
+    });
+    particles[i].baseX = particles[i].x;
+    particles[i].baseY = particles[i].y;
+    particles[i].baseZ = particles[i].z;
+  }
+
+  // Helper for 3D rotation and perspective projection
+  function projectPoint(x, y, z, rotX, rotY) {
+    // 1. Rotation around Y-axis (Yaw)
+    const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+    let x1 = x * cosY - z * sinY;
+    let z1 = x * sinY + z * cosY;
+
+    // 2. Rotation around X-axis (Pitch)
+    const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+    let y2 = y * cosX - z1 * sinX;
+    let z2 = y * sinX + z1 * cosX;
+
+    // Perspective factor
+    const scale = focalLength / (focalLength + z2);
+    return {
+      x: cx + x1 * scale,
+      y: cy + y2 * scale,
+      scale: scale,
+      z: z2,
+      depthAlpha: Math.max(0.1, Math.min(1.0, (focalLength - z2) / (focalLength * 1.5))) // fade out objects in background
+    };
+  }
+
+  // Oscilloscope wave configuration
+  const wavePoints = 40;
+  let waveOffset = 0;
+
+  // Glitch event controls
+  let glitchTime = 0;
+  let activeGlitch = false;
+  let glitchDuration = 0;
+  let glitchShiftX = 0;
+
+  function loop() {
+    ctx.clearRect(0, 0, w, h);
     
-    function toggleDescription(idx, btn) {
-        const descEl = document.getElementById('desc-' + idx);
-        if (descEl.classList.contains('expanded')) {
-            descEl.classList.remove('expanded');
-            btn.innerHTML = 'READ MORE <span style="font-size: 0.6rem;">▼</span>';
+    // Auto idle rotations
+    baseAngleY += 0.003;
+    baseAngleX = Math.sin(baseAngleY * 0.5) * 0.15;
+    
+    // Smooth interpolation to target tilts (from mouse)
+    currentTiltX += (targetTiltX - currentTiltX) * 0.1;
+    currentTiltY += (targetTiltY - currentTiltY) * 0.1;
+
+    // Total rotation values
+    const finalRotX = baseAngleX + currentTiltX;
+    const finalRotY = baseAngleY + currentTiltY;
+
+    const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+
+    // Glitch Simulation
+    glitchTime++;
+    if (!activeGlitch && Math.random() < 0.002) {
+      activeGlitch = true;
+      glitchDuration = 5 + Math.floor(Math.random() * 8);
+      glitchShiftX = (Math.random() - 0.5) * 15;
+    }
+    if (activeGlitch) {
+      glitchDuration--;
+      if (glitchDuration <= 0) activeGlitch = false;
+    }
+
+    // Apply global glitch screen translation if active
+    if (activeGlitch && Math.random() > 0.3) {
+      ctx.save();
+      ctx.translate(glitchShiftX, (Math.random() - 0.5) * 4);
+      if (Math.random() > 0.5) {
+        ctx.fillStyle = theme === 'light' ? 'rgba(0, 212, 255, 0.08)' : 'rgba(0, 212, 255, 0.15)';
+        ctx.fillRect(0, 0, w, h);
+      }
+    }
+
+    // 1. Draw 3D concentrics
+    rings.forEach((ring, index) => {
+      ring.angle += ring.speedY;
+      const ringPoints = [];
+      const segments = 96;
+      
+      // Calculate coordinates of circle points in 3D
+      for (let i = 0; i <= segments; i++) {
+        const theta = (i / segments) * Math.PI * 2;
+        // Introduce small 3D inclination tilt for a spherical cage effect
+        const rx = ring.r * Math.cos(theta);
+        const ry = ring.r * Math.sin(theta) * Math.sin(ring.tilt);
+        const rz = ring.r * Math.sin(theta) * Math.cos(ring.tilt);
+        
+        const pt = projectPoint(rx, ry, rz, finalRotX, finalRotY);
+        ringPoints.push(pt);
+      }
+
+      // Draw dashed ring
+      ctx.beginPath();
+      let isDrawing = true;
+      let dashCounter = 0;
+      
+      // We will trace the ring in 3D
+      for (let i = 0; i < ringPoints.length; i++) {
+        const pt = ringPoints[i];
+        
+        // Calculate dynamic dash patterns manually to avoid standard 2D dash scaling issues in perspective
+        const segmentLength = 4;
+        dashCounter++;
+        
+        const dashOn = ring.dash[0];
+        const dashOff = ring.dash[1];
+        const cycle = dashOn + dashOff;
+        const currentPos = (dashCounter + Math.floor(ring.angle * 120)) % cycle;
+
+        if (currentPos < dashOn) {
+          if (i === 0 || !isDrawing) {
+            ctx.moveTo(pt.x, pt.y);
+          } else {
+            ctx.lineTo(pt.x, pt.y);
+          }
+          isDrawing = true;
         } else {
-            descEl.classList.add('expanded');
-            btn.innerHTML = 'SHOW LESS <span style="font-size: 0.6rem;">▲</span>';
+          isDrawing = false;
         }
+      }
+      
+      const alpha = (0.2 + 0.25 * Math.sin(baseAngleY + index)).toFixed(2);
+      ctx.strokeStyle = theme === 'light' 
+        ? `rgba(${index === 1 ? '109,40,217' : '0,136,204'}, ${alpha * 0.8})` 
+        : `rgba(${ring.color}, ${alpha})`;
+      ctx.lineWidth = 1.5 * (index === 0 ? 1.2 : 0.9);
+      ctx.stroke();
+    });
+
+    // 2. Compute 3D node points and project them
+    const nodeProjList = [];
+    nodes.forEach((nd) => {
+      nd.angle += nd.speed;
+      const ring = rings[nd.ringIdx];
+      
+      // Position of node relative to its ring coordinate
+      const nx = ring.r * Math.cos(nd.angle);
+      const ny = ring.r * Math.sin(nd.angle) * Math.sin(ring.tilt);
+      const nz = ring.r * Math.sin(nd.angle) * Math.cos(ring.tilt);
+
+      const proj = projectPoint(nx, ny, nz, finalRotX, finalRotY);
+      nodeProjList.push({
+        proj: proj,
+        color: nd.color,
+        size: nd.size,
+        name: nd.name,
+        freq: nd.freq
+      });
+    });
+
+    // Draw active node networks
+    nodeProjList.forEach((nd) => {
+      const proj = nd.proj;
+      const glowScale = nd.size * proj.scale;
+      
+      // Node core
+      ctx.beginPath();
+      ctx.arc(proj.x, proj.y, nd.size * proj.scale, 0, Math.PI * 2);
+      ctx.fillStyle = nd.color;
+      ctx.shadowBlur = 0; // optimized
+      ctx.fill();
+
+      // Outer rings/brackets tracker (Reticle)
+      ctx.beginPath();
+      ctx.arc(proj.x, proj.y, glowScale * 2.5, 0, Math.PI * 2);
+      ctx.strokeStyle = nd.color;
+      ctx.lineWidth = 0.8;
+      ctx.globalAlpha = 0.3 * proj.depthAlpha;
+      ctx.stroke();
+      ctx.globalAlpha = 1.0;
+
+      // Draw vector brackets around node
+      const bSz = glowScale * 3.5;
+      ctx.strokeStyle = nd.color;
+      ctx.lineWidth = 1.0;
+      ctx.globalAlpha = 0.5 * proj.depthAlpha;
+      
+      // Top left bracket
+      ctx.beginPath();
+      ctx.moveTo(proj.x - bSz, proj.y - bSz + bSz*0.4);
+      ctx.lineTo(proj.x - bSz, proj.y - bSz);
+      ctx.lineTo(proj.x - bSz + bSz*0.4, proj.y - bSz);
+      ctx.stroke();
+
+      // Bottom right bracket
+      ctx.beginPath();
+      ctx.moveTo(proj.x + bSz, proj.y + bSz - bSz*0.4);
+      ctx.lineTo(proj.x + bSz, proj.y + bSz);
+      ctx.lineTo(proj.x + bSz - bSz*0.4, proj.y + bSz);
+      ctx.stroke();
+      ctx.globalAlpha = 1.0;
+
+      // Float HUD text beside nodes
+      ctx.font = "7px 'Orbitron', monospace";
+      ctx.fillStyle = theme === 'light' ? '#334155' : 'rgba(0, 212, 255, 0.7)';
+      ctx.fillText(`${nd.name}`, proj.x + bSz + 4, proj.y - 2);
+      ctx.fillStyle = nd.color;
+      ctx.fillText(`${nd.freq}`, proj.x + bSz + 4, proj.y + 6);
+    });
+
+    // 3. Constellation Node Connections (Energy Bridges)
+    for (let i = 0; i < nodeProjList.length; i++) {
+      for (let j = i + 1; j < nodeProjList.length; j++) {
+        const pt1 = nodeProjList[i].proj;
+        const pt2 = nodeProjList[j].proj;
+        const dx = pt1.x - pt2.x;
+        const dy = pt1.y - pt2.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        
+        // Link nodes if close to each other in 2D perspective space
+        if (dist < 160) {
+          ctx.beginPath();
+          ctx.moveTo(pt1.x, pt1.y);
+          ctx.lineTo(pt2.x, pt2.y);
+          const edgeAlpha = (1 - dist/160) * 0.3 * Math.min(pt1.depthAlpha, pt2.depthAlpha);
+          ctx.strokeStyle = theme === 'light' 
+            ? `rgba(0, 136, 204, ${edgeAlpha * 0.9})` 
+            : `rgba(0, 212, 255, ${edgeAlpha})`;
+          ctx.lineWidth = 1.0;
+          ctx.stroke();
+        }
+      }
     }
 
-    // Auto-advance
-    if (totalSlides > 1) {
-        setInterval(nextSlide, 8000);
+    // 4. Update and Draw 3D Particles
+    particles.forEach((p) => {
+      p.life += 0.015;
+      
+      // Slow rotation of particles around the Y axis over time
+      const cosP = Math.cos(0.005);
+      const sinP = Math.sin(0.005);
+      const rx = p.x * cosP - p.z * sinP;
+      const rz = p.x * sinP + p.z * cosP;
+      p.x = rx;
+      p.z = rz;
+
+      // Magnetic interactive pull to the mouse coordinate (projected back)
+      if (isMouseOver) {
+        // Calculate vector from particle to 3D mouse position (approximate at z=0)
+        const dx = mouse3D.x - p.x;
+        const dy = mouse3D.y - p.y;
+        const dz = mouse3D.z - p.z;
+        const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+        if (dist < 150) {
+          // Attract slightly
+          p.x += (dx / dist) * 0.6;
+          p.y += (dy / dist) * 0.6;
+          p.z += (dz / dist) * 0.6;
+        }
+      } else {
+        // Slowly ease back to its baseline radius orbit
+        const currentRad = Math.sqrt(p.x*p.x + p.y*p.y + p.z*p.z);
+        const radDiff = p.r - currentRad;
+        if (Math.abs(radDiff) > 2) {
+          const factor = 0.01;
+          p.x += (p.x / currentRad) * radDiff * factor;
+          p.y += (p.y / currentRad) * radDiff * factor;
+          p.z += (p.z / currentRad) * radDiff * factor;
+        }
+      }
+
+      // Projection
+      const proj = projectPoint(p.x, p.y, p.z, finalRotX, finalRotY);
+
+      // Connect particle to nearest nodes if extremely close
+      nodeProjList.forEach((nd) => {
+        const ndP = nd.proj;
+        const pdx = proj.x - ndP.x;
+        const pdy = proj.y - ndP.y;
+        const pdist = Math.sqrt(pdx*pdx + pdy*pdy);
+        if (pdist < 55) {
+          ctx.beginPath();
+          ctx.moveTo(proj.x, proj.y);
+          ctx.lineTo(ndP.x, ndP.y);
+          const linkAlpha = (1 - pdist/55) * 0.18 * proj.depthAlpha;
+          ctx.strokeStyle = theme === 'light' 
+            ? `rgba(124, 58, 237, ${linkAlpha * 0.8})` 
+            : `rgba(${p.color}, ${linkAlpha})`;
+          ctx.lineWidth = 0.6;
+          ctx.stroke();
+        }
+      });
+
+      // Draw particle dot
+      const ptSize = p.size * proj.scale;
+      ctx.beginPath();
+      ctx.arc(proj.x, proj.y, ptSize, 0, Math.PI * 2);
+      const alphaVal = (0.2 + 0.65 * Math.abs(Math.sin(p.life))) * proj.depthAlpha;
+      ctx.fillStyle = theme === 'light' 
+        ? `rgba(0, 136, 204, ${alphaVal * 0.85})` 
+        : `rgba(${p.color}, ${alphaVal})`;
+      ctx.fill();
+    });
+
+    // 5. Draw Sci-Fi HUD Side Elements (Equalizer & Oscilloscope)
+    drawOscilloscope(theme);
+    drawEqualizer(theme);
+
+    // Dynamic HUD Telemetry text
+    ctx.font = "8px 'Space Grotesk', monospace";
+    ctx.fillStyle = theme === 'light' ? 'rgba(0, 136, 204, 0.6)' : 'rgba(0, 212, 255, 0.45)';
+    
+    // Grid Latency jitter
+    const latencyVal = 10 + Math.floor(10 * Math.random()) + Math.floor(Math.sin(baseAngleY * 4) * 2);
+    ctx.fillText(`GRID_LATENCY: ${latencyVal}MS`, 24, 34);
+    ctx.fillText(`NEURAL_SYNC_RATE: ${(99.6 + Math.sin(baseAngleY)*0.35).toFixed(2)}%`, w - 165, 34);
+    
+    // Core telemetry
+    ctx.fillText("CORE_TEMP: 38.6 C", 24, h - 24);
+    ctx.fillText("UPLINK_BANDWIDTH: 1.2 GB/S", w - 165, h - 24);
+
+    if (activeGlitch) {
+      ctx.restore();
+    }
+
+    requestAnimationFrame(loop);
+  }
+
+  // Draw real-time sine-wave oscilloscope on the left
+  function drawOscilloscope(theme) {
+    waveOffset += 0.12;
+    ctx.beginPath();
+    const startX = 24;
+    const startY = h - 60;
+    const width = 85;
+    
+    for (let i = 0; i < wavePoints; i++) {
+      const t = i / wavePoints;
+      const x = startX + t * width;
+      // Synthesize noise + sine wave
+      const yNoise = Math.sin(t * Math.PI * 4 + waveOffset) * 8 + Math.cos(t * Math.PI * 10 - waveOffset * 2.5) * 3;
+      const y = startY + yNoise;
+      
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
     }
     
-    // Initial state
-    if (totalSlides > 0) {
-        updateSlides();
+    ctx.strokeStyle = theme === 'light' ? 'rgba(124, 58, 237, 0.4)' : 'rgba(0, 212, 255, 0.35)';
+    ctx.lineWidth = 1.0;
+    ctx.stroke();
+
+    ctx.font = "6px 'Space Grotesk', monospace";
+    ctx.fillStyle = theme === 'light' ? 'rgba(109, 40, 217, 0.5)' : 'rgba(0, 212, 255, 0.3)';
+    ctx.fillText("SIGNAL_WAVE_01", startX, startY - 14);
+  }
+
+  // Draw real-time signal bar equalizer on the right
+  function drawEqualizer(theme) {
+    const startX = w - 110;
+    const startY = h - 50;
+    const barCount = 10;
+    const barWidth = 6;
+    const spacing = 3;
+    const maxBarHeight = 22;
+
+    for (let i = 0; i < barCount; i++) {
+      const x = startX + i * (barWidth + spacing);
+      // Generate pseudo-random equalizer movements
+      const waveVal = Math.sin(baseAngleY * 3 + i * 0.8) * 0.5 + 0.5;
+      const noiseVal = Math.cos(baseAngleY * 6 - i * 1.5) * 0.2 + 0.2;
+      const barHeight = Math.max(3, (waveVal + noiseVal) * maxBarHeight);
+      
+      ctx.fillStyle = theme === 'light' 
+        ? `rgba(0, 136, 204, ${0.25 + (i / barCount) * 0.35})`
+        : `rgba(0, 255, 136, ${0.3 + (i / barCount) * 0.45})`;
+      
+      ctx.fillRect(x, startY - barHeight, barWidth, barHeight);
+    }
+    
+    ctx.font = "6px 'Space Grotesk', monospace";
+    ctx.fillStyle = theme === 'light' ? 'rgba(0, 136, 204, 0.5)' : 'rgba(0, 255, 136, 0.4)';
+    ctx.fillText("MATRIX_EQ_SPECTRUM", startX, startY - 26);
+  }
+
+  loop();
+
+  // Mouse tilt handlers
+  universe.addEventListener('mousemove', function(e) {
+    isMouseOver = true;
+    const r = universe.getBoundingClientRect();
+    const mx = (e.clientX - r.left) / r.width - 0.5;
+    const my = (e.clientY - r.top) / r.height - 0.5;
+
+    // Set 3D rotation angles (sync with CSS tilt)
+    targetTiltY = mx * 0.52; // around Y
+    targetTiltX = -my * 0.35; // around X
+
+    // Approximate mouse 3D position to attract particles
+    mouse3D.x = mx * 350;
+    mouse3D.y = my * 350;
+    mouse3D.z = 0; // baseline plane
+
+    // CSS card transformation (slight tilt)
+    card.style.animation = 'none';
+    card.style.transform = `rotateY(${mx * 26}deg) rotateX(${-my * 18}deg)`;
+  });
+
+  universe.addEventListener('mouseleave', function() {
+    isMouseOver = false;
+    targetTiltX = 0;
+    targetTiltY = 0;
+    card.style.animation = '';
+    card.style.transform = '';
+  });
+});
+
+// ===== OFFER SLIDER =====
+(function(){
+  let cur=0,total=3,timer;
+  const slides = document.querySelectorAll('.offer-slide');
+  const dots = document.querySelectorAll('.offer-dot');
+  if(slides.length === 0) return;
+  total = slides.length;
+  
+  function goSlide(n){
+    slides.forEach((s,i)=>{s.classList.toggle('active',i===n);});
+    dots.forEach((d,i)=>{d.classList.toggle('active',i===n);});
+    cur=n;
+    clearInterval(timer);
+    timer=setInterval(()=>nextSlide(),5000);
+  }
+  function nextSlide(){goSlide((cur+1)%total);}
+  function prevSlide(){goSlide((cur-1+total)%total);}
+  
+  window.goSlide = goSlide;
+  window.nextSlide = nextSlide;
+  window.prevSlide = prevSlide;
+  
+  // Automatically trigger slide 0 entry animation on page mount
+  goSlide(0);
+})();
+
+// ===== LIVE AUTOCOMPLETE SEARCH =====
+(function(){
+  const searchInput = document.getElementById('mainSearchInput');
+  const suggestionsPanel = document.getElementById('searchSuggestions');
+  if(!searchInput || !suggestionsPanel) return;
+
+  let debounceTimer;
+
+  searchInput.addEventListener('input', function() {
+    const query = this.value.trim();
+    
+    // Clear any pending requests
+    clearTimeout(debounceTimer);
+    
+    if(query.length < 1) {
+      suggestionsPanel.style.display = 'none';
+      suggestionsPanel.innerHTML = '';
+      return;
     }
 
-    // Live Search Neural Engine
-    const searchInput = document.getElementById('mainSearchInput');
-    const resultsPanel = document.getElementById('searchResultsPanel');
+    // Debounce to avoid heavy API calls on fast typing
+    debounceTimer = setTimeout(() => {
+      fetch(`/api/products/search?query=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(products => {
+          suggestionsPanel.innerHTML = '';
+          
+          if(products.length === 0) {
+            // Creative Futuristic "Sorry" Message Card
+            suggestionsPanel.innerHTML = `
+              <div class="sugg-empty">
+                <div class="sugg-empty-icon">🛸</div>
+                <div class="sugg-empty-title">ARchive Telemetry Empty</div>
+                <div class="sugg-empty-text">
+                  We scanned the neural grid but couldn't locate any matching technological artifacts for "<strong>${escapeHtml(query)}</strong>".<br><br>
+                  <em>Try searching for "Processor", "Biometric" or check our latest deal hub below!</em>
+                </div>
+              </div>
+            `;
+          } else {
+            // Render gorgeous list of similar/matching products
+            products.forEach(prod => {
+              const itemImg = prod.imageUrl && prod.imageUrl.trim() !== '' ? prod.imageUrl : '/images/logo.png';
+              const cleanDesc = prod.description ? (prod.description.length > 50 ? prod.description.substring(0, 50) + '...' : prod.description) : 'Premium Next Era Technology product.';
+              
+              const itemAnchor = document.createElement('a');
+              itemAnchor.href = `/products?search=${encodeURIComponent(prod.name)}`;
+              itemAnchor.className = 'sugg-item';
+              itemAnchor.innerHTML = `
+                <img src="${itemImg}" class="sugg-item-img" onerror="this.src='/images/logo.png'" alt="suggestion">
+                <div class="sugg-item-info">
+                  <div class="sugg-item-name">${escapeHtml(prod.name)}</div>
+                  <div class="sugg-item-desc">${escapeHtml(cleanDesc)}</div>
+                </div>
+                <div class="sugg-item-price">Rs. ${prod.price}</div>
+              `;
+              suggestionsPanel.appendChild(itemAnchor);
+            });
+          }
+          suggestionsPanel.style.display = 'block';
+        })
+        .catch(err => {
+          console.error("Suggestions retrieval failure: ", err);
+        });
+    }, 150);
+  });
 
-    searchInput.addEventListener('input', async (e) => {
-        const query = e.target.value.trim();
-        if (query.length < 2) {
-            resultsPanel.style.display = 'none';
-            return;
-        }
-
-        try {
-            const response = await fetch(`/api/products/search?query=${encodeURIComponent(query)}`);
-            const products = await response.json();
-
-            if (products.length > 0) {
-                resultsPanel.innerHTML = products.map(p => `
-                    <a href="/products?search=${encodeURIComponent(p.name)}" class="search-result-item">
-                        <img src="${p.imageUrl || 'https://placehold.co/100x100/080b14/00d4ff?text=Gear'}" class="result-img">
-                        <div class="result-info">
-                            <span class="result-name">${p.name}</span>
-                            <span class="result-price">Rs. ${p.price}</span>
-                        </div>
-                    </a>
-                `).join('');
-                resultsPanel.style.display = 'block';
-            } else {
-                resultsPanel.style.display = 'none';
-            }
-        } catch (err) {
-            console.error('Neural Search Interrupted:', err);
-        }
-    });
-
-    // Close panel on click outside
-    document.addEventListener('click', (e) => {
-        if (!searchInput.contains(e.target) && !resultsPanel.contains(e.target)) {
-            resultsPanel.style.display = 'none';
-        }
-    });
-    // Starlight Generator
-    const starContainer = document.getElementById('starlightBg');
-    if (starContainer) {
-        for(let i=0; i<150; i++) {
-            let star = document.createElement('div');
-            star.className = 'rr-star';
-            star.style.width = Math.random() * 3 + 'px';
-            star.style.height = star.style.width;
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.animationDuration = (Math.random() * 3 + 2) + 's';
-            star.style.animationDelay = (Math.random() * 5) + 's';
-            starContainer.appendChild(star);
-        }
+  // Close suggestions panel when clicking outside
+  document.addEventListener('click', function(e) {
+    if(e.target !== searchInput && e.target !== suggestionsPanel && !suggestionsPanel.contains(e.target)) {
+      suggestionsPanel.style.display = 'none';
     }
+  });
+
+  // Simple HTML escaping helper for security
+  function escapeHtml(str) {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+})();
+
 </script>
 </body>
 </html>
