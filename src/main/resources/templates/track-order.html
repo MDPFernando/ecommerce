@@ -146,6 +146,59 @@
             box-shadow: 0 6px 25px rgba(14, 165, 233, 0.4);
             filter: brightness(1.1);
         }
+
+        /* Responsive Form and Layout Overrides */
+        .track-search-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+        .track-search-form input {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 10px;
+        }
+        .track-search-form button {
+            padding: 0 2.5rem;
+            font-family: 'Orbitron', sans-serif;
+        }
+        @media (max-width: 768px) {
+            .track-container {
+                padding: 1.5rem !important;
+                margin: 2rem auto !important;
+            }
+            .track-search-form {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .track-search-form button {
+                padding: 1rem;
+                width: 100%;
+            }
+            .tracking-stepper {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2rem;
+                padding-left: 1.5rem;
+            }
+            .tracking-stepper::before {
+                left: 49px !important;
+                top: 0 !important;
+                width: 2px !important;
+                height: 100% !important;
+            }
+            .step {
+                display: flex;
+                align-items: center;
+                gap: 1.5rem;
+                text-align: left;
+                width: 100%;
+            }
+            .step-icon {
+                margin: 0 !important;
+                flex-shrink: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -170,9 +223,9 @@
         <div class="track-container">
             <h2 style="font-family: 'Orbitron', sans-serif; color: #0ea5e9; text-align: center; margin-bottom: 2rem;">Order Tracking Link</h2>
             
-            <form th:action="@{/orders/track}" method="get" style="display: flex; gap: 1rem; margin-bottom: 3rem;">
-                <input type="text" name="query" placeholder="Order ID or Phone Number..." class="form-control" style="flex: 1; padding: 1rem; border-radius: 10px;">
-                <button type="submit" class="btn" style="padding: 0 2.5rem; font-family: 'Orbitron', sans-serif;">RETRIEVE STATUS LOGS</button>
+            <form th:action="@{/orders/track}" method="get" class="track-search-form">
+                <input type="text" name="query" placeholder="Order ID or Phone Number..." class="form-control">
+                <button type="submit" class="btn">RETRIEVE STATUS LOGS</button>
             </form>
 
             <div th:if="${order}">

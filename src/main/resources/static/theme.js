@@ -19,6 +19,50 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Mobile navigation initialization
+  const nav = document.querySelector('nav');
+  const header = document.querySelector('.glass-header');
+  if (nav && header) {
+    const ul = nav.querySelector('ul');
+    if (ul) {
+      // Create mobile hamburger toggle button
+      const toggle = document.createElement('button');
+      toggle.className = 'nav-toggle';
+      toggle.setAttribute('aria-label', 'Toggle Navigation Menu');
+      toggle.innerHTML = `
+        <span class="burger-bar"></span>
+        <span class="burger-bar"></span>
+        <span class="burger-bar"></span>
+      `;
+      
+      // Append the toggle to the header (so it is outside nav links)
+      header.appendChild(toggle);
+
+      // Handle toggle menu click
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        ul.classList.toggle('nav-active');
+        toggle.classList.toggle('toggle-active');
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!nav.contains(e.target) && !toggle.contains(e.target)) {
+          ul.classList.remove('nav-active');
+          toggle.classList.remove('toggle-active');
+        }
+      });
+
+      // Close menu when hitting ESC
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          ul.classList.remove('nav-active');
+          toggle.classList.remove('toggle-active');
+        }
+      });
+    }
+  }
+
   function updateBtn(btn, theme) {
     if (theme === 'dark') {
       btn.innerHTML = `
