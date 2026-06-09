@@ -531,8 +531,7 @@ footer p{font-size:0.8rem;color:var(--text-muted)}
     margin: 1.5rem auto 0 !important;
   }
   .logo-universe {
-    width: 100% !important;
-    max-width: 320px !important;
+    width: 320px !important;
     height: 320px !important;
   }
   .logo-card-scene {
@@ -542,6 +541,25 @@ footer p{font-size:0.8rem;color:var(--text-muted)}
   .holo-ring-2 { width: 140px !important; height: 140px !important; }
   .holo-ring-3 { width: 100px !important; height: 100px !important; }
   .holo-crosshair { width: 200px !important; height: 200px !important; }
+
+  /* Homepage Search Bar Mobile Alignment */
+  .cyber-search-wrap {
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 1rem !important;
+    box-sizing: border-box !important;
+  }
+  .cyber-search-input {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .cyber-search-wrap button {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 0.9rem !important;
+  }
 
   /* Product Grid Layout */
   .product-grid {

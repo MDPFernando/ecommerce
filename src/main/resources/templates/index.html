@@ -482,7 +482,7 @@
     <a th:href="@{/orders/track}" class="btn-cyber purple">🛰️ Track Uplink</a>
   </div>
   <form action="/products" method="get" class="cyber-search-wrap" style="position:relative;">
-    <input type="text" name="search" class="cyber-search-input" id="mainSearchInput" placeholder="Search neural archives — products, brands..." autocomplete="off">
+    <input type="text" name="search" class="cyber-search-input" id="mainSearchInput" placeholder="Search products, brands..." autocomplete="off">
     <button type="submit" class="btn-cyber solid" style="white-space:nowrap;">Search</button>
     <div class="search-suggestions" id="searchSuggestions" style="display:none;"></div>
   </form>
@@ -1105,12 +1105,13 @@ document.addEventListener('DOMContentLoaded',function(){
   const card=document.getElementById('logoCard');
   if(!canvas)return;
   const ctx=canvas.getContext('2d');
-  let w,h,cx,cy;
+  let w,h,cx,cy,responsiveScale=1.0;
   function resize(){
     w=canvas.width=universe.offsetWidth;
     h=canvas.height=universe.offsetHeight;
     cx=w/2;
     cy=h/2;
+    responsiveScale=Math.min(1.0,w/480);
   }
   window.addEventListener('resize',resize);
   resize();
@@ -1176,6 +1177,11 @@ document.addEventListener('DOMContentLoaded',function(){
     const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
     let y2 = y * cosX - z1 * sinX;
     let z2 = y * sinX + z1 * cosX;
+
+    // Scale coordinates by responsiveScale
+    x1 *= responsiveScale;
+    y2 *= responsiveScale;
+    z2 *= responsiveScale;
 
     // Perspective factor
     const scale = focalLength / (focalLength + z2);
