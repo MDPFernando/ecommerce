@@ -9,4 +9,4 @@ FROM eclipse-temurin:24-jre-alpine
 WORKDIR /app
 COPY --from=build /home/gradle/src/build/libs/*.jar app.jar
 EXPOSE 8081
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
