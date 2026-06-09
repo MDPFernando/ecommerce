@@ -27,33 +27,73 @@ public class DataSourceConfig {
         if (databaseUrl != null && !databaseUrl.trim().isEmpty()) {
             try {
                 System.out.println("DataSourceConfig: DATABASE_URL found. Parsing connection details...");
-                String cleanUrl = databaseUrl;
-                if (cleanUrl.startsWith("postgres://")) {
-                    cleanUrl = cleanUrl.replace("postgres://", "postgresql://");
+                String temp = databaseUrl;
+                
+                // Extract scheme
+                String scheme = "postgresql";
+                if (temp.contains("://")) {
+                    String[] schemeParts = temp.split("://", 2);
+                    scheme = schemeParts[0];
+                    temp = schemeParts[1];
                 }
-                URI uri = new URI(cleanUrl);
                 
-                String scheme = uri.getScheme();
-                String host = uri.getHost();
-                int port = uri.getPort();
-                String path = uri.getPath();
+                // Extract query parameters
+                String query = "";
+                if (temp.contains("?")) {
+                    String[] queryParts = temp.split("\\?", 2);
+                    temp = queryParts[0];
+                    query = queryParts[1];
+                }
                 
-                String userInfo = uri.getUserInfo();
-                if (userInfo != null && userInfo.contains(":")) {
-                    String[] parts = userInfo.split(":", 2);
-                    username = parts[0];
-                    password = parts[1];
+                // Extract userInfo and hostPart using last '@' (handles passwords with '@')
+                String userInfo = null;
+                String hostPart = temp;
+                int lastAtIndex = temp.lastIndexOf('@');
+                if (lastAtIndex != -1) {
+                    userInfo = temp.substring(0, lastAtIndex);
+                    hostPart = temp.substring(lastAtIndex + 1);
+                }
+                
+                // Extract database name (first '/' separates host/port from database path)
+                String dbName = "";
+                int firstSlashIndex = hostPart.indexOf('/');
+                if (firstSlashIndex != -1) {
+                    dbName = hostPart.substring(firstSlashIndex + 1);
+                    hostPart = hostPart.substring(0, firstSlashIndex);
+                }
+                
+                // Parse userInfo (first ':' separates username from password)
+                if (userInfo != null) {
+                    int firstColonIndex = userInfo.indexOf(':');
+                    if (firstColonIndex != -1) {
+                        username = userInfo.substring(0, firstColonIndex);
+                        password = userInfo.substring(firstColonIndex + 1);
+                    } else {
+                        username = userInfo;
+                    }
                 }
 
-                if ("postgresql".equalsIgnoreCase(scheme) || "postgres".equalsIgnoreCase(scheme)) {
-                    url = "jdbc:postgresql://" + host + ":" + (port == -1 ? 5432 : port) + path;
+                // Map scheme to standard JDBC details
+                String jdbcScheme = "postgresql";
+                if (scheme.startsWith("postgres")) {
+                    jdbcScheme = "postgresql";
                     driverClassName = "org.postgresql.Driver";
-                } else if ("mysql".equalsIgnoreCase(scheme)) {
-                    url = "jdbc:mysql://" + host + ":" + (port == -1 ? 3306 : port) + path + "?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC";
+                } else if (scheme.startsWith("mysql")) {
+                    jdbcScheme = "mysql";
                     driverClassName = "com.mysql.cj.jdbc.Driver";
                 }
-            } catch (URISyntaxException e) {
-                System.err.println("DataSourceConfig error parsing DATABASE_URL: " + e.getMessage());
+
+                // Build JDBC URL
+                url = "jdbc:" + jdbcScheme + "://" + hostPart + "/" + dbName;
+                if (!query.isEmpty()) {
+                    url += "?" + query;
+                } else if ("mysql".equals(jdbcScheme)) {
+                    url += "?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC";
+                }
+                
+                System.out.println("DataSourceConfig: Parsed DATABASE_URL successfully.");
+            } catch (Exception e) {
+                System.err.println("DataSourceConfig: Error parsing DATABASE_URL: " + e.getMessage());
             }
         }
 
