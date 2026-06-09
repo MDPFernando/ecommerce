@@ -272,3 +272,33 @@ select.form-control option {
   color: #00d4ff;
   font-family: 'Space Grotesk', sans-serif;
 }
+
+/* Light Theme Menu & Branding Enhancements */
+[data-theme="light"] .logo-text {
+  background: linear-gradient(135deg, #050b14, var(--primary)) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 0 8px rgba(0, 191, 255, 0.25)) !important;
+}
+
+@media (max-width: 768px) {
+  [data-theme="light"] nav ul {
+    background: rgba(255, 255, 255, 0.96) !important;
+    border-left: 1px solid rgba(0, 191, 255, 0.25) !important;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.08) !important;
+  }
+  [data-theme="light"] nav a {
+    color: #334155 !important;
+    text-shadow: none !important;
+  }
+  [data-theme="light"] nav a:hover {
+    color: #00bfff !important;
+  }
+  [data-theme="light"] nav a::after {
+    background: #00bfff !important;
+  }
+  [data-theme="light"] .burger-bar {
+    background: #00bfff !important;
+    box-shadow: 0 0 5px rgba(0, 191, 255, 0.3) !important;
+  }
+}

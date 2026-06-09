@@ -483,7 +483,16 @@ footer p{font-size:0.8rem;color:var(--text-muted)}
   }
   
   .sidebar{width:100%;position:static}
-  .logo-text{display:none}
+  .logo-text {
+    display: inline-block !important;
+    font-size: 0.8rem !important;
+    letter-spacing: 0.5px !important;
+    font-weight: 800 !important;
+    background: linear-gradient(135deg, #fff, var(--primary)) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.45));
+  }
 
   /* Hamburger Navigation Toggle */
   .nav-toggle {
