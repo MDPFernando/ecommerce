@@ -34,11 +34,15 @@
 
     <div class="admin-container">
         <aside class="sidebar">
-            <a th:href="@{/admin/dashboard}">📊 Dashboard</a>
-            <a th:href="@{/admin/products}">📦 Inventory</a>
-            <a th:href="@{/admin/categories}">📁 Categories</a>
-            <a th:href="@{/admin/orders}">🚚 Orders</a>
-            <a th:href="@{/admin/offers}" class="active">🎁 Offers</a>
+            <div class="sidebar-brand">Navigation Protocol</div>
+            <ul>
+                <li><a th:href="@{/admin/dashboard}">📊 Dashboard</a></li>
+                <li><a th:href="@{/admin/products}">📦 Inventory</a></li>
+                <li><a th:href="@{/admin/categories}">📁 Categories</a></li>
+                <li><a th:href="@{/admin/orders}">🚚 Orders</a></li>
+                <li><a th:href="@{/admin/offers}" class="active">🎁 Offers</a></li>
+                <li><a th:href="@{/admin/products/add}">➕ Add Product</a></li>
+            </ul>
         </aside>
 
         <main class="admin-main">

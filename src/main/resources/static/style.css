@@ -346,6 +346,12 @@ nav a:hover::after{width:100%}
   display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem; margin-bottom: 3rem;
 }
+.charts-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
 .dash-card {
   background: var(--bg-card); border: 1px solid var(--glass-border);
   border-radius: 24px; padding: 2.2rem; transition: all 0.4s;
@@ -486,9 +492,67 @@ footer p{font-size:0.8rem;color:var(--text-muted)}
   .admin-container {
     grid-template-columns: 1fr !important;
     padding: 1rem 3% !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .main-content, .admin-main {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
   }
   
-  .sidebar{width:100%;position:static}
+  .sidebar {
+    width: 100% !important;
+    position: sticky !important;
+    top: 60px !important;
+    z-index: 999;
+    padding: 0.8rem 1rem !important;
+    margin-bottom: 1.5rem !important;
+    border-radius: 0 !important;
+    background: rgba(8, 11, 20, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: 1px solid var(--glass-border) !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .sidebar::-webkit-scrollbar {
+    display: none !important;
+  }
+  .sidebar-brand {
+    display: none !important;
+  }
+  .sidebar ul {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 8px !important;
+    padding: 0 !important;
+    width: max-content !important;
+  }
+  .sidebar a {
+    margin-bottom: 0 !important;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.8rem !important;
+    border-radius: 30px !important;
+    white-space: nowrap !important;
+    border: 1px solid rgba(0, 212, 255, 0.1) !important;
+    background: rgba(0, 212, 255, 0.03) !important;
+  }
+  .sidebar a.active {
+    background: rgba(0, 212, 255, 0.15) !important;
+    border-color: var(--primary) !important;
+  }
+  .sidebar a:hover {
+    transform: none !important;
+    background: rgba(0, 212, 255, 0.08) !important;
+    border-color: var(--primary) !important;
+  }
   .logo-text {
     display: inline-block !important;
     font-size: 0.72rem !important;
@@ -634,6 +698,143 @@ footer p{font-size:0.8rem;color:var(--text-muted)}
   .step-icon {
     margin: 0 !important;
     flex-shrink: 0 !important;
+  }
+
+  .dashboard-cards {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+  .dash-card {
+    padding: 1.5rem !important;
+  }
+  .dash-card .number {
+    font-size: 2rem !important;
+  }
+  
+  .charts-container {
+    grid-template-columns: 1fr !important;
+    gap: 1.2rem !important;
+  }
+  
+  /* Responsive Tables on Mobile */
+  .table-container, .cat-table-card {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: visible !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+  
+  .admin-table, .admin-table thead, .admin-table tbody, .admin-table th, .admin-table td, .admin-table tr {
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .admin-table thead {
+    display: none !important;
+  }
+  .admin-table tr {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 20px !important;
+    margin-bottom: 1.5rem !important;
+    padding: 1.2rem 1.5rem !important;
+    transition: all 0.3s !important;
+  }
+  .admin-table tr:hover {
+    border-color: var(--glass-border-hover) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+  }
+  .admin-table td {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.05) !important;
+    padding: 0.8rem 0 !important;
+    text-align: right !important;
+    font-size: 0.85rem !important;
+  }
+  .admin-table td:last-child {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+  }
+  .admin-table td::before {
+    content: attr(data-label) !important;
+    font-family: 'Orbitron', sans-serif !important;
+    font-size: 0.7rem !important;
+    color: var(--primary) !important;
+    letter-spacing: 1.5px !important;
+    text-transform: uppercase !important;
+    font-weight: 700 !important;
+    text-align: left !important;
+    padding-right: 10px !important;
+  }
+  .admin-table td[data-label="Image"] {
+    justify-content: space-between !important;
+  }
+  .admin-table td[data-label="Image"] img {
+    margin-left: auto !important;
+  }
+  
+  .order-tactical-card {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding: 1.5rem !important;
+    border-radius: 20px !important;
+  }
+  .order-tactical-card > * {
+    text-align: left !important;
+    width: 100% !important;
+  }
+  .order-tactical-card .order-id {
+    font-size: 1.2rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 4px !important;
+  }
+  .order-tactical-card .manifest-list {
+    max-height: 120px !important;
+  }
+  .order-tactical-card .status-control {
+    border: 1px dashed rgba(0, 212, 255, 0.12) !important;
+    background: rgba(0, 0, 0, 0.2) !important;
+    border-radius: 16px !important;
+    padding: 1.2rem !important;
+    margin-top: 8px !important;
+  }
+  
+  #manualOrderLogger form {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  #manualOrderLogger form > div {
+    grid-column: span 1 !important;
+  }
+
+  /* Admin Header and Filter Controls Responsiveness */
+  .dash-header h2 {
+    font-size: 1.5rem !important;
+    word-break: break-word !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .dash-header[style*="display: flex"], .dash-header div[style*="display: flex"] {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+    width: 100% !important;
+  }
+
+  .dash-header select, .dash-header form, .dash-header a, .dash-header button {
+    width: 100% !important;
+    min-width: 0 !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
   }
 }
 
