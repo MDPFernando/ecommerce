@@ -125,9 +125,7 @@
         const whatsapp = document.getElementById('userWhatsapp').value.trim();
         const address = document.getElementById('userAddress').value.trim();
         if (!name || !phone || !whatsapp || !address) { alert('Please fill in all fields.'); return; }
-        const cartItems = /*[[${cartItems}]]*/ [];
-        let items = '';
-        cartItems.forEach(i => items += `• ${i.product.name} x${i.quantity}\n`);
+        const items = /*[[${itemsManifest}]]*/ '';
         const total = /*[[${total}]]*/ 0;
         const data = { customerName: name, customerPhone: phone, customerWhatsapp: whatsapp, address, itemsManifest: items, totalAmount: total, status: 'PROCESSING' };
         try {

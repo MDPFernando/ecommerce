@@ -35,16 +35,21 @@ public class CartController {
 
         // Build WhatsApp Message String dynamically
         StringBuilder waMessage = new StringBuilder("Hello! I would like to finalize my order:%0A%0A");
+        StringBuilder manifest = new StringBuilder();
         for(CartItem item : cartItems) {
             waMessage.append("- ").append(item.getQuantity()).append("x ")
                      .append(item.getProduct().getName())
                      .append(" (Rs. ").append(item.getProduct().getPrice() * item.getQuantity()).append(")%0A");
+            
+            manifest.append("• ").append(item.getProduct().getName())
+                    .append(" x").append(item.getQuantity()).append("\n");
         }
         waMessage.append("%0AGrand Total: Rs. ").append(total);
 
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("total", total);
         model.addAttribute("waMessage", waMessage.toString());
+        model.addAttribute("itemsManifest", manifest.toString());
 
         return "cart";
     }
