@@ -702,9 +702,11 @@
 .hologram-logo {
   width: 130px;
   height: auto;
-  border-radius: 0;
-  object-fit: contain;
-  filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.6));
+  border-radius: 16px;
+  object-fit: cover;
+  border: 2px solid rgba(0, 212, 255, 0.35);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+  filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5));
   animation: hologramFloat 4s ease-in-out infinite;
   z-index: 2;
 }
@@ -777,36 +779,78 @@
 @media (max-width: 768px) {
   .offer-slide {
     grid-template-columns: 1fr;
-    top: 1.5rem;
-    left: 1.5rem;
-    right: 1.5rem;
+    top: 1rem;
+    left: 1rem;
+    right: 1rem;
     bottom: 5.5rem;
-    gap: 0.8rem;
+    gap: 0.6rem;
     height: auto;
   }
   .offer-left {
-    gap: 0.8rem;
+    order: 2;
+    gap: 0.4rem;
+  }
+  .offer-badge {
+    padding: 0.3rem 0.8rem !important;
+    font-size: 0.6rem !important;
+  }
+  .offer-title {
+    font-size: 1.25rem !important;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .offer-desc {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+    margin-bottom: 0.2rem;
+  }
+  .offer-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 0.5rem !important;
+  }
+  .offer-actions .btn-cyber {
+    flex: 1 !important;
+    padding: 0.45rem 0.6rem !important;
+    font-size: 0.75rem !important;
+    text-align: center !important;
+    white-space: nowrap !important;
   }
   .offer-hub {
-    min-height: 560px;
-    padding: 1.5rem;
+    min-height: 570px;
+    padding: 1rem;
   }
   .offer-right {
-    height: 140px;
+    order: 1;
+    height: 110px;
   }
   .hologram-logo {
-    width: 90px;
+    width: 85px;
+    border-radius: 12px !important;
+    border-width: 1.5px !important;
   }
   .offer-slide .hologram-orbit {
     display: none;
   }
   .offer-nav {
-    bottom: 1.5rem;
-    left: 1.5rem;
-    right: 1.5rem;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+  }
+  .offer-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 0.8rem;
   }
 }
 
@@ -939,7 +983,7 @@
                th:style="${iterStat.index % 3 == 1} ? 'background:linear-gradient(135deg,#fff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;' : (${iterStat.index % 3 == 2} ? 'background:linear-gradient(135deg,#fff,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;' : 'background:linear-gradient(135deg,#fff,#00d4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;')"
                th:text="${off.title}">Offer Title</div>
           <p class="offer-desc" th:text="${off.description}">Offer Description</p>
-          <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+          <div class="offer-actions" style="display:flex;gap:1rem;flex-wrap:wrap;">
             <a th:href="${off.product != null ? '/products?search=' + off.product.name : (off.targetUrl != null and !#strings.isEmpty(off.targetUrl) ? off.targetUrl : '/products')}" 
                class="btn-cyber solid"
                th:classappend="${iterStat.index % 3 == 1} ? 'purple' : ''"
@@ -968,7 +1012,7 @@
           <span class="offer-badge">🔥 Flash Sale · 24H Only</span>
           <div class="offer-title">Neural Interface<br>Pro Series</div>
           <p class="offer-desc">Unlock next-gen productivity with our flagship neural computing systems. Limited units — deploy before they vanish from the grid.</p>
-          <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+          <div class="offer-actions" style="display:flex;gap:1rem;flex-wrap:wrap;">
             <a th:href="@{/products}" class="btn-cyber solid">Claim Offer →</a>
             <a th:href="@{/products}" class="btn-cyber">View All Deals</a>
           </div>
@@ -985,7 +1029,7 @@
           <span class="offer-badge" style="border-color:#7c3aed;color:#a78bfa;background:rgba(124,58,237,0.1);">🌌 Exclusive Drop</span>
           <div class="offer-title" style="background:linear-gradient(135deg,#fff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Quantum Storage<br>Vault Edition</div>
           <p class="offer-desc">Military-grade encrypted storage with quantum compression. Store your entire digital universe in a device that fits in your pocket.</p>
-          <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+          <div class="offer-actions" style="display:flex;gap:1rem;flex-wrap:wrap;">
             <a th:href="@{/products}" class="btn-cyber purple">Acquire Now →</a>
             <a th:href="@{/products}" class="btn-cyber">Browse Catalogue</a>
           </div>
@@ -1002,7 +1046,7 @@
           <span class="offer-badge" style="border-color:#00ff88;color:#00ff88;background:rgba(0,255,136,0.08);">🛡️ Bundle Deal</span>
           <div class="offer-title" style="background:linear-gradient(135deg,#fff,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Cyber Armor<br>Complete Kit</div>
           <p class="offer-desc">Full-spectrum protection suite — cybersecurity hardware, encrypted comms and biometric authentication all in one tactical bundle.</p>
-          <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+          <div class="offer-actions" style="display:flex;gap:1rem;flex-wrap:wrap;">
             <a th:href="@{/products}" class="btn-cyber" style="border-color:#00ff88;color:#00ff88;">Get the Bundle →</a>
             <a th:href="@{/products}" class="btn-cyber">See More</a>
           </div>
