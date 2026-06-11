@@ -50,12 +50,38 @@ public class OrderController {
 
     @GetMapping("/track")
     public String viewTrackPage(@RequestParam(required = false) String query, Model model) {
-        if (query != null && !query.isEmpty()) {
+        if (query != null && !query.trim().isEmpty()) {
+            String cleanQuery = query.trim();
+            // Remove common prefixes case-insensitively
+            if (cleanQuery.toLowerCase().startsWith("order id")) {
+                cleanQuery = cleanQuery.substring(8).trim();
+            } else if (cleanQuery.toLowerCase().startsWith("order")) {
+                cleanQuery = cleanQuery.substring(5).trim();
+            }
+            if (cleanQuery.startsWith(":") || cleanQuery.startsWith("-")) {
+                cleanQuery = cleanQuery.substring(1).trim();
+            }
+            if (cleanQuery.startsWith("#")) {
+                cleanQuery = cleanQuery.substring(1).trim();
+            }
+
+            boolean found = false;
             try {
-                Long id = Long.parseLong(query);
-                orderRepository.findById(id).ifPresent(o -> model.addAttribute("order", o));
+                Long id = Long.parseLong(cleanQuery);
+                java.util.Optional<Order> orderOpt = orderRepository.findById(id);
+                if (orderOpt.isPresent()) {
+                    model.addAttribute("order", orderOpt.get());
+                    found = true;
+                }
             } catch (NumberFormatException e) {
-                List<Order> orders = orderRepository.findByCustomerPhoneOrCustomerWhatsapp(query, query);
+                // Ignore, try search by phone/WhatsApp
+            }
+
+            if (!found) {
+                List<Order> orders = orderRepository.findByCustomerPhoneOrCustomerWhatsapp(query.trim(), query.trim());
+                if (orders.isEmpty() && !cleanQuery.equals(query.trim())) {
+                    orders = orderRepository.findByCustomerPhoneOrCustomerWhatsapp(cleanQuery, cleanQuery);
+                }
                 if (!orders.isEmpty()) {
                     model.addAttribute("orders", orders);
                 }
