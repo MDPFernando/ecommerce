@@ -1041,63 +1041,28 @@
       </div>
     </th:block>
 
-    <!-- Fallback Slides (if no offers in database) -->
+    <!-- Fallback Slide (Sorry Message when no offers exist) -->
     <th:block th:if="${allOffers == null or allOffers.empty}">
-      <!-- Slide 1 -->
       <div class="offer-slide active" id="slide0">
         <div class="offer-left">
-          <span class="offer-badge">🔥 Flash Sale · 24H Only</span>
-          <div class="offer-title">Neural Interface<br>Pro Series</div>
-          <p class="offer-desc">Unlock next-gen productivity with our flagship neural computing systems. Limited units — deploy before they vanish from the grid.</p>
-          <div class="offer-actions" style="display:flex;gap:1rem;flex-wrap:wrap;">
-            <a th:href="@{/products}" class="btn-cyber solid">Claim Offer →</a>
-            <a th:href="@{/products}" class="btn-cyber">View All Deals</a>
+          <span class="offer-badge" style="border-color:#ef4444;color:#ef4444;background:rgba(239,68,68,0.08);">📡 Channels Offline</span>
+          <div class="offer-title" style="background:linear-gradient(135deg,#fff,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">No Active Offers</div>
+          <p class="offer-desc">Sorry! All promotional channels are currently offline. Our data-miners are compiling the next generation of gear. Scan back soon for new drops!</p>
+          <div class="offer-actions" style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:1.5rem;">
+            <a th:href="@{/products}" class="btn-cyber solid" style="border-color:#ef4444;color:#fff;background:rgba(239,68,68,0.2);">🔍 Scan Catalogue</a>
+            <a th:href="@{/products}" class="btn-cyber">View Products</a>
           </div>
         </div>
         <div class="offer-right">
-          <div class="hologram-plate"></div>
-          <div class="hologram-orbit"></div>
-          <img th:src="@{/images/logo.png}" alt="Offer 1" class="hologram-logo">
-        </div>
-      </div>
-      <!-- Slide 2 -->
-      <div class="offer-slide" id="slide1">
-        <div class="offer-left">
-          <span class="offer-badge" style="border-color:#7c3aed;color:#a78bfa;background:rgba(124,58,237,0.1);">🌌 Exclusive Drop</span>
-          <div class="offer-title" style="background:linear-gradient(135deg,#fff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Quantum Storage<br>Vault Edition</div>
-          <p class="offer-desc">Military-grade encrypted storage with quantum compression. Store your entire digital universe in a device that fits in your pocket.</p>
-          <div class="offer-actions" style="display:flex;gap:1rem;flex-wrap:wrap;">
-            <a th:href="@{/products}" class="btn-cyber purple">Acquire Now →</a>
-            <a th:href="@{/products}" class="btn-cyber">Browse Catalogue</a>
-          </div>
-        </div>
-        <div class="offer-right">
-          <div class="hologram-plate" style="background:radial-gradient(ellipse,rgba(124,58,237,0.8) 0%,rgba(124,58,237,0) 80%);"></div>
-          <div class="hologram-orbit" style="border-color:rgba(124,58,237,0.35);"></div>
-          <img th:src="@{/images/logo.png}" alt="Offer 2" class="hologram-logo" style="filter:drop-shadow(0 0 20px rgba(124,58,237,0.6));">
-        </div>
-      </div>
-      <!-- Slide 3 -->
-      <div class="offer-slide" id="slide2">
-        <div class="offer-left">
-          <span class="offer-badge" style="border-color:#00ff88;color:#00ff88;background:rgba(0,255,136,0.08);">🛡️ Bundle Deal</span>
-          <div class="offer-title" style="background:linear-gradient(135deg,#fff,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Cyber Armor<br>Complete Kit</div>
-          <p class="offer-desc">Full-spectrum protection suite — cybersecurity hardware, encrypted comms and biometric authentication all in one tactical bundle.</p>
-          <div class="offer-actions" style="display:flex;gap:1rem;flex-wrap:wrap;">
-            <a th:href="@{/products}" class="btn-cyber" style="border-color:#00ff88;color:#00ff88;">Get the Bundle →</a>
-            <a th:href="@{/products}" class="btn-cyber">See More</a>
-          </div>
-        </div>
-        <div class="offer-right">
-          <div class="hologram-plate" style="background:radial-gradient(ellipse,rgba(0,255,136,0.8) 0%,rgba(0,255,136,0) 80%);"></div>
-          <div class="hologram-orbit" style="border-color:rgba(0,255,136,0.35);"></div>
-          <img th:src="@{/images/logo.png}" alt="Offer 3" class="hologram-logo" style="filter:drop-shadow(0 0 20px rgba(0,255,136,0.6));">
+          <div class="hologram-plate" style="background:radial-gradient(ellipse,rgba(239,68,68,0.8) 0%,rgba(239,68,68,0) 80%);"></div>
+          <div class="hologram-orbit" style="border-color:rgba(239,68,68,0.3);"></div>
+          <img th:src="@{/images/logo.png}" alt="No Offers" class="hologram-logo" style="filter:drop-shadow(0 0 20px rgba(239,68,68,0.6)) grayscale(0.5);">
         </div>
       </div>
     </th:block>
 
     <!-- Nav -->
-    <div class="offer-nav">
+    <div class="offer-nav" th:style="${allOffers != null and !allOffers.empty and allOffers.size() > 1 ? '' : 'display:none;'}">
       <div class="offer-dots">
         <!-- Dynamic Dots -->
         <th:block th:if="${allOffers != null and !allOffers.empty}">
@@ -1109,8 +1074,6 @@
         <!-- Fallback Dots -->
         <th:block th:if="${allOffers == null or allOffers.empty}">
           <div class="offer-dot active" onclick="goSlide(0)"></div>
-          <div class="offer-dot" onclick="goSlide(1)"></div>
-          <div class="offer-dot" onclick="goSlide(2)"></div>
         </th:block>
       </div>
       <div class="offer-btns">
@@ -1680,7 +1643,9 @@ document.addEventListener('DOMContentLoaded',function(){
     dots.forEach((d,i)=>{d.classList.toggle('active',i===n);});
     cur=n;
     clearInterval(timer);
-    timer=setInterval(()=>nextSlide(),5000);
+    if(total > 1) {
+      timer=setInterval(()=>nextSlide(),5000);
+    }
   }
   function nextSlide(){goSlide((cur+1)%total);}
   function prevSlide(){goSlide((cur-1+total)%total);}
