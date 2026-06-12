@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Command Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/style.css(v=3.0)}">
+    <link rel="stylesheet" th:href="@{/theme.css(v=3.0)}">
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+    <link rel="icon" type="image/png" th:href="@{/images/logo.png(v=2)}">
+    <link rel="shortcut icon" type="image/png" th:href="@{/images/logo.png(v=2)}">
+    
+    <style>
+        .settings-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            color: var(--primary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--glass-border);
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            letter-spacing: 3px;
+            padding: 1.2rem;
+            border-radius: 14px;
+            width: 100%;
+            margin-top: 2rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 30px rgba(0,212,255,0.3);
+            text-transform: uppercase;
+        }
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 45px rgba(0,212,255,0.5);
+        }
+        .info-pane {
+            background: rgba(0, 212, 255, 0.03);
+            border: 1px dashed rgba(0, 212, 255, 0.2);
+            border-radius: 16px;
+            padding: 1.2rem;
+            margin-bottom: 1.8rem;
+            font-size: 0.82rem;
+            color: var(--text-body);
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body class="admin-body">
+    <header class="glass-header">
+        <div class="logo-container" style="display: flex; align-items: center; gap: 1rem;">
+            <a th:href="@{/}">
+                <img th:src="@{/images/logo.png}" alt="Next Era Technologies Logo" class="brand-logo">
+            </a>
+            <h1 style="font-size: 1.2rem; margin: 0; color: #fff;">COMMAND CENTER</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a th:href="@{/}">Live Site</a></li>
+                <li th:if="${session.loggedInUser != null}"><a th:href="@{/logout}">Sign Out</a></li>
+                <li><button id="themeToggle" class="theme-toggle">☀️</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="sidebar-brand">Navigation Protocol</div>
+            <ul>
+                <li><a th:href="@{/admin/dashboard}">📊 Dashboard</a></li>
+                <li><a th:href="@{/admin/products}">📦 Inventory</a></li>
+                <li><a th:href="@{/admin/categories}">📁 Categories</a></li>
+                <li><a th:href="@{/admin/orders}">🚚 Orders</a></li>
+                <li><a th:href="@{/admin/offers}">🎁 Offers</a></li>
+                <li><a th:href="@{/admin/products/add}">➕ Add Product</a></li>
+                <li><a th:href="@{/admin/settings}" class="active">⚙️ Settings</a></li>
+            </ul>
+        </aside>
+
+        <main class="admin-main" style="flex:1">
+            <div style="margin-bottom: 2.5rem;">
+                <div class="section-tag">System Parameters</div>
+                <h1 style="font-family: 'Orbitron', sans-serif; color: #0ea5e9; font-size: 2.2rem; margin-top: 0.5rem;">Configuration Matrix</h1>
+            </div>
+
+            <div class="settings-card">
+                <div class="form-section-title"><span>01</span> WhatsApp Gateway Link</div>
+                
+                <div class="info-pane">
+                    <p style="margin: 0 0 8px 0; font-weight: 700; color: var(--primary);">🌐 AUTOMATIC RE-ROUTING GATEWAY</p>
+                    Updating this parameter synchronizes the admin WhatsApp target number immediately. All checkout requests, "Buy Now" quick-orders, and direct footer links will dynamically connect to the configured endpoint.
+                </div>
+
+                <form th:action="@{/admin/settings/save}" method="post">
+                    <div class="form-group" style="margin-bottom: 1.8rem;">
+                        <label class="form-label" for="whatsappNumber">Admin WhatsApp Number</label>
+                        <input type="text" id="whatsappNumber" name="whatsappNumber" th:value="${adminWhatsapp}" class="form-control" required placeholder="e.g., 94769414472" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(0, 212, 255, 0.3); color: #fff;">
+                        <small style="display: block; margin-top: 8px; color: var(--text-muted); font-size: 0.75rem;">
+                            Include country code without special characters (e.g., <code>94769414472</code>).
+                        </small>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Commit Parameter Update</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- TACTICAL VISUAL CONFIRMATION NODE -->
+    <div th:if="${param.success}" id="tactical-toast" class="cyber-toast">
+        <div class="toast-icon">✅</div>
+        <div class="toast-content">
+            <h4 style="margin: 0 0 4px 0; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: #00d4ff;">SYSTEM PROTOCOL</h4>
+            <p style="margin: 0; font-size: 0.85rem; color: #fff;">SETTINGS UPDATED: WhatsApp channel re-routed successfully.</p>
+        </div>
+        <div class="toast-progress"></div>
+    </div>
+
+    <style>
+        .cyber-toast {
+            position: fixed;
+            top: 80px;
+            right: -400px;
+            width: 350px;
+            background: rgba(10, 15, 30, 0.9);
+            border: 1px solid var(--primary);
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 212, 255, 0.2);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            z-index: 9999;
+            overflow: hidden;
+            animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, slideOut 0.5s ease-in 3.5s forwards;
+        }
+        
+        .toast-icon {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 5px rgba(0, 255, 100, 0.6));
+        }
+        
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+            animation: progressShrink 3.5s linear forwards;
+        }
+        
+        @keyframes slideIn {
+            0% { right: -400px; opacity: 0; }
+            100% { right: 20px; opacity: 1; }
+        }
+        @keyframes slideOut {
+            0% { right: 20px; opacity: 1; }
+            100% { right: -400px; opacity: 0; }
+        }
+        @keyframes progressShrink {
+            0% { width: 100%; }
+            100% { width: 0%; }
+        }
+    </style>
+
+    <script th:src="@{/theme.js}"></script>
+</body>
+</html>

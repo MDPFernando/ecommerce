@@ -132,8 +132,9 @@
             const res = await fetch('/orders/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
             const result = await res.json();
             if (result.success) {
+                const adminWhatsapp = /*[[${adminWhatsapp}]]*/ '94769414472';
                 const msg = `🛍️ *NEW ORDER #${result.orderId}*\n\nCustomer: ${name}\nPhone: ${phone}\nAddress: ${address}\n\nItems:\n${items}\nTotal: Rs. ${total}\n\nTrack: https://yourdomain.up.railway.app/orders/track?query=${result.orderId}`;
-                window.open(`https://wa.me/94769414472?text=${encodeURIComponent(msg)}`, '_blank');
+                window.open(`https://wa.me/${adminWhatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
             }
         } catch (e) { alert('Order failed. Please try again.'); }
     });

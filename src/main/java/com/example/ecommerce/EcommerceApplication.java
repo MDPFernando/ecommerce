@@ -72,6 +72,19 @@ public class EcommerceApplication {
 					System.out.println("Admin seeding/cleanup skipped: " + e.getMessage());
 				}
 
+				// Seed settings
+				try {
+					jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS settings (setting_key VARCHAR(255) PRIMARY KEY, setting_value VARCHAR(255))");
+					Integer settingsCount = jdbcTemplate.queryForObject(
+						"SELECT COUNT(*) FROM settings WHERE setting_key = 'admin_whatsapp'", Integer.class);
+					if (settingsCount == null || settingsCount == 0) {
+						jdbcTemplate.execute("INSERT INTO settings (setting_key, setting_value) VALUES ('admin_whatsapp', '94769414472')");
+						System.out.println("Seeded default admin WhatsApp setting.");
+					}
+				} catch (Exception e) {
+					System.out.println("Settings seeding skipped: " + e.getMessage());
+				}
+
 				// Seed Sample Products for Dashboard
 				try {
 					if (jdbcTemplate.queryForObject("SELECT COUNT(*) FROM product", Integer.class) == 0) {

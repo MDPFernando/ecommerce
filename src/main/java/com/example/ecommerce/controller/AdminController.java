@@ -3,6 +3,8 @@ package com.example.ecommerce.controller;
 import com.example.ecommerce.model.Product;
 import com.example.ecommerce.model.User;
 import com.example.ecommerce.model.Order;
+import com.example.ecommerce.model.Settings;
+import com.example.ecommerce.repository.SettingsRepository;
 import com.example.ecommerce.service.ProductService;
 import com.example.ecommerce.repository.OrderRepository;
 import jakarta.servlet.http.HttpSession;
@@ -40,6 +42,9 @@ public class AdminController {
 
     @Autowired
     private javax.sql.DataSource dataSource;
+
+    @Autowired
+    private SettingsRepository settingsRepository;
 
     @GetMapping("/debug-db")
     @ResponseBody
@@ -355,5 +360,32 @@ public class AdminController {
         order.setStatus("PROCESSING");
         orderRepository.save(order);
         return "redirect:/admin/orders?success=order_logged";
+    }
+
+    // --- SETTINGS PROTOCOL ---
+    @GetMapping("/settings")
+    public String showSettings(HttpSession session, Model model) {
+        if (!isAdmin(session)) return "redirect:/signin";
+        
+        String adminWhatsapp = settingsRepository.findById("admin_whatsapp")
+                .map(Settings::getSettingValue)
+                .orElse("94769414472");
+        model.addAttribute("adminWhatsapp", adminWhatsapp);
+        return "admin-settings";
+    }
+
+    @PostMapping("/settings/save")
+    public String saveSettings(@RequestParam("whatsappNumber") String whatsappNumber, HttpSession session) {
+        if (!isAdmin(session)) return "redirect:/signin";
+        
+        Settings settings = settingsRepository.findById("admin_whatsapp")
+                .orElseGet(() -> {
+                    Settings s = new Settings();
+                    s.setSettingKey("admin_whatsapp");
+                    return s;
+                });
+        settings.setSettingValue(whatsappNumber.trim());
+        settingsRepository.save(settings);
+        return "redirect:/admin/settings?success=saved";
     }
 }
