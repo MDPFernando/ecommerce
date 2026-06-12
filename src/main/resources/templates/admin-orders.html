@@ -15,62 +15,96 @@
         .orders-grid { display: grid; gap: 1.5rem; }
         .order-tactical-card {
             background: var(--bg-card); border: 1px solid var(--glass-border);
-            border-radius: 24px; padding: 1.8rem; backdrop-filter: blur(20px);
-            display: grid; grid-template-columns: 80px 1.5fr 2fr 1fr 1.2fr;
-            gap: 20px; align-items: center; transition: all 0.3s;
+            border-radius: 24px; padding: 2rem; backdrop-filter: blur(20px);
+            display: grid; grid-template-columns: 1.2fr 1fr;
+            gap: 2.5rem; transition: all 0.3s ease;
             position: relative;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
         .order-tactical-card.elevated { z-index: 1000; border-color: var(--primary); }
         .order-tactical-card:hover { 
-            border-color: var(--primary); transform: translateX(5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-color: var(--primary);
+            box-shadow: 0 12px 40px rgba(0,212,255,0.15);
         }
         .order-tactical-card::before {
             content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
             background: var(--primary); opacity: 0; transition: opacity 0.3s;
+            border-top-left-radius: 24px; border-bottom-left-radius: 24px;
         }
         .order-tactical-card:hover::before { opacity: 1; }
 
-        .order-id { font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--primary); font-weight: 900; }
-        .customer-intel h4 { font-size: 1rem; color: #fff; margin-bottom: 4px; }
-        .customer-intel p { font-size: 0.75rem; color: var(--text-muted); }
-
-        .manifest-list { 
-            font-size: 0.75rem; color: var(--text-body); background: rgba(0,0,0,0.2);
-            padding: 10px 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);
-            max-height: 80px; overflow-y: auto; line-height: 1.5;
+        .order-details-pane {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
         }
 
-        .order-total { font-family: 'Orbitron', sans-serif; font-weight: 700; color: var(--primary); font-size: 1.1rem; }
+        .order-control-pane {
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+            padding-left: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .form-row-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .modern-input {
+            background: rgba(0, 0, 0, 0.2) !important;
+            border: 1px solid var(--glass-border) !important;
+            border-radius: 12px !important;
+            color: #fff !important;
+            padding: 0.65rem 0.9rem !important;
+            font-size: 0.78rem !important;
+            transition: all 0.3s ease !important;
+            height: auto !important;
+            width: 100%;
+            box-sizing: border-box !important;
+        }
+        .modern-input:focus {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 12px var(--primary-glow) !important;
+            background: rgba(0, 0, 0, 0.35) !important;
+            outline: none;
+        }
+
+        .order-id { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; color: var(--primary); font-weight: 900; text-shadow: 0 0 10px var(--primary-glow); }
+        .customer-intel h4 { font-size: 1.05rem; color: #fff; margin-bottom: 6px; }
+        .customer-intel p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin: 0; }
+
+        .manifest-list { 
+            font-size: 0.78rem; color: var(--text-body); background: rgba(0,0,0,0.25);
+            padding: 12px 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);
+            max-height: 100px; overflow-y: auto; line-height: 1.6;
+        }
+
+        .order-total { font-family: 'Orbitron', sans-serif; font-weight: 900; color: var(--primary); font-size: 1.25rem; text-shadow: 0 0 5px rgba(0,212,255,0.2); }
 
         /* Tactical Status Badges */
         .status-pill {
-            padding: 6px 12px; border-radius: 20px; font-size: 0.65rem; font-weight: 900;
+            padding: 6px 14px; border-radius: 20px; font-size: 0.65rem; font-weight: 900;
             font-family: 'Orbitron', sans-serif; text-transform: uppercase; letter-spacing: 1px;
             display: inline-block; text-align: center; border: 1px solid transparent;
         }
-        .status-PROCESSING { background: rgba(245,158,11,0.1); color: #f59e0b; border-color: rgba(245,158,11,0.2); box-shadow: 0 0 10px rgba(245,158,11,0.1); }
-        .status-PACKED { background: rgba(139,92,246,0.1); color: #8b5cf6; border-color: rgba(139,92,246,0.2); }
-        .status-DISPATCHED { background: rgba(14,165,233,0.1); color: #0ea5e9; border-color: rgba(14,165,233,0.2); box-shadow: 0 0 10px rgba(14,165,233,0.1); }
-        .status-DELIVERED { background: rgba(16,185,129,0.1); color: #10b981; border-color: rgba(16,185,129,0.2); box-shadow: 0 0 15px rgba(16,185,129,0.2); }
-
-        .status-select-modern {
-            background: rgba(0,212,255,0.05); border: 1px solid var(--glass-border);
-            color: #fff; padding: 0.6rem 1rem; border-radius: 10px; font-size: 0.75rem;
-            width: 100%; cursor: pointer; transition: all 0.2s;
-        }
-        .status-select-modern:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary-glow); outline: none; }
+        .status-PROCESSING { background: rgba(245,158,11,0.1); color: #f59e0b; border-color: rgba(245,158,11,0.25); box-shadow: 0 0 12px rgba(245,158,11,0.15); }
+        .status-PACKED { background: rgba(139,92,246,0.1); color: #8b5cf6; border-color: rgba(139,92,246,0.25); box-shadow: 0 0 12px rgba(139,92,246,0.15); }
+        .status-DISPATCHED { background: rgba(14,165,233,0.1); color: #0ea5e9; border-color: rgba(14,165,233,0.25); box-shadow: 0 0 12px rgba(14,165,233,0.15); }
+        .status-DELIVERED { background: rgba(16,185,129,0.1); color: #10b981; border-color: rgba(16,185,129,0.25); box-shadow: 0 0 18px rgba(16,185,129,0.25); }
 
         /* Custom Dropdown Styling */
         .custom-select-wrapper { position: relative; width: 100%; z-index: 10; box-sizing: border-box; }
         .custom-select-trigger {
-            width: 100%; background: rgba(0, 212, 255, 0.05);
+            width: 100%; background: rgba(0, 0, 0, 0.2);
             border: 1px solid var(--glass-border); border-radius: 12px;
-            padding: 0.8rem 1rem; color: #fff; cursor: pointer;
+            padding: 0.75rem 1rem; color: #fff; cursor: pointer;
             display: flex; justify-content: space-between; align-items: center;
-            transition: all 0.3s; font-size: 0.75rem; box-sizing: border-box;
+            transition: all 0.3s; font-size: 0.78rem; box-sizing: border-box;
         }
-        .custom-select-trigger:hover { border-color: var(--primary); background: rgba(0, 212, 255, 0.1); }
+        .custom-select-trigger:hover { border-color: var(--primary); background: rgba(0, 0, 0, 0.3); }
         .custom-select-trigger.active { border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
         
         .custom-options {
@@ -84,7 +118,7 @@
         
         .custom-option {
             padding: 0.8rem 1rem; color: var(--text-body); cursor: pointer;
-            transition: all 0.2s; font-size: 0.75rem; font-weight: 600;
+            transition: all 0.2s; font-size: 0.78rem; font-weight: 600;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         .custom-option:last-child { border-bottom: none; }
@@ -96,26 +130,59 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .btn-update {
-            background: var(--primary); color: #000; border: none; padding: 0.6rem 1.2rem;
-            border-radius: 10px; font-family: 'Orbitron', sans-serif; font-size: 0.7rem;
-            font-weight: 700; cursor: pointer; transition: all 0.3s;
+        .btn-sync-cyber {
+            background: linear-gradient(135deg, #00d4ff 0%, #0077ff 100%);
+            color: #000; border: none; padding: 0.7rem 1.5rem;
+            border-radius: 12px; font-family: 'Orbitron', sans-serif; font-size: 0.75rem;
+            font-weight: 800; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center; flex: 1;
+            height: 42px; box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+            text-transform: uppercase;
         }
-        .btn-update:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--primary-glow); }
+        .btn-sync-cyber:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.5);
+            filter: brightness(1.1);
+        }
+        .btn-sync-cyber:active {
+            transform: translateY(0);
+        }
 
-        .btn-delete-tactical {
+        .btn-delete-cyber {
             display: inline-flex; align-items: center; justify-content: center;
-            width: 38px; height: 38px; background: rgba(239, 68, 68, 0.08);
-            border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 10px;
-            color: #ff6b6b; text-decoration: none; cursor: pointer;
-            transition: all 0.3s ease; font-size: 1rem; box-sizing: border-box;
+            width: 42px; height: 42px; background: rgba(239, 68, 68, 0.05);
+            border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px;
+            color: #ef4444; text-decoration: none; cursor: pointer;
+            transition: all 0.3s ease; font-size: 1.1rem; box-sizing: border-box;
         }
-        .btn-delete-tactical:hover {
-            background: rgba(239, 68, 68, 0.22);
+        .btn-delete-cyber:hover {
+            background: rgba(239, 68, 68, 0.18);
             border-color: #ef4444;
-            color: #ff3b30;
-            box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
             transform: scale(1.05);
+        }
+
+        /* Mobile Responsiveness styling */
+        @media (max-width: 900px) {
+            .order-tactical-card {
+                grid-template-columns: 1fr;
+                gap: 1.8rem;
+                padding: 1.5rem;
+            }
+            .order-control-pane {
+                border-left: none;
+                border-top: 1px dashed rgba(255, 255, 255, 0.12);
+                padding-left: 0;
+                padding-top: 1.8rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .form-row-2col {
+                grid-template-columns: 1fr;
+                gap: 0.8rem;
+            }
         }
 
         .cyber-toast {
@@ -245,73 +312,95 @@
             <div class="orders-grid">
                 <!-- Order Card Start -->
                 <div th:each="order : ${orders}" class="order-tactical-card">
-                    <div class="order-id" th:text="'#' + ${order.id}">#001</div>
-                    
-                    <div class="customer-intel">
-                        <h4 th:text="${order.customerName}">Customer Name</h4>
-                        <p th:text="${order.customerPhone}">+94 77 123 4567</p>
-                    </div>
-
-                    <div class="manifest-list" th:text="${order.itemsManifest}">
-                        Order items manifest will appear here...
-                    </div>
-
-                    <div style="text-align: center;">
-                        <div class="order-total" th:text="'Rs. ' + ${order.totalAmount}">Rs. 50,000</div>
-                        <div style="margin-top: 8px;">
+                    <!-- Left Pane: Details Pane -->
+                    <div class="order-details-pane">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                            <div class="order-id" th:text="'#' + ${order.id}">#001</div>
                             <span th:class="'status-pill status-' + ${order.status}" th:text="${order.status}">PROCESSING</span>
+                        </div>
+                        
+                        <div class="customer-intel">
+                            <h4 th:text="${order.customerName}">Customer Name</h4>
+                            <p style="margin-bottom: 6px;">
+                                📞 <span th:text="${order.customerPhone}">+94 77 123 4567</span>
+                                <a th:if="${order.customerWhatsapp != null and order.customerWhatsapp != ''}" th:href="'https://wa.me/' + ${order.customerWhatsapp}" target="_blank" style="color: #25D366; text-decoration: none; margin-left: 10px; font-weight: bold;">💬 WhatsApp</a>
+                            </p>
+                            <p style="color: var(--text-body); font-size: 0.8rem; margin-top: 6px; line-height: 1.4;">
+                                📍 <span th:text="${order.address}">Customer shipping address</span>
+                            </p>
+                        </div>
+
+                        <div style="margin-top: 4px;">
+                            <div style="font-size: 0.65rem; font-family: 'Orbitron', sans-serif; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Manifest Info</div>
+                            <div class="manifest-list" th:text="${order.itemsManifest}">
+                                Order items manifest will appear here...
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; border-top: 1px dashed rgba(255, 255, 255, 0.08); padding-top: 10px;">
+                            <span style="font-family: 'Orbitron', sans-serif; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Total Acquisition</span>
+                            <div class="order-total" th:text="'Rs. ' + ${order.totalAmount}">Rs. 50,000</div>
                         </div>
                     </div>
 
-                    <div class="status-control">
-                        <form th:action="@{/admin/orders/update-status}" method="post" style="display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Right Pane: Control Pane -->
+                    <div class="order-control-pane">
+                        <div style="font-size: 0.7rem; font-family: 'Orbitron', sans-serif; color: var(--primary); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.8rem; text-shadow: 0 0 5px rgba(0,212,255,0.2);">Logistics Routing Protocol</div>
+                        
+                        <form th:action="@{/admin/orders/update-status}" method="post" style="display: flex; flex-direction: column; gap: 1rem;">
                             <input type="hidden" name="orderId" th:value="${order.id}">
                             <input type="hidden" th:id="'statusInput-' + ${order.id}" name="status" th:value="${order.status}">
                             
-                            <div class="custom-select-wrapper">
-                                <div class="custom-select-trigger" th:onclick="'toggleDropdown(' + ${order.id} + ')'" th:id="'trigger-' + ${order.id}">
-                                    <span th:id="'label-' + ${order.id}">
-                                        <th:block th:switch="${order.status}">
-                                            <span th:case="'PROCESSING'">Initialize Processing</span>
-                                            <span th:case="'PACKED'">Artifact Packed</span>
-                                            <span th:case="'DISPATCHED'">Signal Dispatched</span>
-                                            <span th:case="'OUT_FOR_DELIVERY'">Final Transit</span>
-                                            <span th:case="'DELIVERED'">Deployment Complete</span>
-                                            <span th:case="*">Select Status</span>
-                                        </th:block>
-                                    </span>
-                                    <span style="font-size: 0.6rem; opacity: 0.5;">▼</span>
-                                </div>
-                                <div class="custom-options" th:id="'options-' + ${order.id}">
-                                    <div class="custom-option" data-value="PROCESSING" th:onclick="'selectOption(' + ${order.id} + ', \'PROCESSING\', \'Initialize Processing\')'">Initialize Processing</div>
-                                    <div class="custom-option" data-value="PACKED" th:onclick="'selectOption(' + ${order.id} + ', \'PACKED\', \'Artifact Packed\')'">Artifact Packed</div>
-                                    <div class="custom-option" data-value="DISPATCHED" th:onclick="'selectOption(' + ${order.id} + ', \'DISPATCHED\', \'Signal Dispatched\')'">Signal Dispatched</div>
-                                    <div class="custom-option" data-value="OUT_FOR_DELIVERY" th:onclick="'selectOption(' + ${order.id} + ', \'OUT_FOR_DELIVERY\', \'Final Transit\')'">Final Transit</div>
-                                    <div class="custom-option" data-value="DELIVERED" th:onclick="'selectOption(' + ${order.id} + ', \'DELIVERED\', \'Deployment Complete\')'">Deployment Complete</div>
-                                </div>
-                            </div>
-                            
-                            <!-- Courier Details -->
-                            <div style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 6px; margin-top: 4px;">
-                                <div style="margin-bottom: 6px;">
-                                    <label class="form-label" style="font-size: 0.58rem; margin-bottom: 2px;">Courier Service</label>
-                                    <input type="text" name="courierName" th:value="${order.courierName}" class="form-control" style="padding: 0.3rem 0.6rem; font-size: 0.72rem; height: auto;" placeholder="e.g. Domex, Koombiyo">
-                                </div>
-                                <div style="margin-bottom: 6px;">
-                                    <label class="form-label" style="font-size: 0.58rem; margin-bottom: 2px;">Tracking ID</label>
-                                    <input type="text" name="trackingNumber" th:value="${order.trackingNumber}" class="form-control" style="padding: 0.3rem 0.6rem; font-size: 0.72rem; height: auto;" placeholder="e.g. DX98231">
-                                </div>
-                                <div style="margin-bottom: 6px;">
-                                    <label class="form-label" style="font-size: 0.58rem; margin-bottom: 2px;">Tracking Link (Optional)</label>
-                                    <input type="text" name="trackingUrl" th:value="${order.trackingUrl}" class="form-control" style="padding: 0.3rem 0.6rem; font-size: 0.72rem; height: auto;" placeholder="Custom portal URL...">
+                            <!-- Dropdown -->
+                            <div>
+                                <label class="form-label" style="font-size: 0.65rem; margin-bottom: 6px; display: block; color: var(--text-muted);">TARGET STATUS</label>
+                                <div class="custom-select-wrapper">
+                                    <div class="custom-select-trigger" th:onclick="'toggleDropdown(' + ${order.id} + ')'" th:id="'trigger-' + ${order.id}">
+                                        <span th:id="'label-' + ${order.id}">
+                                            <th:block th:switch="${order.status}">
+                                                <span th:case="'PROCESSING'">Initialize Processing</span>
+                                                <span th:case="'PACKED'">Artifact Packed</span>
+                                                <span th:case="'DISPATCHED'">Signal Dispatched</span>
+                                                <span th:case="'OUT_FOR_DELIVERY'">Final Transit</span>
+                                                <span th:case="'DELIVERED'">Deployment Complete</span>
+                                                <span th:case="*">Select Status</span>
+                                            </th:block>
+                                        </span>
+                                        <span style="font-size: 0.6rem; opacity: 0.5;">▼</span>
+                                    </div>
+                                    <div class="custom-options" th:id="'options-' + ${order.id}">
+                                        <div class="custom-option" data-value="PROCESSING" th:onclick="'selectOption(' + ${order.id} + ', \'PROCESSING\', \'Initialize Processing\')'">Initialize Processing</div>
+                                        <div class="custom-option" data-value="PACKED" th:onclick="'selectOption(' + ${order.id} + ', \'PACKED\', \'Artifact Packed\')'">Artifact Packed</div>
+                                        <div class="custom-option" data-value="DISPATCHED" th:onclick="'selectOption(' + ${order.id} + ', \'DISPATCHED\', \'Signal Dispatched\')'">Signal Dispatched</div>
+                                        <div class="custom-option" data-value="OUT_FOR_DELIVERY" th:onclick="'selectOption(' + ${order.id} + ', \'OUT_FOR_DELIVERY\', \'Final Transit\')'">Final Transit</div>
+                                        <div class="custom-option" data-value="DELIVERED" th:onclick="'selectOption(' + ${order.id} + ', \'DELIVERED\', \'Deployment Complete\')'">Deployment Complete</div>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <div style="display: flex; gap: 8px; margin-top: 4px; align-items: center;">
-                                <button type="submit" class="btn-update" style="flex: 1; padding: 0.6rem 1.2rem; height: 38px; box-sizing: border-box;">SYNC STATUS</button>
+                            <!-- Courier Info Rows -->
+                            <div class="form-row-2col">
+                                <div>
+                                    <label class="form-label" style="font-size: 0.65rem; margin-bottom: 4px; display: block; color: var(--text-muted);">COURIER SERVICE</label>
+                                    <input type="text" name="courierName" th:value="${order.courierName}" class="form-control modern-input" placeholder="e.g. Domex, Koombiyo">
+                                </div>
+                                <div>
+                                    <label class="form-label" style="font-size: 0.65rem; margin-bottom: 4px; display: block; color: var(--text-muted);">TRACKING ID</label>
+                                    <input type="text" name="trackingNumber" th:value="${order.trackingNumber}" class="form-control modern-input" placeholder="e.g. DX98231">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="form-label" style="font-size: 0.65rem; margin-bottom: 4px; display: block; color: var(--text-muted);">TRACKING LINK (OPTIONAL)</label>
+                                <input type="text" name="trackingUrl" th:value="${order.trackingUrl}" class="form-control modern-input" placeholder="Custom portal URL...">
+                            </div>
+                            
+                            <div style="display: flex; gap: 10px; margin-top: 0.4rem; align-items: center;">
+                                <button type="submit" class="btn-sync-cyber">SYNC STATUS</button>
                                 <a th:href="@{/admin/orders/delete/{id}(id=${order.id})}" 
-                                   class="btn-delete-tactical" 
-                                   onclick="return confirm('⚠️ WARNING: Deleting this order will remove all tracking records. Proceed?');">
+                                   class="btn-delete-cyber" 
+                                   onclick="return confirm('⚠️ WARNING: Deleting this order will remove all tracking records. Proceed?');"
+                                   title="Delete Order">
                                     🗑️
                                 </a>
                             </div>
