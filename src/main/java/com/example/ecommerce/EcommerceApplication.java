@@ -37,7 +37,8 @@ public class EcommerceApplication {
 					"Neural Interfaces",
 					"Biometric Hardware",
 					"Quantum Computing",
-					"Virtual Reality Gear"
+					"Virtual Reality Gear",
+					"CCTV Equipments"
 				};
 
 				for (String name : defaultCategories) {
@@ -88,10 +89,36 @@ public class EcommerceApplication {
 				// Seed Sample Products for Dashboard
 				try {
 					if (jdbcTemplate.queryForObject("SELECT COUNT(*) FROM product", Integer.class) == 0) {
-						Long catId = categoryRepository.findAll().get(0).getId();
-						jdbcTemplate.execute("INSERT INTO product (name, price, description, category_id, featured, stock_quantity) VALUES ('Neural Link v2', 150000.0, 'Next-gen brain interface', " + catId + ", true, 10)");
-						jdbcTemplate.execute("INSERT INTO product (name, price, description, category_id, featured, stock_quantity) VALUES ('Cyber Arm MK3', 450000.0, 'Titanium alloy limb', " + catId + ", true, 5)");
-						System.out.println("Seeded sample products for dashboard.");
+						Long cyberneticId = categoryRepository.findByName("Cybernetic Enhancements").getId();
+						Long biometricId = categoryRepository.findByName("Biometric Hardware").getId();
+						Long vrId = categoryRepository.findByName("Virtual Reality Gear").getId();
+						Long cctvId = categoryRepository.findByName("CCTV Equipments").getId();
+
+						// Insert Neural Link v2
+						jdbcTemplate.update("INSERT INTO product (name, price, description, category_id, featured, stock_quantity, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)",
+							"Neural Link v2", 150000.0, "Next-gen brain interface updated via admin", cyberneticId, true, 10, null);
+
+						// Insert Neural VR Headset
+						jdbcTemplate.update("INSERT INTO product (name, price, description, category_id, featured, stock_quantity, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)",
+							"Neural VR Headset", 120000.0, "Fully immersive virtual reality headset with direct neural interface for hyper-realistic gaming.", vrId, false, 10, "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?auto=format&fit=crop&w=600&q=80");
+
+						// Insert Cybernetic Smartwatch
+						jdbcTemplate.update("INSERT INTO product (name, price, description, category_id, featured, stock_quantity, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)",
+							"Cybernetic Smartwatch", 35000.0, "Advanced biometric tracking with AI-assisted daily planning and holographic projections.", biometricId, false, 9, "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80");
+
+						// Insert Drone Delivery System
+						jdbcTemplate.update("INSERT INTO product (name, price, description, category_id, featured, stock_quantity, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)",
+							"Drone Delivery System", 250000.0, "Personal automated drone for instant neighborhood deliveries with 4K camera payload.", cyberneticId, false, 10, "https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=600&q=80");
+
+						// Insert EZVIZ H9C 3K
+						jdbcTemplate.update("INSERT INTO product (name, price, description, category_id, featured, stock_quantity, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)",
+							"EZVIZ H9C 3K", 23900.0, "The EZVIZ H9C 3K is a dual‑lens outdoor Wi‑Fi camera featuring 3K ultra‑clear video, 360° pan‑tilt coverage, AI human/vehicle detection, and smart auto‑tracking—designed to secure large areas with wide and close‑up views simultaneously.", cctvId, false, 10, "/product-images/e945fd16-ebcb-4e35-8e5d-d1b6fb16095b_OIP.webp");
+
+						// Insert EZVIZ C3N
+						jdbcTemplate.update("INSERT INTO product (name, price, description, category_id, featured, stock_quantity, image_url) VALUES (?, ?, ?, ?, ?, ?, ?)",
+							"EZVIZ C3N", 19500.0, "Crafted utilizing state-of-the-art cybernetic engineering protocols with integrated neon power emitters. Fully optimized for lightspeed synchronization and seamless deployment in next-generation architectural grid arrays.", cctvId, false, 2, "/product-images/82a9dc4f-a4ff-49f1-967f-219b18464793_image-f3d2ce7cb1b540dca8f72dda3d44c76b.webp");
+
+						System.out.println("Seeded all 6 sample products successfully.");
 					} else {
 						jdbcTemplate.execute("UPDATE product SET stock_quantity = 10 WHERE stock_quantity IS NULL");
 					}
