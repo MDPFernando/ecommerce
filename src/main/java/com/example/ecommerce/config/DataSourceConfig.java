@@ -76,44 +76,8 @@ public class DataSourceConfig {
                 driverClassName = "com.mysql.cj.jdbc.Driver";
             }
         } else {
-            // Auto-detection priority flow
-            DatabaseConnectionDetails details = parseDatabaseUrl(databaseUrl);
-            if (details != null) {
-                url = details.url;
-                username = details.username;
-                password = details.password;
-                driverClassName = details.driverClassName;
-            }
-
-            if (url == null && pgHost != null && !pgHost.trim().isEmpty()) {
-                System.out.println("DataSourceConfig: Auto-detected PGHOST. Using PostgreSQL connection.");
-                String pgPort = System.getenv("PGPORT") != null ? System.getenv("PGPORT") : "5432";
-                String pgDb = System.getenv("PGDATABASE") != null ? System.getenv("PGDATABASE") : "railway";
-                url = "jdbc:postgresql://" + pgHost + ":" + pgPort + "/" + pgDb;
-                username = System.getenv("PGUSER") != null ? System.getenv("PGUSER") : "postgres";
-                password = System.getenv("PGPASSWORD");
-                driverClassName = "org.postgresql.Driver";
-            }
-
-            if (url == null && mysqlHost != null && !mysqlHost.trim().isEmpty()) {
-                System.out.println("DataSourceConfig: Auto-detected MYSQLHOST. Using MySQL connection.");
-                String mysqlPort = System.getenv("MYSQLPORT") != null ? System.getenv("MYSQLPORT") : "3306";
-                String mysqlDb = System.getenv("MYSQLDATABASE") != null ? System.getenv("MYSQLDATABASE") : "railway";
-                url = "jdbc:mysql://" + mysqlHost + ":" + mysqlPort + "/" + mysqlDb + "?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC";
-                username = System.getenv("MYSQLUSER") != null ? System.getenv("MYSQLUSER") : "root";
-                password = System.getenv("MYSQLPASSWORD");
-                driverClassName = "com.mysql.cj.jdbc.Driver";
-            }
-
-            if (url == null && dbHost != null && !dbHost.trim().isEmpty()) {
-                System.out.println("DataSourceConfig: Auto-detected DB_HOST. Using PostgreSQL connection.");
-                String dbPort = System.getenv("DB_PORT") != null ? System.getenv("DB_PORT") : "5432";
-                String dbName = System.getenv("DB_NAME") != null ? System.getenv("DB_NAME") : "ecommerce";
-                url = "jdbc:postgresql://" + dbHost + ":" + dbPort + "/" + dbName;
-                username = System.getenv("DB_USER") != null ? System.getenv("DB_USER") : "postgres";
-                password = System.getenv("DB_PASSWORD");
-                driverClassName = "org.postgresql.Driver";
-            }
+            // Default to local H2 database to use the preloaded/packaged database by default
+            System.out.println("DataSourceConfig: No DB_PROVIDER specified. Defaulting to packaged H2 database to preserve preloaded state.");
         }
 
         if (url == null) {
