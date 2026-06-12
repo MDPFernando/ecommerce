@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - Next Era Technologies</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/style.css(v=3.0)}">
+    <link rel="stylesheet" th:href="@{/theme.css(v=3.0)}">
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+    <style>
+        .orders-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .order-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        .order-card:hover {
+            box-shadow: 0 15px 35px rgba(0, 212, 255, 0.05);
+            border-color: rgba(0, 212, 255, 0.2);
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1.2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .order-id {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+        .order-status {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .status-processing { background: rgba(14, 165, 233, 0.1); border: 1px solid #0ea5e9; color: #0ea5e9; }
+        .status-packed { background: rgba(124, 58, 237, 0.1); border: 1px solid #7c3aed; color: #a78bfa; }
+        .status-dispatched { background: rgba(245, 158, 11, 0.1); border: 1px solid #f59e0b; color: #f59e0b; }
+        .status-out_for_delivery { background: rgba(236, 72, 153, 0.1); border: 1px solid #ec4899; color: #ec4899; }
+        .status-delivered { background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; color: #10b981; }
+
+        .order-body {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 2rem;
+        }
+        @media(max-width: 768px) {
+            .order-body {
+                grid-template-columns: 1fr;
+            }
+        }
+        .order-meta-info {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 1.2rem;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        .order-products-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .ordered-prod-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            gap: 1rem;
+        }
+        .ordered-prod-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .ordered-prod-details {
+            flex: 1;
+        }
+        .review-button {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            background: rgba(0, 212, 255, 0.05);
+        }
+        .review-button:hover {
+            background: var(--primary);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+        }
+        .reviewed-tag {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        /* FUTURISTIC REVIEW MODAL CONSOLE */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 18, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            background: rgba(10, 15, 30, 0.95);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 50px rgba(0, 212, 255, 0.15);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 500px;
+            padding: 2.5rem;
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+            padding-bottom: 1rem;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .close-btn:hover {
+            color: #ff3c3c;
+        }
+
+        /* Star Rating selector */
+        .star-rating-selector {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+            gap: 8px;
+            margin: 1.5rem 0;
+        }
+        .star-rating-selector input {
+            display: none;
+        }
+        .star-rating-selector label {
+            font-size: 2.2rem;
+            color: rgba(255, 255, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .star-rating-selector label:hover,
+        .star-rating-selector label:hover ~ label,
+        .star-rating-selector input:checked ~ label {
+            color: #00d4ff;
+            text-shadow: 0 0 15px rgba(0, 212, 255, 0.6);
+            transform: scale(1.15);
+        }
+        
+        .image-upload-area {
+            border: 1px dashed rgba(0, 212, 255, 0.2);
+            background: rgba(0, 212, 255, 0.02);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .image-upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(0, 212, 255, 0.05);
+        }
+        .image-upload-area input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .preview-box {
+            display: none;
+            width: 100%;
+            max-height: 150px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .btn-submit-review {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #000;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            letter-spacing: 2px;
+            width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.2);
+        }
+        .btn-submit-review:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+<header class="glass-header">
+    <div style="display:flex;align-items:center;gap:1rem">
+        <a th:href="@{/}"><img th:src="@{/images/logo.png}" alt="Logo" class="brand-logo"></a>
+        <span class="logo-text">NEXT ERA TECHNOLOGIES</span>
+    </div>
+    <nav>
+        <ul>
+            <li><a th:href="@{/}">Home</a></li>
+            <li><a th:href="@{/products}">Products</a></li>
+            <li><a th:href="@{/orders/track}">Track Order</a></li>
+            <li th:if="${session.loggedInUser != null and session.loggedInUser.role != 'ADMIN'}"><a th:href="@{/orders/my-orders}" style="color:var(--primary)">My Orders</a></li>
+            <li th:if="${session.loggedInUser != null and session.loggedInUser.role != 'ADMIN'}"><a th:href="@{/cart}">🛒 Cart</a></li>
+            <li th:if="${session.loggedInUser != null and session.loggedInUser.role == 'ADMIN'}"><a th:href="@{/admin/dashboard}">Admin</a></li>
+            <li th:if="${session.loggedInUser == null}"><a th:href="@{/signin}" style="color:var(--primary)">Sign In</a></li>
+            <li th:if="${session.loggedInUser != null}"><a th:href="@{/logout}">Sign Out</a></li>
+            <li><button id="themeToggle" class="theme-toggle" title="Toggle Theme">🌙</button></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container" style="padding-top: 3rem; margin-bottom: 5rem;">
+    <div style="margin-bottom: 2rem;">
+        <div class="section-tag">Transaction Logs</div>
+        <h2 style="font-family:'Orbitron',sans-serif;font-size:2.2rem;text-transform:uppercase;letter-spacing:-1px;margin-top:0.5rem">My Acquisitions</h2>
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${orders == null or orders.empty}" style="text-align:center;padding:8rem 2rem;background:var(--bg-card);border:1px solid var(--glass-border);border-radius:20px">
+        <div style="font-size:4rem;margin-bottom:1.5rem;filter:drop-shadow(0 0 10px rgba(0, 212, 255, 0.2))">📡</div>
+        <h3 style="font-family:'Orbitron',sans-serif;font-size:1.5rem;margin-bottom:1rem">No Acquisitions Logged</h3>
+        <p style="margin-bottom:2rem;color:var(--text-muted)">You haven't placed any orders yet. Ready to acquire future-grade gear?</p>
+        <a th:href="@{/products}" class="btn btn-primary" style="padding:0.9rem 2.5rem">Browse Inventory</a>
+    </div>
+
+    <!-- Orders List -->
+    <div class="orders-grid" th:unless="${orders == null or orders.empty}">
+        <div class="order-card" th:each="order : ${orders}">
+            <div class="order-header">
+                <div>
+                    <span class="order-id" th:text="'#' + ${order.id}">#123</span>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: 10px;" 
+                          th:text="${order.formattedCreatedAt}">2026-06-12 11:00</span>
+                </div>
+                <div class="order-status" 
+                     th:classappend="'status-' + ${order.status.toLowerCase()}" 
+                     th:text="${order.status}">Status</div>
+            </div>
+
+            <div class="order-body">
+                <!-- Products -->
+                <div>
+                    <h4 style="font-family:'Orbitron',sans-serif;font-size:0.8rem;text-transform:uppercase;color:var(--text-muted);margin-bottom:1rem">Ordered Items</h4>
+                    <div class="order-products-list">
+                        <!-- Dynamic ManyToMany links if present -->
+                        <div class="ordered-prod-item" th:each="prod : ${order.products}">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <img th:src="${prod.imageUrl != null ? prod.imageUrl : 'https://placehold.co/100x100/080b14/00d4ff?text=Gear'}" 
+                                     class="ordered-prod-img" alt="Product">
+                                <div class="ordered-prod-details">
+                                    <h5 style="margin: 0; color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem;" th:text="${prod.name}">Product Name</h5>
+                                    <p style="margin: 3px 0 0 0; font-size: 0.8rem; color: var(--primary); font-family: 'Orbitron', sans-serif;" th:text="'Rs. ' + ${prod.price}">Rs. 0</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Rating Controls (Only if status is DELIVERED) -->
+                            <div th:if="${order.status == 'DELIVERED'}">
+                                <!-- If already reviewed -->
+                                <span th:if="${reviewedProductIds.contains(prod.id)}" class="reviewed-tag">✓ Reviewed</span>
+                                <!-- If not reviewed -->
+                                <button th:unless="${reviewedProductIds.contains(prod.id)}" 
+                                        class="review-button" 
+                                        th:data-prod-id="${prod.id}"
+                                        th:data-prod-name="${prod.name}"
+                                        th:data-order-id="${order.id}"
+                                        onclick="openReviewConsole(this)">
+                                    ★ Write Review
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Fallback plaintext display if order.products is empty (e.g. legacy/manual orders) -->
+                        <div th:if="${order.products == null or order.products.empty}" 
+                             style="white-space: pre-wrap; font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; line-height: 1.6; color: var(--text-body);" 
+                             th:text="${order.itemsManifest}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Meta Details -->
+                <div class="order-meta-info">
+                    <h4 style="font-family:'Orbitron',sans-serif;font-size:0.8rem;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.8rem">Acquisition Logistics</h4>
+                    <p style="margin:0 0 6px 0"><strong>Recipient:</strong> <span th:text="${order.customerName}"></span></p>
+                    <p style="margin:0 0 6px 0"><strong>Phone:</strong> <span th:text="${order.customerPhone}"></span></p>
+                    <p style="margin:0 0 12px 0"><strong>Dest Address:</strong> <span th:text="${order.address}"></span></p>
+                    
+                    <div style="border-top:1px dashed var(--glass-border);padding-top:0.8rem;margin-top:0.8rem">
+                        <p style="margin:0 0 4px 0; font-size: 0.75rem; color:var(--text-muted)">SHIPPING METHOD</p>
+                        <p style="margin:0 0 8px 0; font-family:'Orbitron',sans-serif; font-size:0.85rem;" th:text="${order.courierName != null ? order.courierName : 'Awaiting Routing Protocol'}"></p>
+                        
+                        <p th:if="${order.trackingNumber != null}" style="margin:0 0 4px 0; font-size: 0.75rem; color:var(--text-muted)">TRACKING PROTOCOL ID</p>
+                        <p th:if="${order.trackingNumber != null}" style="margin:0; font-family:'Orbitron',sans-serif; font-size:0.85rem; color:var(--primary)" th:text="${order.trackingNumber}"></p>
+                    </div>
+
+                    <div style="border-top:1px solid var(--glass-border);padding-top:0.8rem;margin-top:1rem;display:flex;justify-content:space-between;align-items:center">
+                        <span style="font-family:'Orbitron',sans-serif;font-size:0.8rem;text-transform:uppercase;color:var(--text-muted)">Total Paid</span>
+                        <span style="font-family:'Orbitron',sans-serif;font-size:1.1rem;font-weight:900;color:#00ff88" th:text="'Rs. ' + ${order.totalAmount}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- REVIEW MODAL CONSOLE -->
+<div class="modal" id="reviewModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 style="font-family:'Orbitron',sans-serif;font-size:1.1rem;color:var(--primary);text-transform:uppercase;margin:0">Write Product Review</h3>
+            <button class="close-btn" onclick="closeReviewConsole()">&times;</button>
+        </div>
+        
+        <form th:action="@{/orders/reviews/save}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="productId" id="reviewProductId">
+            <input type="hidden" name="orderId" id="reviewOrderId">
+            <input type="hidden" name="rating" id="reviewRatingValue" value="5">
+
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <p style="margin: 0; font-size: 0.9rem; color: var(--text-muted);">Rate your experience with</p>
+                <h4 id="reviewProductName" style="margin: 5px 0 0 0; color: #fff; font-family: 'Space Grotesk', sans-serif;">Product Name</h4>
+            </div>
+
+            <!-- Star selector -->
+            <div class="star-rating-selector">
+                <input type="radio" id="star5" name="stars" value="5" checked onclick="setRatingValue(5)"><label for="star5" title="5 stars">★</label>
+                <input type="radio" id="star4" name="stars" value="4" onclick="setRatingValue(4)"><label for="star4" title="4 stars">★</label>
+                <input type="radio" id="star3" name="stars" value="3" onclick="setRatingValue(3)"><label for="star3" title="3 stars">★</label>
+                <input type="radio" id="star2" name="stars" value="2" onclick="setRatingValue(2)"><label for="star2" title="2 stars">★</label>
+                <input type="radio" id="star1" name="stars" value="1" onclick="setRatingValue(1)"><label for="star1" title="1 star">★</label>
+            </div>
+
+            <!-- Comments -->
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label class="form-label" style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Share your feedback</label>
+                <textarea name="comment" class="form-control" rows="3" required placeholder="Describe the quality, delivery speed, and performance..."></textarea>
+            </div>
+
+            <!-- Image Upload -->
+            <div class="form-group" style="margin-bottom: 2rem;">
+                <label class="form-label" style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">Attach Photograph of Delivered Gear</label>
+                <div class="image-upload-area">
+                    <div style="font-size: 1.5rem; margin-bottom: 5px;">📷</div>
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">Click to upload file (JPG, PNG)</span>
+                    <input type="file" name="photo" accept="image/*" onchange="previewImage(event)">
+                    <img id="uploadPreview" class="preview-box" alt="Preview">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit-review">Commit Review protocol</button>
+        </form>
+    </div>
+</div>
+
+<!-- success/error notifications toast -->
+<div th:if="${param.success}" id="success-toast" class="cyber-toast">
+    <div class="toast-icon">✅</div>
+    <div class="toast-content">
+        <h4 style="margin: 0 0 4px 0; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: #00d4ff;">TRANSACTION PROTOCOL</h4>
+        <p style="margin: 0; font-size: 0.85rem; color: #fff;">REVIEW SUBMITTED: Thank you for your feedback log.</p>
+    </div>
+    <div class="toast-progress"></div>
+</div>
+
+<style>
+    .cyber-toast {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        width: 350px;
+        background: rgba(10, 15, 30, 0.9);
+        border: 1px solid var(--primary);
+        border-left: 4px solid var(--primary);
+        border-radius: 8px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 212, 255, 0.2);
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        z-index: 9999;
+        overflow: hidden;
+        animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, slideOut 0.5s ease-in 3.5s forwards;
+    }
+    
+    .toast-icon {
+        font-size: 1.5rem;
+        filter: drop-shadow(0 0 5px rgba(0, 255, 100, 0.6));
+    }
+    
+    .toast-progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        background: var(--primary);
+        box-shadow: 0 0 10px var(--primary-glow);
+        animation: progressShrink 3.5s linear forwards;
+    }
+    
+    @keyframes slideIn {
+        0% { right: -400px; opacity: 0; }
+        100% { right: 20px; opacity: 1; }
+    }
+    @keyframes slideOut {
+        0% { right: 20px; opacity: 1; }
+        100% { right: -400px; opacity: 0; }
+    }
+    @keyframes progressShrink {
+        0% { width: 100%; }
+        100% { width: 0%; }
+    }
+</style>
+
+<script>
+    function openReviewConsole(btn) {
+        const productId = btn.getAttribute('data-prod-id');
+        const productName = btn.getAttribute('data-prod-name');
+        const orderId = btn.getAttribute('data-order-id');
+
+        document.getElementById('reviewProductId').value = productId;
+        document.getElementById('reviewProductName').innerText = productName;
+        document.getElementById('reviewOrderId').value = orderId;
+        
+        // Reset modal fields
+        document.getElementById('reviewRatingValue').value = 5;
+        document.getElementById('star5').checked = true;
+        document.getElementById('uploadPreview').style.display = 'none';
+        document.getElementById('uploadPreview').src = '';
+        
+        document.getElementById('reviewModal').classList.add('active');
+    }
+    
+    function closeReviewConsole() {
+        document.getElementById('reviewModal').classList.remove('active');
+    }
+
+    function setRatingValue(val) {
+        document.getElementById('reviewRatingValue').value = val;
+    }
+
+    function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('uploadPreview');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+
+<script th:src="@{/theme.js}"></script>
+</body>
+</html>

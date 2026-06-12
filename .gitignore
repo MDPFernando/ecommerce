@@ -42,3 +42,6 @@ out/
 *.mv.db
 !ecommerce_db.mv.db
 !ecommerce_db.trace.db
+
+# Uploaded review images
+review-images/

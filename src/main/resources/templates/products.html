@@ -8,6 +8,32 @@
     <link rel="stylesheet" th:href="@{/theme.css(v=3.0)}">
     <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
     <style>
+        /* Modal Style Override */
+        .modal-active-class {
+            opacity: 1 !important;
+            pointer-events: auto !important;
+        }
+        .modal-active-class .modal-content {
+            transform: scale(1) !important;
+        }
+        .review-entry-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .review-img-attachment {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 5px;
+        }
+        
         /* Equal-height cards with price+buttons always at bottom */
         .product-grid { align-items: stretch; }
         .product-card { display: flex; flex-direction: column; }
@@ -49,6 +75,7 @@
             <li><a th:href="@{/}">Home</a></li>
             <li><a th:href="@{/products}" style="color:var(--primary)">Products</a></li>
             <li><a th:href="@{/orders/track}">Track Order</a></li>
+            <li th:if="${session.loggedInUser != null and session.loggedInUser.role != 'ADMIN'}"><a th:href="@{/orders/my-orders}">My Orders</a></li>
             <li th:if="${session.loggedInUser != null and session.loggedInUser.role != 'ADMIN'}"><a th:href="@{/cart}">🛒 Cart</a></li>
             <li th:if="${session.loggedInUser != null and session.loggedInUser.role == 'ADMIN'}"><a th:href="@{/admin/dashboard}">Admin</a></li>
             <li th:if="${session.loggedInUser == null}"><a th:href="@{/signin}" style="color:var(--primary)">Sign In</a></li>
@@ -94,6 +121,20 @@
             <div class="product-info">
                 <div class="product-cat" th:if="${product.category != null}" th:text="${product.category.name}">Category</div>
                 <h3 class="product-name" th:text="${product.name}">Product Name</h3>
+
+                <!-- Product Star Rating (interactive viewer) -->
+                <div class="product-rating" th:if="${product.averageRating != null and product.averageRating > 0}" 
+                     th:data-prod-id="${product.id}"
+                     th:data-prod-name="${product.name}"
+                     onclick="openReviewsReader(this)"
+                     style="margin: 0.5rem 0; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <div class="stars-display" style="display: flex; gap: 3px; color: #00d4ff; text-shadow: 0 0 10px rgba(0, 212, 255, 0.4); font-size: 0.85rem;">
+                        <span th:each="i : ${#numbers.sequence(1, 5)}"
+                              th:text="${i <= product.averageRating ? '★' : '☆'}"></span>
+                    </div>
+                    <span class="rating-val" style="font-size: 0.75rem; font-weight: 600; color: var(--primary);" th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)}">4.5</span>
+                    <span class="rating-count" style="font-size: 0.7rem; color: var(--text-muted);" th:text="'(' + ${product.reviewCount} + ')'">(12)</span>
+                </div>
 
                 <!-- Clamped description with Read More toggle -->
                 <div class="product-desc-wrap">
@@ -180,6 +221,19 @@
                     <div class="product-info">
                         <div class="product-cat" th:if="${product.category != null}" th:text="${product.category.name}">Category</div>
                         <h3 class="product-name" th:text="${product.name}">Product Name</h3>
+                        <!-- Product Star Rating (interactive viewer) -->
+                        <div class="product-rating" th:if="${product.averageRating != null and product.averageRating > 0}" 
+                             th:data-prod-id="${product.id}"
+                             th:data-prod-name="${product.name}"
+                             onclick="openReviewsReader(this)"
+                             style="margin: 0.5rem 0; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <div class="stars-display" style="display: flex; gap: 3px; color: #00d4ff; text-shadow: 0 0 10px rgba(0, 212, 255, 0.4); font-size: 0.85rem;">
+                                <span th:each="i : ${#numbers.sequence(1, 5)}"
+                                      th:text="${i <= product.averageRating ? '★' : '☆'}"></span>
+                            </div>
+                            <span class="rating-val" style="font-size: 0.75rem; font-weight: 600; color: var(--primary);" th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)}">4.5</span>
+                            <span class="rating-count" style="font-size: 0.7rem; color: var(--text-muted);" th:text="'(' + ${product.reviewCount} + ')'">(12)</span>
+                        </div>
                         <div class="product-desc-wrap">
                             <p class="product-desc" th:text="${product.description}">Description</p>
                             <button class="read-more-btn" onclick="toggleDesc(this)">Read More ▾</button>
@@ -226,6 +280,20 @@
     <a th:href="'https://wa.me/' + ${adminWhatsapp}" target="_blank" class="btn btn-whatsapp" style="padding:0.7rem 1.8rem; border-radius: 50px; font-size:0.7rem;">📡 DIRECT UPLINK</a>
 </footer>
 
+<!-- REVIEWS READER MODAL (FUTURISTIC OVERLAY) -->
+<div class="modal" id="reviewsReaderModal" style="position: fixed; inset: 0; background: rgba(2, 6, 18, 0.85); backdrop-filter: blur(12px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1.5rem; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;">
+    <div class="modal-content" style="background: rgba(10, 15, 30, 0.95); border: 1px solid rgba(0, 212, 255, 0.3); box-shadow: 0 0 50px rgba(0, 212, 255, 0.15); border-radius: 24px; width: 100%; max-width: 550px; padding: 2.5rem; transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; flex-direction: column; max-height: 80vh;">
+        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+            <h3 id="readerProductName" style="font-family:'Orbitron',sans-serif;font-size:1.2rem;color:var(--primary);text-transform:uppercase;margin:0">Product Reviews</h3>
+            <button class="close-btn" onclick="closeReviewsReader()" style="background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.3s;">&times;</button>
+        </div>
+        
+        <div id="reviewsContainer" style="overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 1.5rem; padding-right: 5px;">
+            <!-- Dynamic Review Entries -->
+        </div>
+    </div>
+</div>
+
 <div th:replace="~{chat-widget :: chat}"></div>
 <script th:src="@{/theme.js}"></script>
 <script>
@@ -240,6 +308,59 @@ document.querySelectorAll('.product-desc').forEach(el => {
         el.nextElementSibling.style.display = 'none';
     }
 });
+
+async function openReviewsReader(el) {
+    const productId = el.getAttribute('data-prod-id');
+    const productName = el.getAttribute('data-prod-name');
+    document.getElementById('readerProductName').innerText = productName + ' - Reviews Log';
+    const container = document.getElementById('reviewsContainer');
+    container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--primary)">Accessing reviews mainframe...</div>';
+    
+    document.getElementById('reviewsReaderModal').classList.add('modal-active-class');
+    
+    try {
+        const res = await fetch(`/api/reviews?productId=${productId}`);
+        const data = await res.json();
+        
+        if (data.length === 0) {
+            container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-muted)">No user ratings logged for this unit.</div>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        data.forEach(rev => {
+            let starsHtml = '';
+            for(let i=1; i<=5; i++) {
+                starsHtml += i <= rev.rating ? '★' : '☆';
+            }
+            
+            const card = document.createElement('div');
+            card.className = 'review-entry-card';
+            
+            let photoHtml = '';
+            if (rev.imageUrl) {
+                photoHtml = `<img src="${rev.imageUrl}" class="review-img-attachment" alt="User review photograph">`;
+            }
+            
+            card.innerHTML = `
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <strong style="color:var(--primary);font-size:0.9rem;">@${rev.username}</strong>
+                    <span style="font-size:0.75rem;color:var(--text-muted);">${rev.createdAt}</span>
+                </div>
+                <div style="color:#00d4ff;text-shadow:0 0 10px rgba(0,212,255,0.4);font-size:0.85rem;margin:2px 0;">${starsHtml}</div>
+                <p style="margin:4px 0 0 0;font-size:0.85rem;color:var(--text-body);line-height:1.4;">${rev.comment}</p>
+                ${photoHtml}
+            `;
+            container.appendChild(card);
+        });
+    } catch (e) {
+        container.innerHTML = '<div style="text-align:center;padding:2rem;color:#ff3c3c">Failed to parse review datastream.</div>';
+    }
+}
+
+function closeReviewsReader() {
+    document.getElementById('reviewsReaderModal').classList.remove('modal-active-class');
+}
 </script>
 </body>
 </html>

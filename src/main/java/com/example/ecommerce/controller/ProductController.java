@@ -1,15 +1,22 @@
 package com.example.ecommerce.controller;
 
 import com.example.ecommerce.model.Product;
+import com.example.ecommerce.model.Review;
 import com.example.ecommerce.service.ProductService;
+import com.example.ecommerce.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import java.util.List;
 
 @Controller
 public class ProductController {
+
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     @Autowired
     private ProductService productService;
@@ -93,5 +100,23 @@ public class ProductController {
         model.addAttribute("listProducts", filteredProducts);
         model.addAttribute("categories", categoryService.getAllCategories());
         return "products";
+    }
+
+    @GetMapping("/api/reviews")
+    @ResponseBody
+    public java.util.List<java.util.Map<String, Object>> getReviewsForProduct(@RequestParam("productId") Long productId) {
+        List<Review> reviews = reviewRepository.findByProductId(productId);
+        java.util.List<java.util.Map<String, Object>> list = new java.util.ArrayList<>();
+        for (Review r : reviews) {
+            java.util.Map<String, Object> map = new java.util.HashMap<>();
+            map.put("id", r.getId());
+            map.put("username", r.getUser() != null ? r.getUser().getUsername() : "Anonymous");
+            map.put("rating", r.getRating());
+            map.put("comment", r.getComment() != null ? r.getComment() : "");
+            map.put("imageUrl", r.getImageUrl() != null ? r.getImageUrl() : "");
+            map.put("createdAt", r.getCreatedAt() != null ? r.getCreatedAt().toString().substring(0, 10) : "");
+            list.add(map);
+        }
+        return list;
     }
 }

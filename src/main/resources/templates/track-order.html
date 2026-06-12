@@ -331,7 +331,12 @@
                 <li><a th:href="@{/}">Home</a></li>
                 <li><a th:href="@{/products}">Products</a></li>
                 <li><a th:href="@{/orders/track}" class="active">Tracking</a></li>
-                <li><button id="themeToggle" class="theme-toggle"></button></li>
+                <li th:if="${session.loggedInUser != null and session.loggedInUser.role != 'ADMIN'}"><a th:href="@{/orders/my-orders}">My Orders</a></li>
+                <li th:if="${session.loggedInUser != null and session.loggedInUser.role != 'ADMIN'}"><a th:href="@{/cart}">🛒 Cart</a></li>
+                <li th:if="${session.loggedInUser != null and session.loggedInUser.role == 'ADMIN'}"><a th:href="@{/admin/dashboard}">Admin</a></li>
+                <li th:if="${session.loggedInUser == null}"><a th:href="@{/signin}" style="color:var(--primary)">Sign In</a></li>
+                <li th:if="${session.loggedInUser != null}"><a th:href="@{/logout}">Sign Out</a></li>
+                <li><button id="themeToggle" class="theme-toggle">🌙</button></li>
             </ul>
         </nav>
     </header>

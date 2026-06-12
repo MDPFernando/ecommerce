@@ -12,6 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         exposeDirectory("product-images", registry);
+        exposeDirectory("review-images", registry);
     }
 
     private void exposeDirectory(String dirName, ResourceHandlerRegistry registry) {

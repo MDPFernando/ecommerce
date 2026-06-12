@@ -22,6 +22,12 @@ public class Product {
     private Boolean featured = false;
     private Integer stockQuantity = 10;
 
+    @Transient
+    private Double averageRating;
+
+    @Transient
+    private Integer reviewCount;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;

@@ -27,10 +27,12 @@
     <nav><ul>
         <li><a th:href="@{/}">Home</a></li>
         <li><a th:href="@{/products}">Products</a></li>
+        <li><a th:href="@{/orders/track}">Track Order</a></li>
+        <li th:if="${session.loggedInUser != null and session.loggedInUser.role != 'ADMIN'}"><a th:href="@{/orders/my-orders}">My Orders</a></li>
         <li><a th:href="@{/cart}" style="color:var(--primary)">🛒 Cart</a></li>
         <li th:if="${session.loggedInUser != null and session.loggedInUser.role == 'ADMIN'}"><a th:href="@{/admin/dashboard}">Admin</a></li>
         <li th:if="${session.loggedInUser != null}"><a th:href="@{/logout}">Sign Out</a></li>
-        <li><button id="themeToggle" class="theme-toggle"></button></li>
+        <li><button id="themeToggle" class="theme-toggle">🌙</button></li>
     </ul></nav>
 </header>
 

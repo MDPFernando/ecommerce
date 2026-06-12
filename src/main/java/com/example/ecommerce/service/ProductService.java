@@ -13,12 +13,29 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private com.example.ecommerce.repository.ReviewRepository reviewRepository;
+
     public List<Product> getAllProducts() {
-        return productRepository.findAll();
+        List<Product> products = productRepository.findAll();
+        for (Product p : products) {
+            Double avg = reviewRepository.getAverageRatingForProduct(p.getId());
+            Integer count = reviewRepository.getReviewCountForProduct(p.getId());
+            p.setAverageRating(avg != null ? avg : 0.0);
+            p.setReviewCount(count != null ? count : 0);
+        }
+        return products;
     }
 
     public Product getProductById(Long id) {
-        return productRepository.findById(id).orElse(null);
+        Product p = productRepository.findById(id).orElse(null);
+        if (p != null) {
+            Double avg = reviewRepository.getAverageRatingForProduct(p.getId());
+            Integer count = reviewRepository.getReviewCountForProduct(p.getId());
+            p.setAverageRating(avg != null ? avg : 0.0);
+            p.setReviewCount(count != null ? count : 0);
+        }
+        return p;
     }
 
     public Product saveProduct(Product product) {

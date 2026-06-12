@@ -7,4 +7,5 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByCustomerPhoneOrCustomerWhatsapp(String phone, String whatsapp);
     List<Order> findAllByOrderByCreatedAtDesc();
+    List<Order> findByUserIdOrderByCreatedAtDesc(Long userId);
 }
