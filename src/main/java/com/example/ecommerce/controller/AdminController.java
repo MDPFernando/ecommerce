@@ -38,6 +38,38 @@ public class AdminController {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private javax.sql.DataSource dataSource;
+
+    @GetMapping("/debug-db")
+    @ResponseBody
+    public String debugDb(HttpSession session) {
+        if (!isAdmin(session)) {
+            return "Unauthorized";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("<h3>Database Diagnostic Panel</h3>");
+        try (java.sql.Connection conn = dataSource.getConnection()) {
+            sb.append("<p><strong>JDBC URL:</strong> ").append(conn.getMetaData().getURL()).append("</p>");
+            sb.append("<p><strong>Database Product Name:</strong> ").append(conn.getMetaData().getDatabaseProductName()).append("</p>");
+            sb.append("<p><strong>Database Product Version:</strong> ").append(conn.getMetaData().getDatabaseProductVersion()).append("</p>");
+            sb.append("<p><strong>Username:</strong> ").append(conn.getMetaData().getUserName()).append("</p>");
+        } catch (Exception e) {
+            sb.append("<p style='color:red;'><strong>Connection Error:</strong> ").append(e.getMessage()).append("</p>");
+        }
+        sb.append("<h4>Environment Variables (Cleaned):</h4>");
+        System.getenv().forEach((k, v) -> {
+            if (k.contains("URL") || k.contains("HOST") || k.contains("PORT") || k.contains("DATABASE") || k.contains("USER") || k.contains("DB")) {
+                String safeValue = v;
+                if (k.contains("PASSWORD") || k.contains("PASS") || (v != null && v.contains(":") && v.contains("@"))) {
+                    safeValue = v.replaceAll(":[^@/]+@", ":****@");
+                }
+                sb.append("<p><strong>").append(k).append(":</strong> ").append(safeValue).append("</p>");
+            }
+        });
+        return sb.toString();
+    }
+
     // Helper method to check admin access
     private boolean isAdmin(HttpSession session) {
         User user = (User) session.getAttribute("loggedInUser");
