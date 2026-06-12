@@ -40,3 +40,5 @@ out/
 *.db
 *.trace.db
 *.mv.db
+!ecommerce_db.mv.db
+!ecommerce_db.trace.db
