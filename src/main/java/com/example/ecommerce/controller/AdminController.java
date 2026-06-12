@@ -257,9 +257,17 @@ public class AdminController {
 
     // --- ORDER MANAGEMENT ---
     @GetMapping("/orders")
-    public String listOrders(Model model) {
+    public String listOrders(HttpSession session, Model model) {
+        if (!isAdmin(session)) return "redirect:/signin";
         model.addAttribute("orders", orderRepository.findAllByOrderByCreatedAtDesc());
         return "admin-orders";
+    }
+
+    @GetMapping("/orders/delete/{id}")
+    public String deleteOrder(@PathVariable("id") Long id, HttpSession session) {
+        if (!isAdmin(session)) return "redirect:/signin";
+        orderRepository.deleteById(id);
+        return "redirect:/admin/orders?success=order_deleted";
     }
 
     @PostMapping("/orders/update-status")

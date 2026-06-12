@@ -103,6 +103,21 @@
         }
         .btn-update:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--primary-glow); }
 
+        .btn-delete-tactical {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 38px; height: 38px; background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 10px;
+            color: #ff6b6b; text-decoration: none; cursor: pointer;
+            transition: all 0.3s ease; font-size: 1rem; box-sizing: border-box;
+        }
+        .btn-delete-tactical:hover {
+            background: rgba(239, 68, 68, 0.22);
+            border-color: #ef4444;
+            color: #ff3b30;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+            transform: scale(1.05);
+        }
+
         .cyber-toast {
             position: fixed;
             top: 80px;
@@ -292,7 +307,14 @@
                                 </div>
                             </div>
                             
-                            <button type="submit" class="btn-update">SYNC STATUS</button>
+                            <div style="display: flex; gap: 8px; margin-top: 4px; align-items: center;">
+                                <button type="submit" class="btn-update" style="flex: 1; padding: 0.6rem 1.2rem; height: 38px; box-sizing: border-box;">SYNC STATUS</button>
+                                <a th:href="@{/admin/orders/delete/{id}(id=${order.id})}" 
+                                   class="btn-delete-tactical" 
+                                   onclick="return confirm('⚠️ WARNING: Deleting this order will remove all tracking records. Proceed?');">
+                                    🗑️
+                                </a>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -362,7 +384,8 @@
         <div class="toast-content">
             <h4 style="margin: 0 0 4px 0; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--primary);">SYSTEM UPDATE</h4>
             <p th:if="${param.success[0] == 'order_logged'}" style="margin: 0; font-size: 0.85rem; color: #fff;">PROTOCOL DEPLOYED: WhatsApp order manually logged in matrix.</p>
-            <p th:if="${param.success[0] != 'order_logged'}" style="margin: 0; font-size: 0.85rem; color: #fff;">PROTOCOL DEPLOYED: Logistics database updated.</p>
+            <p th:if="${param.success[0] == 'order_deleted'}" style="margin: 0; font-size: 0.85rem; color: #fff;">PROTOCOL DEPLOYED: Order deleted successfully from logistics.</p>
+            <p th:if="${param.success[0] != 'order_logged' and param.success[0] != 'order_deleted'}" style="margin: 0; font-size: 0.85rem; color: #fff;">PROTOCOL DEPLOYED: Logistics database updated.</p>
         </div>
         <div class="toast-progress"></div>
     </div>
