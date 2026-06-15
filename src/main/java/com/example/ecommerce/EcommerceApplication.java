@@ -1,6 +1,6 @@
 package com.example.ecommerce;
 
-// Deploy trigger: 2026-06-15
+// Deploy trigger: 2026-06-15T22:07:00
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
