@@ -116,23 +116,50 @@ public class DataSourceConfig {
             }
         }
 
-        if (url == null) {
-            System.out.println("DataSourceConfig: No remote database connection established. Using local H2 fallback...");
+        DataSource ds = null;
+        if (url != null) {
+            System.out.println("DataSourceConfig: Testing remote database connection at: " + url);
+            try {
+                DataSource candidateDs = DataSourceBuilder.create()
+                        .url(url)
+                        .username(username)
+                        .password(password)
+                        .driverClassName(driverClassName)
+                        .build();
+
+                if (candidateDs instanceof com.zaxxer.hikari.HikariDataSource) {
+                    com.zaxxer.hikari.HikariDataSource hds = (com.zaxxer.hikari.HikariDataSource) candidateDs;
+                    hds.setInitializationFailTimeout(1000);
+                    hds.setConnectionTimeout(3000);
+                }
+
+                try (java.sql.Connection conn = candidateDs.getConnection()) {
+                    System.out.println("DataSourceConfig: Remote database connection test SUCCESSFUL!");
+                    ds = candidateDs;
+                }
+            } catch (Exception e) {
+                System.err.println("DataSourceConfig: Remote database connection test FAILED: " + e.getMessage());
+            }
+        }
+
+        if (ds == null) {
+            System.out.println("DataSourceConfig: No remote database connection established or connection failed. Using local H2 fallback...");
             url = "jdbc:h2:file:./ecommerce_db;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL";
             username = "sa";
             password = "";
             driverClassName = "org.h2.Driver";
+            ds = DataSourceBuilder.create()
+                    .url(url)
+                    .username(username)
+                    .password(password)
+                    .driverClassName(driverClassName)
+                    .build();
         }
 
         System.out.println("DataSourceConfig resolved JDBC URL: " + url);
         System.out.println("DataSourceConfig resolved Username: " + username);
 
-        return DataSourceBuilder.create()
-                .url(url)
-                .username(username)
-                .password(password)
-                .driverClassName(driverClassName)
-                .build();
+        return ds;
     }
 
     private DatabaseConnectionDetails parseDatabaseUrl(String databaseUrl) {
