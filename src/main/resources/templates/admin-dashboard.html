@@ -15,8 +15,318 @@
     
     <link rel="icon" type="image/png" th:href="@{/images/logo.png(v=2)}">
     <link rel="shortcut icon" type="image/png" th:href="@{/images/logo.png(v=2)}">
+    
+    <style>
+        /* Futuristic Strategic Dashboard Specific Styles */
+        .admin-container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .dash-card {
+            background: rgba(10, 15, 30, 0.65) !important;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 212, 255, 0.15) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 212, 255, 0.05) !important;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+            border-radius: 20px !important;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease backwards;
+        }
+
+        .dash-card:nth-child(1) { animation-delay: 0.1s; }
+        .dash-card:nth-child(2) { animation-delay: 0.2s; }
+        .dash-card:nth-child(3) { animation-delay: 0.3s; }
+        .dash-card:nth-child(4) { animation-delay: 0.4s; }
+        .dash-card:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dash-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(0, 212, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transition: all 0.6s ease;
+            transform: skewX(-25deg);
+            pointer-events: none;
+        }
+
+        .dash-card:hover {
+            transform: translateY(-6px) scale(1.02) !important;
+            border-color: rgba(0, 212, 255, 0.5) !important;
+            box-shadow: 0 15px 45px rgba(0, 212, 255, 0.25), inset 0 0 20px rgba(0, 212, 255, 0.1) !important;
+        }
+
+        .dash-card:hover::before {
+            left: 125%;
+        }
+
+        .dash-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+
+        .dash-card .number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            transition: color 0.3s ease;
+            word-wrap: break-word;
+        }
+
+        .dash-card .card-subtitle {
+            font-size: 0.7rem;
+            font-family: 'Orbitron', sans-serif;
+            margin-top: 8px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Status Indicator Pulse */
+        .status-pulse {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--neon-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--neon-green);
+            margin-right: 6px;
+            animation: pulse-green 1.5s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 200, 83, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 200, 83, 0); }
+        }
+
+        .status-pulse.danger {
+            background-color: var(--secondary);
+            box-shadow: 0 0 8px var(--secondary);
+            animation: pulse-red 1.5s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 0, 85, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 0, 85, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 0, 85, 0); }
+        }
+
+        /* Grid for widgets */
+        .widgets-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .widget-card {
+            background: rgba(10, 15, 30, 0.65) !important;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 212, 255, 0.15) !important;
+            border-radius: 24px !important;
+            padding: 2rem !important;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4) !important;
+            animation: fadeInUp 0.8s ease backwards;
+            animation-delay: 0.5s;
+        }
+
+        .widget-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            font-size: 1rem;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+            padding-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* User Registration Stats */
+        .user-metric-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+        }
+
+        .user-metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .user-metric-label {
+            font-size: 0.9rem;
+            font-family: 'Space Grotesk', sans-serif;
+            color: var(--text-body);
+        }
+
+        .user-metric-val {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            width: 0%;
+            transition: width 1.5s cubic-bezier(0.1, 0.8, 0.2, 1);
+        }
+
+        /* Low Stock list styling */
+        .low-stock-list {
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .low-stock-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 0, 85, 0.03);
+            border: 1px solid rgba(255, 0, 85, 0.15);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .low-stock-item:hover {
+            border-color: rgba(255, 0, 85, 0.4);
+            background: rgba(255, 0, 85, 0.06);
+            transform: translateX(4px);
+        }
+
+        .low-stock-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .low-stock-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+
+        .low-stock-qty {
+            font-size: 0.75rem;
+            color: var(--secondary);
+            font-family: 'Orbitron', sans-serif;
+            margin-top: 3px;
+        }
+
+        .replenish-btn {
+            background: rgba(255, 0, 85, 0.1);
+            color: var(--secondary);
+            border: 1px solid rgba(255, 0, 85, 0.3);
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .replenish-btn:hover {
+            background: var(--secondary);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+        }
+
+        /* Light mode adjustments */
+        [data-theme="light"] .dash-card {
+            background: rgba(255, 255, 255, 0.85) !important;
+            border: 1px solid rgba(0, 191, 255, 0.25) !important;
+            box-shadow: 0 10px 30px rgba(0, 191, 255, 0.04) !important;
+        }
+        [data-theme="light"] .dash-card .number {
+            color: #0f172a !important;
+            text-shadow: none;
+        }
+        [data-theme="light"] .widget-card {
+            background: rgba(255, 255, 255, 0.85) !important;
+            border: 1px solid rgba(0, 191, 255, 0.25) !important;
+            box-shadow: 0 10px 30px rgba(0, 191, 255, 0.04) !important;
+        }
+        [data-theme="light"] .user-metric-val, 
+        [data-theme="light"] .low-stock-name {
+            color: #0f172a !important;
+        }
+        [data-theme="light"] .low-stock-item {
+            background: rgba(255, 0, 85, 0.02);
+            border-color: rgba(255, 0, 85, 0.1);
+        }
+
+        @media(max-width: 768px) {
+            .widgets-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .dashboard-cards {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media(max-width: 480px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body class="admin-body">
+    <!-- Futuristic animated background -->
+    <canvas id="neural-canvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; opacity: 0.15;"></canvas>
+
     <header class="glass-header">
         <div class="logo-container" style="display: flex; align-items: center; gap: 1rem;">
             <a th:href="@{/}">
@@ -53,27 +363,45 @@
                 <h2 style="font-family: 'Orbitron', sans-serif; font-size: 2.2rem; color: #fff; margin-top: 0.5rem;">Strategic Dashboard</h2>
             </div>
 
+            <!-- Redesigned futuristic metric cards -->
             <div class="dashboard-cards">
                 <div class="dash-card">
                     <h3>Active Inventory</h3>
                     <div class="number" th:text="${totalProducts}">0</div>
-                    <div style="font-size: 0.75rem; color: var(--primary); margin-top: 10px; font-family: 'Orbitron', sans-serif;">DEPLOYED UNITS</div>
+                    <div class="card-subtitle" style="color: var(--primary);">DEPLOYED UNITS</div>
                 </div>
                 <div class="dash-card">
-                    <h3>Projected Revenue</h3>
-                    <div class="number" style="color: var(--neon-green);">Rs. 2.4M</div>
-                    <div style="font-size: 0.75rem; color: var(--neon-green); margin-top: 10px; font-family: 'Orbitron', sans-serif;">SIMULATED DATA</div>
+                    <h3>Total Revenue</h3>
+                    <div class="number" style="color: var(--neon-green);">
+                        Rs. <span th:text="${#numbers.formatDecimal(totalRevenue, 1, 'COMMA', 2, 'POINT')}">0.00</span>
+                    </div>
+                    <div class="card-subtitle" style="color: var(--neon-green);">DYNAMIC AGGREGATE</div>
+                </div>
+                <div class="dash-card">
+                    <h3>Total Sales</h3>
+                    <div class="number" style="color: #0ea5e9;" th:text="${totalSales}">0</div>
+                    <div class="card-subtitle" style="color: #0ea5e9;">ORDERS PLACED</div>
+                </div>
+                <div class="dash-card">
+                    <h3>Net Income</h3>
+                    <div class="number" style="color: #8b5cf6;">
+                        Rs. <span th:text="${#numbers.formatDecimal(netIncome, 1, 'COMMA', 2, 'POINT')}">0.00</span>
+                    </div>
+                    <div class="card-subtitle" style="color: #8b5cf6;">DELIVERED VALUE</div>
                 </div>
                 <div class="dash-card">
                     <h3>Neural Status</h3>
-                    <div class="number" style="color: var(--secondary);">OPTIMAL</div>
-                    <div style="font-size: 0.75rem; color: var(--secondary); margin-top: 10px; font-family: 'Orbitron', sans-serif;">SYSTEM HEALTH</div>
+                    <div class="number" style="color: var(--neon-green); display: flex; align-items: center; gap: 8px;">
+                        <span class="status-pulse"></span> ACTIVE
+                    </div>
+                    <div class="card-subtitle" style="color: var(--text-muted);">SYSTEM HEALTH</div>
                 </div>
             </div>
 
+            <!-- Dynamic interactive charts -->
             <div class="charts-container">
                 <div class="dash-card" style="padding: 2rem;">
-                    <h3 style="margin-bottom: 2rem; color: var(--primary);">Revenue projection manifest</h3>
+                    <h3 style="margin-bottom: 2rem; color: var(--primary);">Revenue trend monitor</h3>
                     <canvas id="revenueChart" style="max-height: 300px;"></canvas>
                 </div>
                 <div class="dash-card" style="padding: 2rem;">
@@ -81,39 +409,121 @@
                     <canvas id="categoryChart" style="max-height: 300px;"></canvas>
                 </div>
             </div>
+
+            <!-- Redesigned user registrations & stock warning panels -->
+            <div class="widgets-grid">
+                <!-- User Registrations Widget -->
+                <div class="widget-card">
+                    <h3>
+                        <span>👥 User Registrations</span>
+                        <span style="font-size: 0.75rem; color: var(--text-muted); font-family: 'Orbitron', sans-serif;">GLOBAL DIRECTORY</span>
+                    </h3>
+                    <div class="user-metric-row">
+                        <span class="user-metric-label">Total Registered Accounts</span>
+                        <span class="user-metric-val" style="font-size: 1.4rem;" th:text="${totalUsers}">0</span>
+                    </div>
+                    <div class="user-metric-row">
+                        <span class="user-metric-label">Customers</span>
+                        <span class="user-metric-val" th:text="${customerCount}">0</span>
+                    </div>
+                    <div class="user-metric-row">
+                        <span class="user-metric-label">Administrators</span>
+                        <span class="user-metric-val" th:text="${adminCount}">0</span>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem;">
+                        <div class="user-metric-label" style="display:flex; justify-content:space-between; font-size: 0.8rem;">
+                            <span>Customer ratio manifest</span>
+                            <span th:text="${totalUsers > 0 ? (customerCount * 100 / totalUsers) + '%' : '0%'}">0%</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar" id="userProgressBar" th:style="'width: ' + ${totalUsers > 0 ? (customerCount * 100 / totalUsers) : 0} + '%'"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Low Stock Alert Widget -->
+                <div class="widget-card" style="border-color: rgba(255, 0, 85, 0.2) !important;">
+                    <h3 style="color: var(--secondary); border-bottom-color: rgba(255, 0, 85, 0.15);">
+                        <span>⚠️ Low Stock Alerts</span>
+                        <span th:if="${not #lists.isEmpty(lowStockProducts)}" class="status-pulse danger"></span>
+                        <span th:if="${#lists.isEmpty(lowStockProducts)}" style="font-size: 0.75rem; color: var(--neon-green); font-family: 'Orbitron', sans-serif;">OPTIMAL</span>
+                    </h3>
+                    <div class="low-stock-list">
+                        <!-- Loop through low stock products -->
+                        <div th:each="prod : ${lowStockProducts}" class="low-stock-item">
+                            <div class="low-stock-info">
+                                <span class="low-stock-name" th:text="${prod.name}">Product Name</span>
+                                <span class="low-stock-qty" th:text="'STOCK DEPLOYED: ' + ${prod.stockQuantity} + ' UNITS'">STOCK DEPLOYED: 0 UNITS</span>
+                            </div>
+                            <a th:href="@{/admin/products/edit/{id}(id=${prod.id})}" class="replenish-btn">REPLENISH</a>
+                        </div>
+                        
+                        <!-- Empty State -->
+                        <div th:if="${#lists.isEmpty(lowStockProducts)}" style="padding: 2.2rem 1rem; text-align: center; color: var(--neon-green); font-family: 'Orbitron', sans-serif; font-size: 0.9rem;">
+                            <div style="font-size: 2.2rem; margin-bottom: 0.75rem;">🛡️</div>
+                            <div>ALL INVENTORIES SECURED</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 5px; font-family: 'Space Grotesk', sans-serif;">Zero low stock threats detected in current system matrix.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
-    <script>
+    <!-- Chart Configuration Script -->
+    <script th:inline="javascript">
         // Configure Chart.js global settings for dark theme
         Chart.defaults.color = '#94a3b8';
         Chart.defaults.font.family = "'Space Grotesk', sans-serif";
 
+        /*[+
+        const revenueMonths = [[${revenueMonths}]];
+        const revenueValues = [[${revenueValues}]];
+        const categoryLabels = [[${categoryLabels}]];
+        const categoryValues = [[${categoryValues}]];
+        +]*/
+
         // Revenue Bar Chart
         const revCtx = document.getElementById('revenueChart').getContext('2d');
+        const revenueGradient = revCtx.createLinearGradient(0, 0, 0, 300);
+        revenueGradient.addColorStop(0, 'rgba(14, 165, 233, 0.85)'); // Cyan neon
+        revenueGradient.addColorStop(1, 'rgba(139, 92, 246, 0.05)'); // Violet fade
+
         new Chart(revCtx, {
             type: 'bar',
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                labels: revenueMonths,
                 datasets: [{
-                    label: 'Revenue (Rs. in Millions)',
-                    data: [1.2, 1.9, 1.5, 2.1, 2.4, 3.0],
-                    backgroundColor: 'rgba(14, 165, 233, 0.5)',
+                    label: 'Revenue (Rs.)',
+                    data: revenueValues,
+                    backgroundColor: revenueGradient,
                     borderColor: '#0ea5e9',
-                    borderWidth: 1,
-                    borderRadius: 4
+                    borderWidth: 2,
+                    borderRadius: 6,
+                    hoverBackgroundColor: 'rgba(14, 165, 233, 1)',
+                    hoverBorderColor: '#0ea5e9',
                 }]
             },
             options: {
                 responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' }
                     },
                     x: {
                         grid: { display: false }
                     }
+                },
+                animation: {
+                    duration: 1500,
+                    easing: 'easeOutQuart'
                 }
             }
         });
@@ -123,30 +533,47 @@
         new Chart(catCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Cybernetics', 'Neural Interfaces', 'Quantum Computing', 'Robotics'],
+                labels: categoryLabels,
                 datasets: [{
-                    data: [45, 25, 20, 10],
+                    data: categoryValues,
                     backgroundColor: [
-                        '#0ea5e9', // Blue
-                        '#8b5cf6', // Purple
-                        '#10b981', // Green
-                        '#f59e0b'  // Yellow
+                        '#0ea5e9', // Cyber blue
+                        '#8b5cf6', // Violet
+                        '#10b981', // Neon emerald
+                        '#f59e0b', // Cyber gold
+                        '#ec4899', // Pink pulse
+                        '#3b82f6', // Dark blue
+                        '#14b8a6'  // Teal
                     ],
-                    borderWidth: 0,
-                    hoverOffset: 10
+                    borderWidth: 1,
+                    borderColor: 'rgba(10, 15, 30, 0.65)',
+                    hoverOffset: 12
                 }]
             },
             options: {
                 responsive: true,
-                cutout: '75%',
+                cutout: '70%',
                 plugins: {
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            font: {
+                                size: 11
+                            }
+                        }
                     }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true,
+                    duration: 1800,
+                    easing: 'easeOutElastic'
                 }
             }
         });
     </script>
     <script th:src="@{/theme.js}"></script>
+    <script th:src="@{/neural.js}"></script>
 </body>
 </html>

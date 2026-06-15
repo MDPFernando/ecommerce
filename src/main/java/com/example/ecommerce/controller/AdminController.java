@@ -46,6 +46,9 @@ public class AdminController {
     @Autowired
     private SettingsRepository settingsRepository;
 
+    @Autowired
+    private com.example.ecommerce.repository.UserRepository userRepository;
+
     @GetMapping("/debug-db")
     @ResponseBody
     public String debugDb(HttpSession session) {
@@ -90,9 +93,80 @@ public class AdminController {
         }
         
         try {
-            int productCount = productService.getAllProducts().size();
+            // 1. Total Products Count
+            java.util.List<Product> products = productService.getAllProducts();
+            int productCount = products.size();
             model.addAttribute("totalProducts", productCount);
-            System.out.println("DEBUG: Dashboard data prepared successfully. Count: " + productCount);
+            
+            // 2. Fetch all orders
+            java.util.List<Order> orders = orderRepository.findAll();
+            
+            // 3. Calculate Revenue & Sales
+            double totalRevenue = orders.stream().mapToDouble(Order::getTotalAmount).sum();
+            long totalSales = orders.size();
+            
+            // 4. Calculate Net Income (revenue from DELIVERED orders)
+            double netIncome = orders.stream()
+                .filter(o -> "DELIVERED".equalsIgnoreCase(o.getStatus()))
+                .mapToDouble(Order::getTotalAmount)
+                .sum();
+            
+            model.addAttribute("totalRevenue", totalRevenue);
+            model.addAttribute("totalSales", totalSales);
+            model.addAttribute("netIncome", netIncome);
+            
+            // 5. User registrations
+            long totalUsers = userRepository.count();
+            long customerCount = userRepository.findAll().stream()
+                .filter(u -> "CUSTOMER".equalsIgnoreCase(u.getRole()))
+                .count();
+            long adminCount = userRepository.findAll().stream()
+                .filter(u -> "ADMIN".equalsIgnoreCase(u.getRole()))
+                .count();
+            
+            model.addAttribute("totalUsers", totalUsers);
+            model.addAttribute("customerCount", customerCount);
+            model.addAttribute("adminCount", adminCount);
+            
+            // 6. Low stock products (stock <= 5)
+            java.util.List<Product> lowStockProducts = products.stream()
+                .filter(p -> p.getStockQuantity() != null && p.getStockQuantity() <= 5)
+                .collect(java.util.stream.Collectors.toList());
+            model.addAttribute("lowStockProducts", lowStockProducts);
+            
+            // 7. Monthly Revenue Aggregate (past 6 months)
+            java.util.Map<String, Double> monthlyRevenue = new java.util.LinkedHashMap<>();
+            java.time.LocalDate today = java.time.LocalDate.now();
+            for (int i = 5; i >= 0; i--) {
+                java.time.YearMonth ym = java.time.YearMonth.from(today.minusMonths(i));
+                String monthName = ym.getMonth().getDisplayName(java.time.format.TextStyle.SHORT, java.util.Locale.ENGLISH);
+                monthlyRevenue.put(monthName, 0.0);
+            }
+            for (Order order : orders) {
+                if (order.getCreatedAt() != null) {
+                    java.time.YearMonth orderYM = java.time.YearMonth.from(order.getCreatedAt());
+                    for (int i = 0; i < 6; i++) {
+                        java.time.YearMonth targetYM = java.time.YearMonth.from(today.minusMonths(i));
+                        if (orderYM.equals(targetYM)) {
+                            String monthName = targetYM.getMonth().getDisplayName(java.time.format.TextStyle.SHORT, java.util.Locale.ENGLISH);
+                            monthlyRevenue.put(monthName, monthlyRevenue.getOrDefault(monthName, 0.0) + order.getTotalAmount());
+                        }
+                    }
+                }
+            }
+            model.addAttribute("revenueMonths", new java.util.ArrayList<>(monthlyRevenue.keySet()));
+            model.addAttribute("revenueValues", new java.util.ArrayList<>(monthlyRevenue.values()));
+            
+            // 8. Sector/Category Distribution
+            java.util.Map<String, Long> categoryData = products.stream()
+                .collect(java.util.stream.Collectors.groupingBy(
+                    p -> p.getCategory() != null ? p.getCategory().getName() : "Uncategorized",
+                    java.util.stream.Collectors.counting()
+                ));
+            model.addAttribute("categoryLabels", new java.util.ArrayList<>(categoryData.keySet()));
+            model.addAttribute("categoryValues", new java.util.ArrayList<>(categoryData.values()));
+            
+            System.out.println("DEBUG: Strategic Dashboard data successfully computed.");
             return "admin-dashboard";
         } catch (Exception e) {
             System.out.println("DEBUG: ERROR IN DASHBOARD: " + e.getMessage());

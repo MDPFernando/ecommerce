@@ -68,6 +68,8 @@ public class EcommerceApplication {
 						System.out.println("Seeded default admin user: admin / admin123");
 					} else {
 						System.out.println("Admin user already exists - skipping seed.");
+						jdbcTemplate.execute("UPDATE users SET password = 'admin123' WHERE username = 'admin'");
+						System.out.println("Admin password reset to default: admin123");
 					}
 				} catch (Exception e) {
 					System.out.println("Admin seeding/cleanup skipped: " + e.getMessage());
