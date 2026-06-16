@@ -460,6 +460,38 @@ public class AdminController {
                 });
         settings.setSettingValue(whatsappNumber.trim());
         settingsRepository.save(settings);
-        return "redirect:/admin/settings?success=saved";
+        return "redirect:/admin/settings?success=whatsapp";
+    }
+
+    @PostMapping("/settings/save-credentials")
+    public String saveCredentials(@RequestParam("username") String username,
+                                  @RequestParam("password") String password,
+                                  @RequestParam("confirmPassword") String confirmPassword,
+                                  HttpSession session) {
+        if (!isAdmin(session)) return "redirect:/signin";
+        
+        User currentUser = (User) session.getAttribute("loggedInUser");
+        if (currentUser == null) return "redirect:/signin";
+        
+        if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty()) {
+            return "redirect:/admin/settings?error=empty_fields";
+        }
+        
+        if (!password.equals(confirmPassword)) {
+            return "redirect:/admin/settings?error=password_mismatch";
+        }
+        
+        java.util.Optional<User> existingUser = userRepository.findByUsername(username.trim());
+        if (existingUser.isPresent() && !existingUser.get().getId().equals(currentUser.getId())) {
+            return "redirect:/admin/settings?error=username_exists";
+        }
+        
+        User userToUpdate = userRepository.findById(currentUser.getId()).orElse(currentUser);
+        userToUpdate.setUsername(username.trim());
+        userToUpdate.setPassword(password);
+        userRepository.save(userToUpdate);
+        
+        session.setAttribute("loggedInUser", userToUpdate);
+        return "redirect:/admin/settings?success=credentials";
     }
 }

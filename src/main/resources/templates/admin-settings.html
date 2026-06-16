@@ -111,25 +111,59 @@
                 <h1 style="font-family: 'Orbitron', sans-serif; color: #0ea5e9; font-size: 2.2rem; margin-top: 0.5rem;">Configuration Matrix</h1>
             </div>
 
-            <div class="settings-card">
-                <div class="form-section-title"><span>01</span> WhatsApp Gateway Link</div>
-                
-                <div class="info-pane">
-                    <p style="margin: 0 0 8px 0; font-weight: 700; color: var(--primary);">🌐 AUTOMATIC RE-ROUTING GATEWAY</p>
-                    Updating this parameter synchronizes the admin WhatsApp target number immediately. All checkout requests, "Buy Now" quick-orders, and direct footer links will dynamically connect to the configured endpoint.
+            <div class="settings-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; width: 100%;">
+                <!-- CARD 1: WHATSAPP SETTINGS -->
+                <div class="settings-card" style="margin: 0; max-width: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <div class="form-section-title"><span>01</span> WhatsApp Gateway Link</div>
+                        
+                        <div class="info-pane">
+                            <p style="margin: 0 0 8px 0; font-weight: 700; color: var(--primary);">🌐 AUTOMATIC RE-ROUTING GATEWAY</p>
+                            Updating this parameter synchronizes the admin WhatsApp target number immediately. All checkout requests, "Buy Now" quick-orders, and direct footer links will dynamically connect to the configured endpoint.
+                        </div>
+
+                        <form th:action="@{/admin/settings/save}" method="post">
+                            <div class="form-group" style="margin-bottom: 1.8rem;">
+                                <label class="form-label" for="whatsappNumber">Admin WhatsApp Number</label>
+                                <input type="text" id="whatsappNumber" name="whatsappNumber" th:value="${adminWhatsapp}" class="form-control" required placeholder="e.g., 94769414472" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(0, 212, 255, 0.3); color: #fff;">
+                                <small style="display: block; margin-top: 8px; color: var(--text-muted); font-size: 0.75rem;">
+                                    Include country code without special characters (e.g., <code>94769414472</code>).
+                                </small>
+                            </div>
+
+                            <button type="submit" class="btn-submit">Commit Parameter Update</button>
+                        </form>
+                    </div>
                 </div>
 
-                <form th:action="@{/admin/settings/save}" method="post">
-                    <div class="form-group" style="margin-bottom: 1.8rem;">
-                        <label class="form-label" for="whatsappNumber">Admin WhatsApp Number</label>
-                        <input type="text" id="whatsappNumber" name="whatsappNumber" th:value="${adminWhatsapp}" class="form-control" required placeholder="e.g., 94769414472" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(0, 212, 255, 0.3); color: #fff;">
-                        <small style="display: block; margin-top: 8px; color: var(--text-muted); font-size: 0.75rem;">
-                            Include country code without special characters (e.g., <code>94769414472</code>).
-                        </small>
-                    </div>
+                <!-- CARD 2: ADMIN CREDENTIALS -->
+                <div class="settings-card" style="margin: 0; max-width: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <div class="form-section-title"><span>02</span> Admin Security Credentials</div>
+                        
+                        <div class="info-pane" style="background: rgba(255, 0, 85, 0.03); border: 1px dashed rgba(255, 0, 85, 0.2);">
+                            <p style="margin: 0 0 8px 0; font-weight: 700; color: var(--secondary);">🔒 SECURE AUTHENTICATION NODE</p>
+                            Updating these parameters changes the administrative credentials for the dashboard. Ensure you record and retain the new login credentials securely.
+                        </div>
 
-                    <button type="submit" class="btn-submit">Commit Parameter Update</button>
-                </form>
+                        <form th:action="@{/admin/settings/save-credentials}" method="post">
+                            <div class="form-group" style="margin-bottom: 1.2rem;">
+                                <label class="form-label" for="username">Admin Username</label>
+                                <input type="text" id="username" name="username" th:value="${session.loggedInUser.username}" class="form-control" required style="background: rgba(0,0,0,0.2); border: 1px solid rgba(0, 212, 255, 0.3); color: #fff;">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 1.2rem;">
+                                <label class="form-label" for="password">New Password</label>
+                                <input type="password" id="password" name="password" class="form-control" required placeholder="Enter new password" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(0, 212, 255, 0.3); color: #fff;">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 1.8rem;">
+                                <label class="form-label" for="confirmPassword">Confirm Password</label>
+                                <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required placeholder="Confirm new password" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(0, 212, 255, 0.3); color: #fff;">
+                            </div>
+
+                            <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, var(--secondary), #ff0055); box-shadow: 0 0 30px rgba(255,0,85,0.3);">Commit Security Update</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -139,9 +173,21 @@
         <div class="toast-icon">✅</div>
         <div class="toast-content">
             <h4 style="margin: 0 0 4px 0; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: #00d4ff;">SYSTEM PROTOCOL</h4>
-            <p style="margin: 0; font-size: 0.85rem; color: #fff;">SETTINGS UPDATED: WhatsApp channel re-routed successfully.</p>
+            <p th:if="${param.success[0] == 'whatsapp' or param.success[0] == 'saved'}" style="margin: 0; font-size: 0.85rem; color: #fff;">SETTINGS UPDATED: WhatsApp channel re-routed successfully.</p>
+            <p th:if="${param.success[0] == 'credentials'}" style="margin: 0; font-size: 0.85rem; color: #fff;">SECURITY UPDATED: Admin access credentials changed successfully.</p>
         </div>
         <div class="toast-progress"></div>
+    </div>
+
+    <div th:if="${param.error}" id="tactical-error-toast" class="cyber-toast cyber-error-toast">
+        <div class="toast-icon">⚠️</div>
+        <div class="toast-content">
+            <h4 style="margin: 0 0 4px 0; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--secondary);">PROTOCOL BREACH</h4>
+            <p th:if="${param.error[0] == 'username_exists'}" style="margin: 0; font-size: 0.85rem; color: #fff;">ERROR: Username already taken by another node.</p>
+            <p th:if="${param.error[0] == 'password_mismatch'}" style="margin: 0; font-size: 0.85rem; color: #fff;">ERROR: Password confirmation does not match matrix parameters.</p>
+            <p th:if="${param.error[0] == 'empty_fields'}" style="margin: 0; font-size: 0.85rem; color: #fff;">ERROR: Username and password fields cannot be empty.</p>
+        </div>
+        <div class="toast-progress" style="background: var(--secondary); box-shadow: 0 0 10px rgba(255,0,85,0.5);"></div>
     </div>
 
     <style>
@@ -163,6 +209,12 @@
             z-index: 9999;
             overflow: hidden;
             animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, slideOut 0.5s ease-in 3.5s forwards;
+        }
+        
+        .cyber-error-toast {
+            border: 1px solid var(--secondary) !important;
+            border-left: 4px solid var(--secondary) !important;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 0, 85, 0.2) !important;
         }
         
         .toast-icon {

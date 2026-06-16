@@ -55,22 +55,15 @@ public class EcommerceApplication {
 					}
 				}
 
-				// Seed Admin User - check first to avoid duplicates
+				// Seed Admin User - check first if any ADMIN exists to avoid duplicates/overwrite
 				try {
-					Integer adminCount = jdbcTemplate.queryForObject(
-						"SELECT COUNT(*) FROM users WHERE username = 'admin'", Integer.class);
-					if (adminCount != null && adminCount > 1) {
-						// Remove duplicates - keep only the one with lowest id
-						jdbcTemplate.execute(
-							"DELETE FROM users WHERE username = 'admin' AND id NOT IN (SELECT id FROM (SELECT MIN(id) as id FROM users WHERE username = 'admin') t)");
-						System.out.println("Cleaned up duplicate admin users.");
-					} else if (adminCount == null || adminCount == 0) {
+					Integer adminRoleCount = jdbcTemplate.queryForObject(
+						"SELECT COUNT(*) FROM users WHERE role = 'ADMIN'", Integer.class);
+					if (adminRoleCount == null || adminRoleCount == 0) {
 						jdbcTemplate.execute("INSERT INTO users (username, password, role) VALUES ('admin', 'admin123', 'ADMIN')");
 						System.out.println("Seeded default admin user: admin / admin123");
 					} else {
-						System.out.println("Admin user already exists - skipping seed.");
-						jdbcTemplate.execute("UPDATE users SET password = 'admin123' WHERE username = 'admin'");
-						System.out.println("Admin password reset to default: admin123");
+						System.out.println("Admin user already exists - skipping seed/reset.");
 					}
 				} catch (Exception e) {
 					System.out.println("Admin seeding/cleanup skipped: " + e.getMessage());
