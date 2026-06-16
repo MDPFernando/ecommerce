@@ -55,18 +55,28 @@ public class EcommerceApplication {
 					}
 				}
 
-				// Seed Admin User - check first if any ADMIN exists to avoid duplicates/overwrite
+				// Seed/Reset Admin User - recovery fallback configuration
 				try {
-					Integer adminRoleCount = jdbcTemplate.queryForObject(
-						"SELECT COUNT(*) FROM users WHERE role = 'ADMIN'", Integer.class);
-					if (adminRoleCount == null || adminRoleCount == 0) {
-						jdbcTemplate.execute("INSERT INTO users (username, password, role) VALUES ('admin', 'admin123', 'ADMIN')");
-						System.out.println("Seeded default admin user: admin / admin123");
+					String adminUser = System.getenv("ADMIN_USERNAME");
+					if (adminUser == null || adminUser.isEmpty()) {
+						adminUser = "admin";
+					}
+					String adminPass = System.getenv("ADMIN_PASSWORD");
+					if (adminPass == null || adminPass.isEmpty()) {
+						adminPass = "admin123";
+					}
+
+					Integer exists = jdbcTemplate.queryForObject(
+						"SELECT COUNT(*) FROM users WHERE username = ?", Integer.class, adminUser);
+					if (exists == null || exists == 0) {
+						jdbcTemplate.update("INSERT INTO users (username, password, role) VALUES (?, ?, 'ADMIN')", adminUser, adminPass);
+						System.out.println("Seeded admin user: " + adminUser);
 					} else {
-						System.out.println("Admin user already exists - skipping seed/reset.");
+						jdbcTemplate.update("UPDATE users SET password = ?, role = 'ADMIN' WHERE username = ?", adminPass, adminUser);
+						System.out.println("Reset admin user credentials for recovery: " + adminUser);
 					}
 				} catch (Exception e) {
-					System.out.println("Admin seeding/cleanup skipped: " + e.getMessage());
+					System.out.println("Admin seeding/recovery skipped: " + e.getMessage());
 				}
 
 				// Seed settings
