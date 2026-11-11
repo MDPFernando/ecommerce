@@ -3,10 +3,5 @@
 build
 bin
 out
-ecommerce_db*
-Dockerfile
-.dockerignore
-*.png
-*.mp4
-*.webp
-*.md
+.idea
+.vscode

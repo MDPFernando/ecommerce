@@ -129,8 +129,8 @@ public class DataSourceConfig {
 
                 if (candidateDs instanceof com.zaxxer.hikari.HikariDataSource) {
                     com.zaxxer.hikari.HikariDataSource hds = (com.zaxxer.hikari.HikariDataSource) candidateDs;
-                    hds.setInitializationFailTimeout(1000);
-                    hds.setConnectionTimeout(3000);
+                    hds.setInitializationFailTimeout(10000);
+                    hds.setConnectionTimeout(10000);
                 }
 
                 try (java.sql.Connection conn = candidateDs.getConnection()) {
