@@ -182,7 +182,7 @@ public class DataSourceConfig {
             if (temp.contains("?")) {
                 String[] queryParts = temp.split("\\?", 2);
                 temp = queryParts[0];
-                query = queryParts[1];
+                query = queryParts[1].replace("channel_binding=", "channelBinding=");
             }
             
             // Extract userInfo and hostPart using last '@' (handles passwords with '@')
