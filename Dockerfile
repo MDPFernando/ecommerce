@@ -14,6 +14,6 @@ COPY --chown=user:user --from=build /home/gradle/src/ecommerce_db*.db /app/
 COPY --chown=user:user --from=build /home/gradle/src/product-images /app/product-images
 RUN mkdir -p /app/review-images && chown -R user:user /app
 USER user
-ENV PORT=7860
-EXPOSE 7860
+ENV PORT=8081
+EXPOSE 8081
 ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
