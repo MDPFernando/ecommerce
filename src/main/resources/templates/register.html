@@ -7,6 +7,8 @@
     <link rel="stylesheet" th:href="@{/style.css}">
     <link rel="stylesheet" th:href="@{/theme.css}">
     <link rel="icon" type="image/png" th:href="@{/images/logo.png}">
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         canvas#matrix-canvas {
             position: fixed; top: 0; left: 0;
@@ -101,7 +103,29 @@
             </button>
         </form>
 
-        <div class="divider">or</div>
+        <div class="divider">or continue with</div>
+
+        <!-- Google Identity Services Sign-Up Button -->
+        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 1.5rem; width: 100%;">
+            <div id="g_id_onload"
+                 th:data-client_id="${googleClientId}"
+                 data-context="signup"
+                 data-ux_mode="popup"
+                 data-callback="handleGoogleCredential"
+                 data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-shape="rectangular"
+                 data-theme="filled_black"
+                 data-text="signup_with"
+                 data-size="large"
+                 data-logo_alignment="left"
+                 data-width="320">
+            </div>
+            <div id="google-auth-error" style="color: #ff0055; font-size: 0.8rem; margin-top: 10px; display: none; text-align: center;"></div>
+        </div>
+
         <p style="text-align:center;font-size:0.9rem;color:var(--text-muted)">
             Already have an account?
             <a th:href="@{/signin}" style="color:var(--primary);text-decoration:none;font-weight:600">Sign In →</a>
@@ -162,6 +186,43 @@
             btn.style.filter = 'drop-shadow(0 0 5px var(--primary-glow))';
             btn.style.color = 'var(--primary)';
         }
+    }
+
+    function handleGoogleCredential(response) {
+        if (!response || !response.credential) {
+            console.error("Google sign-up error: credential not received");
+            return;
+        }
+        const errDiv = document.getElementById('google-auth-error');
+        if (errDiv) errDiv.style.display = 'none';
+
+        fetch('/api/auth/google', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ credential: response.credential })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = data.redirect || '/';
+            } else {
+                if (errDiv) {
+                    errDiv.textContent = data.message || 'Google registration failed';
+                    errDiv.style.display = 'block';
+                } else {
+                    alert(data.message || 'Google registration failed');
+                }
+            }
+        })
+        .catch(err => {
+            console.error('Error during Google sign-up:', err);
+            if (errDiv) {
+                errDiv.textContent = 'Server communication error during Google registration.';
+                errDiv.style.display = 'block';
+            }
+        });
     }
 </script>
 </body>
