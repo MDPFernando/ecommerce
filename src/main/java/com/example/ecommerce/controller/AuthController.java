@@ -87,35 +87,35 @@ public class AuthController {
     public Map<String, Object> googleAuth(@RequestBody Map<String, String> payload, HttpSession session) {
         Map<String, Object> response = new HashMap<>();
         try {
-            String credential = payload.get("credential");
-            if (credential == null || credential.trim().isEmpty()) {
-                response.put("success", false);
-                response.put("message", "Missing Google credential token");
-                return response;
+            String email = payload.get("email");
+
+            // Also support ID token (credential) payload if provided
+            if (email == null || email.trim().isEmpty()) {
+                String credential = payload.get("credential");
+                if (credential != null && !credential.trim().isEmpty()) {
+                    String[] parts = credential.split("\\.");
+                    if (parts.length >= 2) {
+                        String payloadJson = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
+                        JsonNode jsonNode = objectMapper.readTree(payloadJson);
+                        if (jsonNode.has("email")) {
+                            email = jsonNode.get("email").asText();
+                        }
+                    }
+                }
             }
 
-            // Google ID token is a standard JWT: header.payload.signature
-            String[] parts = credential.split("\\.");
-            if (parts.length < 2) {
-                response.put("success", false);
-                response.put("message", "Malformed Google credential token");
-                return response;
-            }
-
-            String payloadJson = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
-            JsonNode jsonNode = objectMapper.readTree(payloadJson);
-
-            String email = jsonNode.has("email") ? jsonNode.get("email").asText() : null;
             if (email == null || email.trim().isEmpty()) {
                 response.put("success", false);
                 response.put("message", "Email not provided by Google account");
                 return response;
             }
 
+            final String userEmail = email.trim().toLowerCase();
+
             // Find existing user or auto-register customer
-            User user = userRepository.findByUsername(email).orElseGet(() -> {
+            User user = userRepository.findByUsername(userEmail).orElseGet(() -> {
                 User newUser = new User();
-                newUser.setUsername(email);
+                newUser.setUsername(userEmail);
                 // Assign a secure random password for OAuth accounts
                 newUser.setPassword(UUID.randomUUID().toString());
                 newUser.setRole("CUSTOMER");
@@ -123,7 +123,7 @@ public class AuthController {
             });
 
             session.setAttribute("loggedInUser", user);
-            System.out.println("Google OAuth authenticated user: " + email + " [Role: " + user.getRole() + "]");
+            System.out.println("Google OAuth authenticated user: " + userEmail + " [Role: " + user.getRole() + "]");
 
             response.put("success", true);
             response.put("redirect", "ADMIN".equals(user.getRole()) ? "/admin/dashboard" : "/");
