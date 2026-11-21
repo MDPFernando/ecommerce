@@ -1,6 +1,6 @@
 ---
 title: NET Cybernetic E-Commerce
-emoji: ??
+emoji: 🛒
 colorFrom: blue
 colorTo: purple
 sdk: docker
