@@ -1,3 +1,12 @@
+---
+title: NET Cybernetic E-Commerce
+emoji: ??
+colorFrom: blue
+colorTo: purple
+sdk: docker
+app_port: 7860
+suggested_hardware: cpu-basic
+---
 # 🌐 NET (Next Era Technologies) — Future-Grade Cybernetic E-Commerce Grid
 
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)

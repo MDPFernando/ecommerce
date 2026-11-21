@@ -7,9 +7,13 @@ RUN gradle build --no-daemon -x test
 
 # Stage 2: Minimal runtime image
 FROM eclipse-temurin:24-jre-alpine
+RUN adduser -u 1000 -D user
 WORKDIR /app
-COPY --from=build /home/gradle/src/build/libs/*.jar app.jar
-COPY --from=build /home/gradle/src/ecommerce_db*.db /app/
-COPY --from=build /home/gradle/src/product-images /app/product-images
-RUN mkdir -p /app/review-images
+COPY --chown=user:user --from=build /home/gradle/src/build/libs/*.jar app.jar
+COPY --chown=user:user --from=build /home/gradle/src/ecommerce_db*.db /app/
+COPY --chown=user:user --from=build /home/gradle/src/product-images /app/product-images
+RUN mkdir -p /app/review-images && chown -R user:user /app
+USER user
+ENV PORT=7860
+EXPOSE 7860
 ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
