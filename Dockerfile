@@ -16,4 +16,4 @@ RUN mkdir -p /app/review-images && chown -R user:user /app
 USER user
 ENV PORT=8081
 EXPOSE 8081
-ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-XX:+UseSerialGC", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
