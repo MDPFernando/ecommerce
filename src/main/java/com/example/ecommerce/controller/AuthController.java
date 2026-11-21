@@ -27,8 +27,7 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Value("${google.client.id:974329213397-s8dcis01flqks7mts448h3r6s1f461eh.apps.googleusercontent.com}")
     private String googleClientId;
